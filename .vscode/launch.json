@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lua",
+            "request": "launch",
+            "name": "launch",
+            "runtimeExecutable": "D:/Software/Development/MSYS2/mingw64/bin/mpv.exe",
+            "runtimeArgs": ["--quiet", "--script=${workspaceFolder}/src/delete-current-file.lua", "D:/Samples/LG New York HDR UHD 4K Demo (5stars).ts"],
+            "stopOnEntry": false,
+            "luaVersion": "5.1"
+        }
+    ]
+}
