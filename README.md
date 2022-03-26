@@ -1,7 +1,7 @@
 
 # mpv-scripts
 
-## [delete-current-file](delete-current-filelua.lua)
+## [delete-current-file](src/delete-current-file.lua)
 
 This script deletes the file that is currently playing
 via keyboard shortcut, the file is moved to the recycle bin.
