@@ -3,12 +3,12 @@
 -- Which is different from most players which use: 01:10:00 / 01:20:00
 -- In input.conf set the input command prefix no-osd infront of the seek command.
 
-function Round(value)
+function round(value)
     return value >= 0 and math.floor(value + 0.5) or math.ceil(value - 0.5)
 end
 
-function AddZero(value)
-    local value = Round(value)
+function add_zero(value)
+    local value = round(value)
 
     if value > 9 then
         return "" .. value
@@ -17,28 +17,28 @@ function AddZero(value)
     end
 end
 
-function Format(value)
-    local seconds = Round(value)
+function format(value)
+    local seconds = round(value)
 
     if seconds < 0 then
         seconds = 0
     end
 
-    PosMinFloor = math.floor(seconds / 60)
-    SecRest = seconds - PosMinFloor * 60
+    local pos_min_floor = math.floor(seconds / 60)
+    local sec_rest = seconds - pos_min_floor * 60
 
-    return AddZero(PosMinFloor) .. ":" .. AddZero(SecRest)
+    return add_zero(pos_min_floor) .. ":" .. add_zero(sec_rest)
 end
 
-function Seek(event)
-    Position = mp.get_property_number("time-pos")
-    Duration = mp.get_property_number("duration")
+function seek(event)
+    local position = mp.get_property_number("time-pos")
+    local duration = mp.get_property_number("duration")
 
-    if Position > Duration then
-        Position = Duration
+    if position > duration then
+        position = duration
     end
 
-    mp.commandv("show-text", Format(Position) .. " / " .. Format(Duration))
+    mp.commandv("show-text", format(position) .. " / " .. format(duration))
 end
 
-mp.register_event("seek", Seek)
+mp.register_event("seek", seek)
