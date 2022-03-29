@@ -63,7 +63,8 @@ function handle_confirm_key()
             })
         end
 
-        cleanup()
+        remove_key_bindings()
+        file_to_delete = ""
     end
 end
 
