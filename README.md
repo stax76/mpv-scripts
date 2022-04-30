@@ -16,5 +16,5 @@ In input.conf set the input command prefix `no-osd` infront of the seek command.
 
 ## [osm](src/osm.lua)
 
-Shows an customizable on screen menu,
+Shows a customizable on screen menu,
 which is useful to navigate via remote control.

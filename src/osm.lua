@@ -1,5 +1,5 @@
 
--- Shows an customizable on screen menu,
+-- Shows a customizable on screen menu,
 -- which is useful to navigate via remote control.
 
 -- Usage:
