@@ -6,7 +6,7 @@
             "request": "launch",
             "name": "launch",
             "runtimeExecutable": "D:/Software/Development/MSYS2/mingw64/bin/mpv.exe",
-            "runtimeArgs": ["--quiet", "--script=${workspaceFolder}/src/delete-current-file.lua", "D:/Samples/LG New York HDR UHD 4K Demo (5stars).ts"],
+            "runtimeArgs": ["--quiet", "--script=${workspaceFolder}/src/${fileBasename}", "D:/Samples/LG New York HDR UHD 4K Demo (5stars).mkv"],
             "stopOnEntry": false,
             "luaVersion": "5.1"
         }
