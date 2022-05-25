@@ -38,7 +38,7 @@ ESC    Close the menu
 font_scale=90
 border_size=1.0
 # BGR
-highlight_color="00ccff"
+highlight_color=00ccff
 cursor_icon="➤"
 indent_icon="\h\h\h"
 
