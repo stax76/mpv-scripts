@@ -9,17 +9,17 @@ Usage:
 
 osm-menu.conf example:
 
-[animals]
-cat = show-text meow
-dog = show-text woof
-more animals = script-message-to osm show-menu more-animals
+[main]
+Write watch later config = write-watch-later-config
+Power = script-message-to osm show-menu power
 
-[more-animals]
-cow = show-text muh
-sheep = show-text meh #no-close
+[power]
+Shutdown = run shutdown.exe -f -s
+Sleep    = run powershell.exe -Command "[Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms');[Windows.Forms.Application]::SetSuspendState('Suspend',$false,$false)"
+
 
 2. Add a binding to your input.conf file:
-CTRL+M script-message-to osm show-menu animals
+CTRL+M script-message-to osm show-menu main
 
 3. Show the menu and navigate it with the keys:
 LEFT   Close the menu
