@@ -98,7 +98,18 @@ local o = {
 
 (require "mp.options").read_options(o)
 
+function sleep(sec)
+    local new_sec = tonumber(os.clock() + sec)
+    while (os.clock() < new_sec) do end
+end
+
 function show(name)
+    local osd_level = mp.get_property_number("osd-level")
+    mp.set_property_number("osd-level", 0)
+    mp.command("script-message osc-idlelogo no")
+    sleep(0.1)
+    mp.set_property_number("osd-level", osd_level)
+
     active_menu = menus[name]
 
     if active_menu == nil then
@@ -134,6 +145,7 @@ function close()
     selected_index = 1
     mp.set_osd_ass(0, 0, "")
     remove_bindings()
+    -- mp.set_property_number("osd-level", osd_level)
 end
 
 function invoke()
