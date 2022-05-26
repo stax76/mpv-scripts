@@ -145,7 +145,6 @@ function close()
     selected_index = 1
     mp.set_osd_ass(0, 0, "")
     remove_bindings()
-    -- mp.set_property_number("osd-level", osd_level)
 end
 
 function invoke()
