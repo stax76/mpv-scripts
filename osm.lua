@@ -98,17 +98,8 @@ local o = {
 
 (require "mp.options").read_options(o)
 
-function sleep(sec)
-    local new_sec = tonumber(os.clock() + sec)
-    while (os.clock() < new_sec) do end
-end
-
 function show(name)
-    local osd_level = mp.get_property_number("osd-level")
-    mp.set_property_number("osd-level", 0)
-    mp.command("script-message osc-idlelogo no")
-    sleep(0.1)
-    mp.set_property_number("osd-level", osd_level)
+    mp.command("script-message osc-idlescreen no no_osd")
 
     active_menu = menus[name]
 
@@ -221,7 +212,6 @@ function show_menu(name)
     show(name)
 end
 
--- register_script_message unfortunately supports only 1 argument
 mp.register_script_message("show-menu", show_menu)
 
 menu_conf_path = mp.command_native({"expand-path", "~~/script-opts"}) .. "/osm-menu.conf"

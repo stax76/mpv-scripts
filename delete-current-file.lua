@@ -119,5 +119,4 @@ function client_message(event)
     end
 end
 
--- register_script_message unfortunately supports only 1 argument
 mp.register_event("client-message", client_message)

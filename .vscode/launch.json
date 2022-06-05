@@ -6,7 +6,7 @@
             "request": "launch",
             "name": "launch",
             "runtimeExecutable": "D:/Software/Development/MSYS2/mingw64/bin/mpv.exe",
-            "runtimeArgs": ["--quiet", "--script=${file}", "D:/Samples/LG New York HDR UHD 4K Demo (5stars).mkv"],
+            "runtimeArgs": ["--quiet", "--script=${file}", "D:/Samples/LG New York HDR UHD 4K Demo.mkv"],
             "stopOnEntry": false,
             "luaVersion": "5.1"
         }
