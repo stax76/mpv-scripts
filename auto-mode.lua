@@ -1,5 +1,5 @@
 
------ This script allows to dynamically switch between video,
+----- This script allows to automatically switch between video,
 ----- audio and image mode. All configuration is done in code.
 
 ----- config
