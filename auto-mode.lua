@@ -8,6 +8,7 @@
 function on_image_mode_activate()
     mp.command("script-message osc-visibility never no_osd")
     mp.command("no-osd set osd-playing-msg ''")
+    mp.command("set background '#1A2226'")
 end
 
 -- executes when image mode is deactivated,
@@ -15,6 +16,7 @@ end
 function on_image_mode_deactivate()
     mp.command("script-message osc-visibility auto no_osd")
     mp.command("no-osd set osd-playing-msg '${media-title}'")
+    mp.command("set background '#000000'")
 end
 
 -- executes when audio mode is activated
