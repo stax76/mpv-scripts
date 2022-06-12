@@ -26,8 +26,8 @@ function on_audio_mode_activate()
 end
 
 function on_image_mode_activate()
-    mp.command("no-osd set osd-playing-msg ''")               -- disable osd-playing-msg for images
-    mp.command("no-osd set background '#1A2226'")             -- use dark grey background for images
+    mp.set_property("osd-playing-msg", "")                    -- disable osd-playing-msg for images
+    mp.set_property("background", "#1A2226")                  -- use dark grey background for images
     mp.command("script-message osc-visibility never no_osd")  -- disable osc for images
 end
 
@@ -38,19 +38,17 @@ function on_audio_mode_deactivate()
 end
 
 function on_image_mode_deactivate()
-    mp.command("no-osd set background '#000000'")             -- use black background for audio and video
-    mp.command("script-message osc-visibility auto no_osd")   -- enable osc for audio and video
+    mp.set_property("background", "#000000")                 -- use black background for audio and video
+    mp.command("script-message osc-visibility auto no_osd")  -- enable osc for audio and video
 end
 
 function on_type_change(old_ext, new_ext)
     if new_ext == ".gif" then
-        mp.command("no-osd set osd-level 0")     -- disable OSD for GIF
-        mp.command("no-osd set loop-file inf")   -- loop GIF files
+        mp.set_property("loop-file", "inf")   -- loop GIF files
     end
 
     if old_ext == ".gif" then
-        mp.command("no-osd set osd-level 1")     -- enable OSD for anything except GIF
-        mp.command("no-osd set loop-file no")    -- use loop-file=no for anything except GIF
+        mp.set_property("loop-file", "no")    -- use loop-file=no for anything except GIF
     end
 end
 
@@ -99,7 +97,7 @@ end
 
 ----- mpv
 
--- msg = require 'mp.msg' --   msg.warn()   msg.error()
+msg = require 'mp.msg' --   msg.warn()   msg.error()
 -- mp.osd_message("hello")
 
 ----- mpv key bindings
@@ -133,6 +131,7 @@ last_type = nil
 
 function enable_video_mode()
     if active_mode == "video" then return end
+    -- msg.warn("enable_video_mode")
     active_mode = "video"
     remove_bindings()
     on_video_mode_activate()
@@ -140,6 +139,7 @@ end
 
 function enable_audio_mode()
     if active_mode == "audio" then return end
+    -- msg.warn("enable_audio_mode")
     active_mode = "audio"
     remove_bindings()
     add_bindings(audio_mode_bindings)
@@ -148,6 +148,7 @@ end
 
 function enable_image_mode()
     if active_mode == "image" then return end
+    -- msg.warn("enable_image_mode")
     active_mode = "image"
     remove_bindings()
     add_bindings(image_mode_bindings)
@@ -156,6 +157,7 @@ end
 
 function disable_video_mode()
     if active_mode ~= "video" then return end
+    -- msg.warn("disable_video_mode")
     active_mode = nil
     remove_bindings()
     on_video_mode_deactivate()
@@ -163,6 +165,7 @@ end
 
 function disable_image_mode()
     if active_mode ~= "image" then return end
+    -- msg.warn("disable_image_mode")
     active_mode = nil
     remove_bindings()
     on_image_mode_deactivate()
@@ -170,6 +173,7 @@ end
 
 function disable_audio_mode()
     if active_mode ~= "audio" then return end
+    -- msg.warn("disable_audio_mode")
     active_mode = nil
     remove_bindings()
     on_audio_mode_deactivate()
