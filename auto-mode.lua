@@ -128,7 +128,7 @@ end
 
 ----- image-mode
 
-active_mode = nil
+active_mode = "video"
 last_type = nil
 
 function enable_video_mode()
