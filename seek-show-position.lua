@@ -1,7 +1,11 @@
 
--- When seeking displays position and duration like so: 70:00 / 80:00
--- Which is different from most players which use: 01:10:00 / 01:20:00
--- In input.conf set the input command prefix no-osd infront of the seek command.
+--[[
+    When seeking displays position and duration like
+    so: 70:00 / 80:00, which is different from most
+    players which use: 01:10:00 / 01:20:00.
+    In input.conf set the input command prefix
+    no-osd infront of the seek command.
+]]--
 
 function round(value)
     return value >= 0 and math.floor(value + 0.5) or math.ceil(value - 0.5)
@@ -38,7 +42,9 @@ function seek(event)
         position = duration
     end
 
-    mp.commandv("show-text", format(position) .. " / " .. format(duration))
+    if position ~= 0 then
+        mp.commandv("show-text", format(position) .. " / " .. format(duration))
+    end
 end
 
 mp.register_event("seek", seek)
