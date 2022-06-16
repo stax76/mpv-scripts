@@ -16,3 +16,7 @@ Customizable on screen menu useful to navigate via remote control.
 ## [auto-mode](auto-mode.lua)
 
 Automatically switches between video, audio and image mode.
+
+## [file-rating](file-rating.lua)
+
+Writes a star rating to the filename.

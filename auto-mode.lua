@@ -77,7 +77,7 @@ end
 
 ----- path
 
-function get_ext(path)
+function get_file_ext(path)
     if path == nil then return nil end
     local val = path:match("^.+(%.[^%./\\]+)$")
     if val == nil then return nil end
@@ -94,11 +94,6 @@ function list_contains(list, value)
     end
     return false
 end
-
------ mpv
-
-msg = require 'mp.msg' --   msg.warn()   msg.error()
--- mp.osd_message("hello")
 
 ----- mpv key bindings
 
@@ -179,8 +174,8 @@ function disable_audio_mode()
     on_audio_mode_deactivate()
 end
 
-function update(event)
-    local ext = get_ext(mp.get_property("path"))
+function on_start_file(event)
+    local ext = get_file_ext(mp.get_property("path"))
 
     if list_contains(image_file_extensions, ext) then
         disable_video_mode()
@@ -202,4 +197,4 @@ function update(event)
     end
 end
 
-mp.register_event("start-file", update)
+mp.register_event("start-file", on_start_file)

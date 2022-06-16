@@ -61,7 +61,9 @@ function handle_confirm_key()
             })
         else
             mp.command_native({
-                name = "run",
+                name = "subprocess",
+                playback_only = false,
+                detach = true,
                 args = { 'trash', file_to_delete },
             })
         end
