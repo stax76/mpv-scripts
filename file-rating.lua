@@ -113,7 +113,6 @@ end
 ----- file-rating
 
 ratings = {}
--- audio_file_extensions = { ".mp3", ".ogg", ".opus", ".flac", ".m4a", ".mka", ".ac3", ".dts", ".dtshd", ".dtshr", ".dtsma", ".eac3", ".mp2", ".mpa", ".thd", ".w64", ".wav", ".aac" }
 
 function on_rate_file(rating)
     local path = mp.get_property("path")
@@ -145,18 +144,11 @@ function rate_file(path, rating)
     set_last_write_time_to_now(new_path)
 end
 
--- function rate_audio_file(path, rating)
--- end
-
 function on_shutdown()
     for path, rating in pairs(ratings) do
         if file_exists(path) then
             local ext = get_file_ext(mp.get_property("path"))
             rate_file(path, rating)
-            -- if list_contains(audio_file_extensions, ext) then
-            --     rate_audio_file(path, rating)
-            -- else
-            -- end
         end
     end
 end

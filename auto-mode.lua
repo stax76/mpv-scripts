@@ -16,30 +16,33 @@
     The configuration is done in code.
 ]]--
 
-
+-- video is the default mode, this is only called if the previous file wasn't video
 function on_video_mode_activate()
-    mp.set_property("osd-playing-msg", "${media-title}") -- in video mode use media-title for osd-playing-msg
+    mp.set_property("osd-playing-msg", "${media-title}")       -- in video mode use media-title for osd-playing-msg
+    mp.command("script-message osc-visibility auto no_osd")    -- set osc visibility to auto
 end
 
 function on_audio_mode_activate()
     mp.set_property("osd-playing-msg", "${filtered-metadata}") -- show MP3 tags in audio mode. In mpv.conf define: display-tags = Artist,Title,Album,Date,Genre,Rating,Comment,Description
+    mp.set_property("keep-open", "yes")                        -- for audio files automatically progress to the next file
+    mp.command("script-message osc-visibility always no_osd")  -- always show osc for audio files
 end
 
 function on_image_mode_activate()
-    mp.set_property("osd-playing-msg", "")                    -- disable osd-playing-msg for images
-    mp.set_property("background", "#1A2226")                  -- use dark grey background for images
-    mp.command("script-message osc-visibility never no_osd")  -- disable osc for images
+    mp.set_property("osd-playing-msg", "")                     -- disable osd-playing-msg for images
+    mp.set_property("background", "#1A2226")                   -- use dark grey background for images
+    mp.command("script-message osc-visibility never no_osd")   -- disable osc for images
 end
 
 function on_video_mode_deactivate()
 end
 
 function on_audio_mode_deactivate()
+    mp.set_property("keep-open", "always")                     -- for video and image files don't automatically progress to the next file
 end
 
 function on_image_mode_deactivate()
-    mp.set_property("background", "#000000")                 -- use black background for audio and video
-    mp.command("script-message osc-visibility auto no_osd")  -- enable osc for audio and video
+    mp.set_property("background", "#000000")                   -- use black background for audio and video
 end
 
 function on_type_change(old_ext, new_ext)
@@ -53,15 +56,19 @@ function on_type_change(old_ext, new_ext)
 end
 
 audio_mode_bindings = {
+    { "Left",   function () mp.command("no-osd seek -10") end,              { repeatable = true } }, -- audio seek length longer than video seek length
+    { "Right",  function () mp.command("no-osd seek  10") end,              { repeatable = true } }, -- audio seek length longer than video seek length
+    { "0",      function () mp.command("script-message-to trash_tracker trash-music-track") end   }, -- remove this personal code
+    { "KP0",    function () mp.command("script-message-to trash_tracker trash-music-track") end   }, -- remove this personal code
 }
 
 image_mode_bindings = {
-    { "UP",     function () mp.command("no-osd add video-pan-y -0.02") end, { repeatable = true } },
-    { "DOWN",   function () mp.command("no-osd add video-pan-y  0.02") end, { repeatable = true } },
-    { "LEFT",   function () mp.command("playlist-prev") end,                { repeatable = true } },
-    { "RIGHT",  function () mp.command("playlist-next") end,                { repeatable = true } },
-    { "SPACE",  function () mp.command("playlist-next") end,                { repeatable = true } },
-    { "BS",     function () mp.command("no-osd set video-pan-y 0; no-osd set video-zoom 0") end   },
+    { "UP",     function () mp.command("no-osd add video-pan-y -0.02") end, { repeatable = true } }, -- move image up
+    { "DOWN",   function () mp.command("no-osd add video-pan-y  0.02") end, { repeatable = true } }, -- move image down
+    { "LEFT",   function () mp.command("playlist-prev") end,                { repeatable = true } }, -- show previous image
+    { "RIGHT",  function () mp.command("playlist-next") end,                { repeatable = true } }, -- show next image
+    { "SPACE",  function () mp.command("playlist-next") end,                { repeatable = true } }, -- show next image
+    { "BS",     function () mp.command("no-osd set video-pan-y 0; no-osd set video-zoom 0") end   }, -- reset image options
 }
 
 image_file_extensions = { ".jpg", ".png", ".bmp", ".gif", ".webp" }
