@@ -39,7 +39,7 @@ font_scale=90
 border_size=1.0
 # BGR
 highlight_color=00ccff
-cursor_icon="➤"
+cursor_icon="➜"
 indent_icon="\h\h\h"
 
 ]]
@@ -92,7 +92,7 @@ local o = {
     border_size = 1.0,
     -- BGR
     highlight_color = "00ccff",
-    cursor_icon = "➤",
+    cursor_icon = "➜",
     indent_icon = [[\h\h\h]],
 }
 
