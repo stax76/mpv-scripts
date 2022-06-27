@@ -1,5 +1,6 @@
 
 --[[
+
     This script writes a star rating to the filename
     of rated files when mpv shuts down. When a file
     is rated the last modified file date is set to now.
@@ -11,6 +12,7 @@
     KP3 script-message-to file_rating rate-file 3
     KP4 script-message-to file_rating rate-file 4
     KP5 script-message-to file_rating rate-file 5
+
 ]]--
 
 ----- string
@@ -94,7 +96,7 @@ end
 
 ----- path mpv
 
-local utils = require 'mp.utils'
+utils = require "mp.utils"
 
 function file_name(value)
     local _, filename = utils.split_path(value)

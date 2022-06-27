@@ -1,5 +1,6 @@
 
 --[[
+
     This script changes options depending on what type of
     file is played. It uses the file extension to detect
     if the current file is a video, audio or image file.
@@ -14,6 +15,7 @@
     3. Send messages
 
     The configuration is done in code.
+
 ]]--
 
 -- video is the default mode, this is only called if the previous file wasn't video
@@ -58,19 +60,19 @@ function on_type_change(old_ext, new_ext)
 end
 
 audio_mode_bindings = {
-    { "Left",   function () mp.command("no-osd seek -10") end,              { repeatable = true } }, -- audio seek length longer than video seek length
-    { "Right",  function () mp.command("no-osd seek  10") end,              { repeatable = true } }, -- audio seek length longer than video seek length
-    { "0",      function () mp.command("script-message-to trash_tracker trash-track") end         }, -- personal code
-    { "KP0",    function () mp.command("script-message-to trash_tracker trash-track") end         }, -- personal code
+    { "Left",   function () mp.command("no-osd seek -10") end,               "repeatable" }, -- audio seek length longer than video seek length
+    { "Right",  function () mp.command("no-osd seek  10") end,               "repeatable" }, -- audio seek length longer than video seek length
+    { "0",      function () mp.command("script-message-to trash_tracker trash-track") end }, -- personal code
+    { "KP0",    function () mp.command("script-message-to trash_tracker trash-track") end }, -- personal code
 }
 
 image_mode_bindings = {
-    { "UP",     function () mp.command("no-osd add video-pan-y -0.02") end, { repeatable = true } }, -- move image up
-    { "DOWN",   function () mp.command("no-osd add video-pan-y  0.02") end, { repeatable = true } }, -- move image down
-    { "LEFT",   function () mp.command("playlist-prev") end,                { repeatable = true } }, -- show previous image
-    { "RIGHT",  function () mp.command("playlist-next") end,                { repeatable = true } }, -- show next image
-    { "SPACE",  function () mp.command("playlist-next") end,                { repeatable = true } }, -- show next image
-    { "BS",     function () mp.command("no-osd set video-pan-y 0; no-osd set video-zoom 0") end   }, -- reset image options
+    { "UP",     function () mp.command("no-osd add video-pan-y -0.02") end,  "repeatable" }, -- move image up
+    { "DOWN",   function () mp.command("no-osd add video-pan-y  0.02") end,  "repeatable" }, -- move image down
+    { "LEFT",   function () mp.command("playlist-prev") end,                 "repeatable" }, -- show previous image
+    { "RIGHT",  function () mp.command("playlist-next") end,                 "repeatable" }, -- show next image
+    { "SPACE",  function () mp.command("playlist-next") end,                 "repeatable" }, -- show next image
+    { "BS",     function () mp.command("no-osd set video-pan-y 0; no-osd set video-zoom 0") end }, -- reset image options
 }
 
 image_file_extensions = { ".jpg", ".png", ".bmp", ".gif", ".webp" }
@@ -80,8 +82,8 @@ audio_file_extensions = { ".mp3", ".ogg", ".opus", ".flac", ".m4a", ".mka", ".ac
 
 ----- string
 
-function ends_with(str, ending)
-    return ending == "" or str:sub(-#ending) == ending
+function ends_with(value, ending)
+    return ending == "" or value:sub(-#ending) == ending
 end
 
 ----- path
@@ -101,6 +103,7 @@ function list_contains(list, value)
             return true
         end
     end
+    
     return false
 end
 

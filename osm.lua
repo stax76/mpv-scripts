@@ -42,11 +42,15 @@ highlight_color=00ccff
 cursor_icon="➜"
 indent_icon="\h\h\h"
 
-]]
+]]--
+
+----- string
 
 function string_contains(value, find)
     return value:find(find, 1, true)
 end
+
+----- file
 
 -- ini reader from: https://forum.rainmeter.net/viewtopic.php?t=38190
 function read_ini(input_file)
@@ -82,6 +86,8 @@ function read_ini(input_file)
     final_table['key_order'] = key_read_order
     return final_table
 end
+
+----- osm
 
 menus = {}
 bindings = {}
