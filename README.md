@@ -20,3 +20,8 @@ Automatically switches between video, audio and image mode.
 ## [file-rating](file-rating.lua)
 
 Writes a star rating to the filename.
+
+## [smart-volume](smart-volume.lua)
+
+Records the volume per file in order to restore it in future sessions.
+What is recorded and restored is the volume offset relative to the session average volume.
