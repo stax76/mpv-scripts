@@ -64,6 +64,7 @@ audio_mode_bindings = {
     { "Right",  function () mp.command("no-osd seek  10") end,               "repeatable" }, -- audio seek length longer than video seek length
     { "0",      function () mp.command("script-message-to trash_tracker trash-track") end }, -- personal code
     { "KP0",    function () mp.command("script-message-to trash_tracker trash-track") end }, -- personal code
+    { "Ctrl+-", function () mp.command("script-message-to delete_current_file delete-file") end }, -- personal code
 }
 
 image_mode_bindings = {
