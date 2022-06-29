@@ -8,6 +8,11 @@
 
     Usage:
     Add bindings to input.conf:
+
+    # delete directly
+    KP0 script-message-to delete_current_file delete-file
+
+    # delete with required confirmation
     KP0 script-message-to delete_current_file delete-file KP1 "Press 1 to delete file"
 
     Press KP0 to initiate the delete operation,
