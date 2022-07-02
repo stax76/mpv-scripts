@@ -168,6 +168,20 @@ function get_average_volume()
     return mp.get_property("volume")
 end
 
+function round_5(value)
+    local remainder = value % 5
+
+    if remainder ~= 0 then
+        if remainder > 2.5 then
+            value = value - remainder + 5
+        else
+            value = value - remainder
+        end
+    end
+
+    return value
+end
+
 function on_start_file(event)
     local file = normalize_path(mp.get_property("path"))
     local found = false
@@ -194,7 +208,9 @@ function on_start_file(event)
 
     previous_file = file
 
-    if data[previous_file] ~= nil then
+    if session_data[previous_file] ~= nil then
+        mp.set_property("volume", session_data[previous_file])
+    elseif data[previous_file] ~= nil then
         local past_offset = get_average(data[previous_file])
         local current_average = get_average(volume_list)
 
@@ -202,18 +218,9 @@ function on_start_file(event)
             current_average = volume
         end
 
-        local new_volume = current_average + past_offset
-        local remainder = new_volume % 5
-
-        if remainder ~= 0 then
-            if remainder > 2.5 then
-                new_volume = new_volume - remainder + 5
-            else
-                new_volume = new_volume - remainder
-            end
-        end
-
-        mp.set_property("volume", round(new_volume))
+        mp.set_property("volume", round_5(current_average + past_offset))
+    else
+        mp.set_property("volume", round_5(get_average_volume()))
     end
 end
 
