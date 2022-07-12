@@ -64,7 +64,8 @@ audio_mode_bindings = {
     { "Right",  function () mp.command("no-osd seek  10") end,         "repeatable" }, -- audio seek length longer than video seek length
     { "0",      function () mp.command("script-message-to private trash-track") end }, -- private code
     { "KP0",    function () mp.command("script-message-to private trash-track") end }, -- private code
-    { "Ctrl+-", function () mp.command("script-message-to delete_current_file delete-file") end }, -- private code
+    { "Ctrl+T", function () mp.command("script-message-to delete_current_file delete-file") end }, -- delete current file directly
+    { "Ctrl++", function () mp.command("script-message-to mpvnet playlist-random") end }, -- jump to random position in playlist
 }
 
 image_mode_bindings = {

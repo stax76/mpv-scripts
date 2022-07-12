@@ -5,6 +5,8 @@
     it in future sessions.
     What is recorded and restored is the volume offset relative
     to the session average volume.
+    For every song the last six sessions are recorded,
+    the average of that is used.
 
     Usage:
     1. In the mpv config directory create a directory called: 'script-settings'
