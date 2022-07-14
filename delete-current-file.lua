@@ -20,6 +20,9 @@
     You may customize the the init and confirm key and the confirm message.
     Confirm key and confirm message are optional.
 
+    Similar scripts:
+    https://github.com/zenyd/mpv-scripts#delete-file
+
 ]]--
 
 key_bindings = {}
