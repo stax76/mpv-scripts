@@ -1,12 +1,18 @@
 
 --[[
 
-    This script records the volume per file in order to restore
+    This script records the volume per song in order to restore
     it in future sessions.
+
     What is recorded and restored is the volume offset relative
     to the session average volume.
-    For every song the last six sessions are recorded,
+
+    For every song the last ten sessions are recorded,
     the average of that is used.
+    
+    At least ten songs must be played for the recording to happen.
+
+    It gives better results compared to using replay gain.
 
     Usage:
     1. In the mpv config directory create a directory called: 'script-settings'
@@ -170,18 +176,8 @@ function get_average_volume()
     return mp.get_property("volume")
 end
 
-function round_5(value)
-    local remainder = value % 5
-
-    if remainder ~= 0 then
-        if remainder > 2.5 then
-            value = value - remainder + 5
-        else
-            value = value - remainder
-        end
-    end
-
-    return value
+function round_down_5(value)
+    return value - value % 5
 end
 
 function on_start_file(event)
@@ -220,16 +216,16 @@ function on_start_file(event)
             current_average = volume
         end
 
-        mp.set_property("volume", round_5(current_average + past_offset))
+        mp.set_property("volume", round_down_5(current_average + past_offset))
     else
-        mp.set_property("volume", round_5(get_average_volume()))
+        mp.set_property("volume", round_down_5(get_average_volume()))
     end
 end
 
 mp.register_event("start-file", on_start_file)
 
 function on_shutdown()
-    if table_count(session_data) == 0 then
+    if table_count(session_data) < 9 then
         return
     end
 
@@ -239,7 +235,7 @@ function on_shutdown()
         if data[path] == nil then
             data[path] = { volume - average }
         else
-            while table_count(data[path]) > 5 do
+            while table_count(data[path]) > 9 do
                 table.remove(data[path], 1)
             end
 
