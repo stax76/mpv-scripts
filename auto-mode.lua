@@ -18,6 +18,8 @@
 
 ]]--
 
+-- start config
+
 -- video is the default mode, this is only called if the previous file wasn't video
 function on_video_mode_activate()
     mp.set_property("osd-playing-msg", "${media-title}")       -- in video mode use media-title for osd-playing-msg
@@ -69,12 +71,14 @@ audio_mode_bindings = {
 }
 
 image_mode_bindings = {
-    { "UP",     function () mp.command("no-osd add video-pan-y -0.02") end,  "repeatable" }, -- move image up
-    { "DOWN",   function () mp.command("no-osd add video-pan-y  0.02") end,  "repeatable" }, -- move image down
-    { "LEFT",   function () mp.command("playlist-prev") end,                 "repeatable" }, -- show previous image
-    { "RIGHT",  function () mp.command("playlist-next") end,                 "repeatable" }, -- show next image
-    { "SPACE",  function () mp.command("playlist-next") end,                 "repeatable" }, -- show next image
-    { "BS",     function () mp.command("no-osd set video-pan-y 0; no-osd set video-zoom 0") end }, -- reset image options
+    { "UP",         function () mp.command("no-osd add video-pan-y -0.02") end,  "repeatable" }, -- move image up
+    { "DOWN",       function () mp.command("no-osd add video-pan-y  0.02") end,  "repeatable" }, -- move image down
+    { "LEFT",       function () mp.command("playlist-prev") end,                 "repeatable" }, -- show previous image
+    { "RIGHT",      function () mp.command("playlist-next") end,                 "repeatable" }, -- show next image
+    { "SPACE",      function () mp.command("playlist-next") end,                 "repeatable" }, -- show next image
+    { "WHEEL_UP",   function () mp.command("add video-zoom  0.1") end,           "repeatable" }, -- show next image
+    { "WHEEL_DOWN", function () mp.command("add video-zoom -0.1") end,           "repeatable" }, -- show next image
+    { "BS",         function () mp.command("no-osd set video-pan-y 0; no-osd set video-zoom 0") end }, -- reset image options
 }
 
 image_file_extensions = { ".jpg", ".png", ".bmp", ".gif", ".webp" }
@@ -140,7 +144,6 @@ last_type = nil
 
 function enable_video_mode()
     if active_mode == "video" then return end
-    -- msg.warn("enable_video_mode")
     active_mode = "video"
     remove_bindings()
     on_video_mode_activate()
@@ -148,7 +151,6 @@ end
 
 function enable_audio_mode()
     if active_mode == "audio" then return end
-    -- msg.warn("enable_audio_mode")
     active_mode = "audio"
     remove_bindings()
     add_bindings(audio_mode_bindings)
@@ -157,7 +159,6 @@ end
 
 function enable_image_mode()
     if active_mode == "image" then return end
-    -- msg.warn("enable_image_mode")
     active_mode = "image"
     remove_bindings()
     add_bindings(image_mode_bindings)
@@ -166,24 +167,21 @@ end
 
 function disable_video_mode()
     if active_mode ~= "video" then return end
-    -- msg.warn("disable_video_mode")
-    active_mode = nil
+    active_mode = ""
     remove_bindings()
     on_video_mode_deactivate()
 end
 
 function disable_image_mode()
     if active_mode ~= "image" then return end
-    -- msg.warn("disable_image_mode")
-    active_mode = nil
+    active_mode = ""
     remove_bindings()
     on_image_mode_deactivate()
 end
 
 function disable_audio_mode()
     if active_mode ~= "audio" then return end
-    -- msg.warn("disable_audio_mode")
-    active_mode = nil
+    active_mode = ""
     remove_bindings()
     on_audio_mode_deactivate()
 end
