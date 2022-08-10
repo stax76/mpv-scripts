@@ -32,7 +32,6 @@ function delete_file(path)
 
     if is_windows then
         local ps_code = [[& {
-            Start-Sleep -Seconds 1
             Add-Type -AssemblyName Microsoft.VisualBasic
             [Microsoft.VisualBasic.FileIO.FileSystem]::DeleteFile('__path__', 'OnlyErrorDialogs', 'SendToRecycleBin')
         }]]
