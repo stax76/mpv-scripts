@@ -102,7 +102,8 @@ local o = {
     indent_icon = [[\h\h\h]],
 }
 
-(require "mp.options").read_options(o)
+opt = require "mp.options"
+opt.read_options(o)
 
 function show(name)
     mp.command("script-message osc-idlescreen no no_osd")
