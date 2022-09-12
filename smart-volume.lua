@@ -16,22 +16,23 @@
 
     Usage:
     1. In the mpv config directory create a directory called: 'script-settings'
-       C:\Users\JD\AppData\Roaming\mpv.net\script-settings
+       C:\Users\username\AppData\Roaming\mpv.net\script-settings
     2. Create a conf file 'smart_volume.conf' in the 'script-opts' directory:
-       C:\Users\JD\AppData\Roaming\mpv.net\script-opts\smart_volume.conf
+       C:\Users\username\AppData\Roaming\mpv.net\script-opts\smart_volume.conf
     3. In smart_volume.conf add the option monitored_directories=<directory>
-    4. Multiple directories are seperated with a semicolon.
-    5. The script is ready to be used now, when mpv exits,
+       Multiple directories are seperated with a semicolon.
+    4. The script is ready to be used now, when mpv exits,
        the script creates or updates the file:
-       C:\Users\JD\AppData\Roaming\mpv.net\script-settings\smart-volume.json
+       C:\Users\username\AppData\Roaming\mpv.net\smart-volume.json
+       The location of the file can be customized via conf option 'storage_path'.
 
 ]]--
 
 ----- options
 
 local o = {
-    -- semicolon used as seperator
     monitored_directories = "",
+    storage_path = "~~home/smart-volume.json",
 }
 
 ----- math
@@ -138,14 +139,15 @@ end
 
 utils = require "mp.utils"
 msg = require "mp.msg"
-options = require "mp.options"
 
 previous_file = nil
 data = {}
 session_data = {}
-settings_file_path = mp.command_native({"expand-path", "~~/script-settings"}) .. "/smart-volume.json"
 volume_list = {}
-options.read_options(o)
+
+opt = require "mp.options"
+opt.read_options(o)
+o.storage_path = mp.command_native({"expand-path", o.storage_path})
 
 if o.monitored_directories == nil or o.monitored_directories == "" then
     msg.error("No directory to be monitored found.")
@@ -243,11 +245,11 @@ function on_shutdown()
         end
     end
 
-    file_write(settings_file_path, utils.format_json(data))
+    file_write(o.storage_path, utils.format_json(data))
 end
 
 mp.register_event("shutdown", on_shutdown)
 
-if file_exists(settings_file_path) then
-    data = utils.parse_json(file_read(settings_file_path))
+if file_exists(o.storage_path) then
+    data = utils.parse_json(file_read(o.storage_path))
 end
