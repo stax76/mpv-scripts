@@ -1,8 +1,16 @@
 
 --[[
 
-    All this script does is writing to a log file. It writes the filename,
-    when a file was played and for how many minutes a file was played:
+    All this script does is writing to a log file.
+    
+    It writes:
+    
+    1. The date and time:     10.09.2022 19:50
+    2. How many minutes:      3
+    3. Filename and location: D:\Samples\Big Buck Bunny.mkv
+
+    This is how it looks:
+    
     10.09.2022 19:50  3 D:\Samples\Big Buck Bunny.mkv
 
     There are two conf options:
