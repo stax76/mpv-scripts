@@ -112,10 +112,10 @@ end
 ----- file
 
 function file_exists(name)
-    local f = io.open(name, "r")
+    local file = io.open(name, "r")
 
-    if f ~= nil then
-        io.close(f)
+    if file ~= nil then
+        io.close(file)
         return true
     else
         return false
@@ -123,16 +123,16 @@ function file_exists(name)
 end
 
 function file_read(file_path)
-    local h = assert(io.open(file_path, "rb"))
-    local content = h:read("*all")
-    h:close()
+    local file = assert(io.open(file_path, "r"))
+    local content = file:read("*all")
+    file:close()
     return content
 end
 
 function file_write(file_path, content)
-    local h = assert(io.open(file_path, "wb"))
-    h:write(content)
-    h:close()
+    local file = assert(io.open(file_path, "w"))
+    file:write(content)
+    file:close()
 end
 
 ----- smart-volume

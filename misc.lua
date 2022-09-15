@@ -3,9 +3,10 @@
 
     1. Jump to a random position in the playlist
     --------------------------------------------
-    Binding: Ctrl+r  script-message-to misc playlist-random
+    Add binding to input.conf:
+    ctrl+r  script-message-to misc playlist-random
+
     If pos=last it jumps to first instead of random.
-    mpv.net has the same feature built-in.
 
 
 
@@ -32,8 +33,19 @@
     Must be enabled in conf file:
     ~~home/script-opts/misc.conf: auto_play=yes
     
-    mpv.net has the same feature built-in.
 
+
+    4. Show media info on screen
+    ----------------------------
+    Prints media info on the screen.
+    
+    Depends on the CLI tool 'mediainfo':
+    sudo apt install mediainfo
+    https://mediaarea.net/en/MediaInfo/Download
+
+    Add binding to input.conf:
+    ctrl+i  script-message-to misc print-media-info
+ 
 ]]--
 
 ----- options
@@ -45,6 +57,20 @@ local o = {
 
 opt = require "mp.options"
 opt.read_options(o)
+
+----- string
+
+function is_empty(input)
+    if input == nil or input == "" then
+        return true
+    end
+end
+
+function contains(input, find)
+    if not is_empty(input) and not is_empty(find) then
+        return input:find(find, 1, true)
+    end
+end
 
 ----- math
 
@@ -59,6 +85,23 @@ utils = require "mp.utils"
 function file_name(value)
     local _, filename = utils.split_path(value)
     return filename
+end
+
+----- file
+
+function file_exists(path)
+    local file = io.open(path, "r")
+
+    if file ~= nil then
+        io.close(file)
+        return true
+    end
+end
+
+function file_write(path, content)
+    local file = assert(io.open(path, "w"))
+    file:write(content)
+    file:close()
 end
 
 ----- playlist
@@ -77,7 +120,7 @@ end
 
 mp.register_script_message("playlist-random", random)
 
------ alternative seek text
+----- alternative seek OSD message
 
 function add_zero(value)
     local value = round(value)
@@ -128,3 +171,60 @@ end
 if o.auto_play then
     mp.register_event("file-loaded", on_file_loaded)
 end
+
+----- Print media info on screen
+
+format = [[General;N: %FileNameExtension%\\nG: %Format%, %FileSize/String%, %Duration/String%, %OverallBitRate/String%\\n
+Video;V: %Format%, %Format_Profile%, %Width%x%Height%, %BitRate/String%, %FrameRate% FPS\\n
+Audio;A: %Language/String%, %Format%, %Format_Profile%, %BitRate/String%, %Channel(s)% ch, %SamplingRate/String%, %Title%\\n
+Text;S: %Language/String%, %Format%, %Format_Profile%, %Title%\\n]]
+
+is_windows = package.config:sub(1,1) == "\\"
+
+if is_windows then
+    format_file = os.getenv("TEMP") .. "/media-info-format.txt"
+else
+    format_file = "/tmp/media-info-format.txt"
+end
+
+if not file_exists(format_file) then
+    file_write(format_file, format)
+end
+
+function show_text(text, duration, font_size)
+    mp.command('show-text "${osd-ass-cc/0}{\\\\fs' .. font_size ..
+        '}${osd-ass-cc/1}' .. text .. '" ' .. duration)
+end
+
+function on_print_media_info()
+    local path = mp.get_property("path")
+
+    if contains(path, "://") or not file_exists(path) then
+        return
+    end
+
+    local arg2 = "--inform=file://" .. format_file
+
+    local r = mp.command_native({
+        name = "subprocess",
+        playback_only = false,
+        capture_stdout = true,
+        args = {"mediainfo", arg2, path},
+    })
+
+    if r.status == 0 then
+        local output = r.stdout
+
+        output = string.gsub(output, ", , ,", ",")
+        output = string.gsub(output, ", ,", ",")
+        output = string.gsub(output, ": , ", ": ")
+        output = string.gsub(output, ", \\n\r*\n", "\\n")
+        output = string.gsub(output, "\\n\r*\n", "\\n")
+        output = string.gsub(output, ", \\n", "\\n")
+        output = string.gsub(output, "%.000 FPS", " FPS")
+
+        show_text(output, 5000, 16)
+    end
+end
+
+mp.register_script_message("print-media-info", on_print_media_info)
