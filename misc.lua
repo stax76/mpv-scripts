@@ -174,7 +174,7 @@ end
 
 ----- Print media info on screen
 
-format = [[General;N: %FileNameExtension%\\nG: %Format%, %FileSize/String%, %Duration/String%, %OverallBitRate/String%\\n
+media_info_format = [[General;N: %FileNameExtension%\\nG: %Format%, %FileSize/String%, %Duration/String%, %OverallBitRate/String%\\n
 Video;V: %Format%, %Format_Profile%, %Width%x%Height%, %BitRate/String%, %FrameRate% FPS\\n
 Audio;A: %Language/String%, %Format%, %Format_Profile%, %BitRate/String%, %Channel(s)% ch, %SamplingRate/String%, %Title%\\n
 Text;S: %Language/String%, %Format%, %Format_Profile%, %Title%\\n]]
@@ -188,7 +188,7 @@ else
 end
 
 if not file_exists(format_file) then
-    file_write(format_file, format)
+    file_write(format_file, media_info_format)
 end
 
 function show_text(text, duration, font_size)
