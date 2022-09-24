@@ -62,8 +62,8 @@ end
 audio_mode_bindings = {
     { "Left",   function () mp.command("no-osd seek -10") end,         "repeatable" }, -- audio seek length longer than video seek length
     { "Right",  function () mp.command("no-osd seek  10") end,         "repeatable" }, -- audio seek length longer than video seek length
-    { "0",      function () mp.command("script-message-to misc trash-track")    end }, -- not documented, too special
-    { "KP0",    function () mp.command("script-message-to misc trash-track")    end }, -- not documented, too special
+    { "0",      function () mp.command("script-message-to private trash-track")    end }, -- not documented, too special
+    { "KP0",    function () mp.command("script-message-to private trash-track")    end }, -- not documented, too special
     { "Ctrl+T", function () mp.command("script-message-to delete_current_file delete-file") end }, -- delete current file directly
 }
 

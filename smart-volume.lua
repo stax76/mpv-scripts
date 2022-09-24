@@ -175,7 +175,7 @@ function get_average_volume()
         return get_average(volume_list)
     end
 
-    return mp.get_property("volume")
+    return mp.get_property_number("volume")
 end
 
 function round_down_5(value)
@@ -199,7 +199,7 @@ function on_start_file(event)
         return
     end
 
-    local volume = mp.get_property("volume")
+    local volume = mp.get_property_number("volume")
 
     if previous_file ~= nil then
         session_data[previous_file] = volume

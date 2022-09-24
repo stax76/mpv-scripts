@@ -1,17 +1,27 @@
 
 --[[
 
-    1. Jump to a random position in the playlist
-    --------------------------------------------
-    Add binding to input.conf:
+    Jump to a random position in the playlist
+    -----------------------------------------
+    It's necessary to add a binding to input.conf:
     ctrl+r  script-message-to misc playlist-random
 
     If pos=last it jumps to first instead of random.
 
 
 
-    2. When seeking displays position and duration like so:
-    -------------------------------------------------------
+    Quick Bookmark
+    --------------
+    Creates or restores a single bookmark that persists
+    as long as a file is opened.
+
+    It's necessary to add a binding to input.conf:
+    ctrl+q  script-message-to misc quick-bookmark
+
+
+
+    When seeking displays position and duration like so:
+    ----------------------------------------------------
     70:00 / 80:00
 
     Which is different from most players which use:
@@ -23,36 +33,36 @@
 
     Must be enabled in conf file:
     ~~home/script-opts/misc.conf: alternative_seek_text=yes
+ 
 
 
-
-    3. Auto Play
-    ------------
-    When a new file is loaded, sets pause=no to start playback.
-    
-    Must be enabled in conf file:
-    ~~home/script-opts/misc.conf: auto_play=yes
-    
-
-
-    4. Show media info on screen
-    ----------------------------
+    Show media info on screen
+    -------------------------
     Prints media info on the screen.
     
     Depends on the CLI tool 'mediainfo':
     sudo apt install mediainfo
     https://mediaarea.net/en/MediaInfo/Download
 
-    Add binding to input.conf:
+    It's necessary to add a binding to input.conf:
     ctrl+i  script-message-to misc print-media-info
  
+
+
+    Execute Lua code
+    ----------------
+    Allows to execute Lua Code directly from input.conf.
+
+    It's necessary to add a binding to input.conf:
+    #Navigates to the last file in the playlist
+    END script-message-to misc execute-lua-code "mp.set_property_number('playlist-pos', mp.get_property_number('playlist-count') - 1)"
+
 ]]--
 
 ----- options
 
 local o = {
     alternative_seek_text = false,
-    auto_play = false,
 }
 
 opt = require "mp.options"
@@ -78,15 +88,6 @@ function round(value)
     return value >= 0 and math.floor(value + 0.5) or math.ceil(value - 0.5)
 end
 
------ path mpv
-
-utils = require "mp.utils"
-
-function file_name(value)
-    local _, filename = utils.split_path(value)
-    return filename
-end
-
 ----- file
 
 function file_exists(path)
@@ -104,12 +105,12 @@ function file_write(path, content)
     file:close()
 end
 
------ playlist
+----- Jump to a random position in the playlist
 
-function random()
-    local count = mp.get_property("playlist-count")
+function random_jump()
+    local count = mp.get_property_number("playlist-count")
     local new_pos = math.random(0, count - 1)
-    local current_pos = mp.get_property("playlist-pos")
+    local current_pos = mp.get_property_number("playlist-pos")
 
     if current_pos == count - 1 then
         new_pos = 0
@@ -118,9 +119,38 @@ function random()
     mp.set_property_number("playlist-pos", new_pos)
 end
 
-mp.register_script_message("playlist-random", random)
+mp.register_script_message("playlist-random", random_jump)
 
------ alternative seek OSD message
+----- Quick Bookmark
+
+quick_bookmark_position = 0
+quick_bookmark_file = ""
+
+function quick_bookmark()
+    if quick_bookmark_position == 0 then
+        quick_bookmark_position = mp.get_property_number("time-pos")
+        quick_bookmark_file = mp.get_property("path")
+
+        if quick_bookmark_position ~= 0 then
+            mp.command("show-text 'Bookmark Saved'")
+        end
+    elseif quick_bookmark_file == mp.get_property("path") then
+        mp.set_property_number("time-pos", quick_bookmark_position)
+        quick_bookmark_position = 0
+    end
+end
+
+mp.register_script_message("quick-bookmark", quick_bookmark)
+
+----- Execute Lua code
+
+function execute_lua_code(code)
+    loadstring(code)()
+end
+
+mp.register_script_message("execute-lua-code", execute_lua_code)
+
+----- Alternative seek OSD message
 
 function add_zero(value)
     local value = round(value)
@@ -160,16 +190,6 @@ end
 
 if o.alternative_seek_text then
     mp.register_event("seek", on_seek)
-end
-
------ Auto play
-
-function on_file_loaded()
-    mp.set_property_bool("pause", false)
-end
-
-if o.auto_play then
-    mp.register_event("file-loaded", on_file_loaded)
 end
 
 ----- Print media info on screen
