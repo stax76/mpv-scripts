@@ -41,7 +41,6 @@
     Prints media info on the screen.
     
     Depends on the CLI tool 'mediainfo':
-    sudo apt install mediainfo
     https://mediaarea.net/en/MediaInfo/Download
 
     It's necessary to add a binding to input.conf:
