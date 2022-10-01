@@ -28,7 +28,6 @@ end
 
 function on_audio_mode_activate()
     mp.set_property("osd-playing-msg", "")                     -- disable osd-playing-msg for audio because osd-msg1 is used instead
-    mp.set_property("osd-msg1", "${filtered-metadata}")        -- always show metadata in audio mode. In mpv.conf define: display-tags = Artist,Title,Album,Date,Genre,Comment,Description
     mp.command("script-message osc-visibility always no_osd")  -- always show osc for audio files
 end
 
@@ -56,6 +55,12 @@ function on_type_change(old_ext, new_ext)
 
     if old_ext == ".gif" then
         mp.set_property("loop-file", "no")                     -- use loop-file=no for anything except GIF
+    end
+end
+
+function on_file_loaded(event)
+    if active_mode == "audio" then
+        mp.set_property("osd-msg1", get_metadata())            -- In mpv.conf define: display-tags = Artist,Title,Album,Date,Genre,Comment,Description
     end
 end
 
@@ -106,7 +111,7 @@ function list_contains(list, value)
             return true
         end
     end
-    
+
     return false
 end
 
@@ -183,6 +188,16 @@ function disable_audio_mode()
     on_audio_mode_deactivate()
 end
 
+function get_metadata()
+    local msg = mp.command_native({"expand-text", "${filtered-metadata}"})
+
+    if msg == "(empty)" then
+        msg = mp.get_property("filename")
+    end
+
+    return msg
+end
+
 function on_start_file(event)
     local ext = get_file_ext(mp.get_property("path"))
 
@@ -207,3 +222,5 @@ function on_start_file(event)
 end
 
 mp.register_event("start-file", on_start_file)
+
+mp.register_event("file-loaded", on_file_loaded)
