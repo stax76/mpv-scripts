@@ -9,8 +9,6 @@
 
     For every song the last ten sessions are recorded,
     the average of that is used.
-    
-    At least ten songs must be played for the recording to happen.
 
     It gives better results compared to using replay gain.
 
@@ -33,6 +31,7 @@
 local o = {
     monitored_directories = "",
     storage_path = "~~home/smart-volume.json",
+    remove_missing_files = false, -- use only temporarily!
 }
 
 ----- math
@@ -109,6 +108,16 @@ function table_count(t)
     return count
 end
 
+function get_keys(input)
+    local ret = {}
+
+    for k, _ in pairs(input) do
+        table.insert(ret, k)
+    end
+
+    return ret
+end
+
 ----- file
 
 function file_exists(name)
@@ -150,7 +159,7 @@ opt.read_options(o)
 o.storage_path = mp.command_native({"expand-path", o.storage_path})
 
 if o.monitored_directories == nil or o.monitored_directories == "" then
-    msg.error("No directory to be monitored found.")
+    msg.warn("No directory to be monitored found.")
     return
 end
 
@@ -176,10 +185,6 @@ function get_average_volume()
     end
 
     return mp.get_property_number("volume")
-end
-
-function round_down_5(value)
-    return value - value % 5
 end
 
 function on_start_file(event)
@@ -209,7 +214,7 @@ function on_start_file(event)
     previous_file = file
 
     if session_data[previous_file] ~= nil then
-        mp.set_property("volume", session_data[previous_file])
+        mp.set_property_number("volume", session_data[previous_file])
     elseif data[previous_file] ~= nil then
         local past_offset = get_average(data[previous_file])
         local current_average = get_average(volume_list)
@@ -218,17 +223,26 @@ function on_start_file(event)
             current_average = volume
         end
 
-        mp.set_property("volume", round_down_5(current_average + past_offset))
+        mp.set_property_number("volume", current_average + past_offset)
     else
-        mp.set_property("volume", round_down_5(get_average_volume()))
+        mp.set_property_number("volume", get_average_volume())
     end
 end
 
 mp.register_event("start-file", on_start_file)
 
 function on_shutdown()
-    if table_count(session_data) < 9 then
+    if table_count(session_data) < 3 then
         return
+    end
+
+    if o.remove_missing_files then
+        for _, path in pairs(get_keys(data)) do
+            if not file_exists(path) then                
+                msg.info("removed: " .. path)
+                data[path] = nil
+            end
+        end
     end
 
     local average = get_average(volume_list)
