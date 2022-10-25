@@ -22,13 +22,14 @@
 
 -- video is the default mode, this is only called if the previous file wasn't video
 function on_video_mode_activate()
-    mp.set_property("osd-playing-msg", "${media-title}")       -- in video mode use media-title for osd-playing-msg
+    mp.set_property("osd-playing-msg", "${media-title}")       -- in video mode use media-title
     mp.command("script-message osc-visibility auto no_osd")    -- set osc visibility to auto
 end
 
 function on_audio_mode_activate()
-    mp.set_property("osd-playing-msg", "")                     -- disable osd-playing-msg for audio because osd-msg1 is used instead
-    mp.command("script-message osc-visibility always no_osd")  -- always show osc for audio files
+    mp.set_property("osd-playing-msg", "${media-title}")       -- in audio mode use media-title
+    mp.set_property("display-tags", "Artist,Title,Date")       -- Used by the property 'filtered-metadata'
+    mp.command("script-message osc-visibility never no_osd")   -- disable osc for images
 end
 
 function on_image_mode_activate()
@@ -41,7 +42,6 @@ function on_video_mode_deactivate()
 end
 
 function on_audio_mode_deactivate()
-    mp.set_property("osd-msg1", "")                            -- remove metadata display.
 end
 
 function on_image_mode_deactivate()
@@ -58,18 +58,9 @@ function on_type_change(old_ext, new_ext)
     end
 end
 
-function on_file_loaded(event)
-    if active_mode == "audio" then
-        mp.set_property("osd-msg1", get_metadata())            -- In mpv.conf define: display-tags = Artist,Title,Album,Date,Genre,Comment,Description
-    end
-end
-
 audio_mode_bindings = {
     { "Left",   function () mp.command("no-osd seek -10") end,         "repeatable" }, -- audio seek length longer than video seek length
     { "Right",  function () mp.command("no-osd seek  10") end,         "repeatable" }, -- audio seek length longer than video seek length
-    { "0",      function () mp.command("script-message-to private trash-track")    end }, -- not documented, too special
-    { "KP0",    function () mp.command("script-message-to private trash-track")    end }, -- not documented, too special
-    { "Ctrl+T", function () mp.command("script-message-to delete_current_file delete-file") end }, -- delete current file directly
 }
 
 image_mode_bindings = {
@@ -188,16 +179,6 @@ function disable_audio_mode()
     on_audio_mode_deactivate()
 end
 
-function get_metadata()
-    local msg = mp.command_native({"expand-text", "${filtered-metadata}"})
-
-    if msg == "(empty)" then
-        msg = mp.get_property("filename")
-    end
-
-    return msg
-end
-
 function on_start_file(event)
     local ext = get_file_ext(mp.get_property("path"))
 
@@ -222,5 +203,3 @@ function on_start_file(event)
 end
 
 mp.register_event("start-file", on_start_file)
-
-mp.register_event("file-loaded", on_file_loaded)

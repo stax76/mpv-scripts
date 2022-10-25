@@ -116,15 +116,6 @@ end
 
 ratings = {}
 
-function on_rate_file(rating)
-    local path = mp.get_property("path")
-
-    if file_exists(path) then        
-        ratings[path] = rating
-        mp.command('show-text "Rating: ' .. rating .. '"')
-    end
-end
-
 function rate_file(path, rating)
     local base = file_base_name(file_name(path))
 
@@ -146,14 +137,20 @@ function rate_file(path, rating)
     set_last_write_time_to_now(new_path)
 end
 
-function on_shutdown()
+mp.register_event("shutdown", function ()
     for path, rating in pairs(ratings) do
         if file_exists(path) then
             local ext = get_file_ext(mp.get_property("path"))
             rate_file(path, rating)
         end
     end
-end
+end)
 
-mp.register_event("shutdown", on_shutdown)
-mp.register_script_message("rate-file", on_rate_file)
+mp.register_script_message("rate-file", function (rating)
+    local path = mp.get_property("path")
+
+    if file_exists(path) then        
+        ratings[path] = rating
+        mp.command('show-text "Rating: ' .. rating .. '"')
+    end
+end)

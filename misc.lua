@@ -81,6 +81,15 @@ function contains(input, find)
     end
 end
 
+function replace(str, what, with)
+    if is_empty(str) then return "" end
+    if is_empty(what) then return str end
+    if with == nil then with = "" end
+    what = string.gsub(what, "[%(%)%.%+%-%*%?%[%]%^%$%%]", "%%%1")
+    with = string.gsub(with, "[%%]", "%%%%")
+    return string.gsub(str, what, with)
+end
+
 ----- math
 
 function round(value)
@@ -193,7 +202,7 @@ end
 
 ----- Print media info on screen
 
-media_info_format = [[General;N: %FileNameExtension%\\nG: %Format%, %FileSize/String%, %Duration/String%, %OverallBitRate/String%\\n
+media_info_format = [[General;N: %FileNameExtension%\\nG: %Format%, %FileSize/String%, %Duration/String%, %OverallBitRate/String%, %Recorded_Date%\\n
 Video;V: %Format%, %Format_Profile%, %Width%x%Height%, %BitRate/String%, %FrameRate% FPS\\n
 Audio;A: %Language/String%, %Format%, %Format_Profile%, %BitRate/String%, %Channel(s)% ch, %SamplingRate/String%, %Title%\\n
 Text;S: %Language/String%, %Format%, %Format_Profile%, %Title%\\n]]
@@ -201,9 +210,9 @@ Text;S: %Language/String%, %Format%, %Format_Profile%, %Title%\\n]]
 is_windows = package.config:sub(1,1) == "\\"
 
 if is_windows then
-    format_file = os.getenv("TEMP") .. "/media-info-format.txt"
+    format_file = os.getenv("TEMP") .. "/media-info-format-2.txt"
 else
-    format_file = "/tmp/media-info-format.txt"
+    format_file = "/tmp/media-info-format-2.txt"
 end
 
 if not file_exists(format_file) then
@@ -241,6 +250,10 @@ function on_print_media_info()
         output = string.gsub(output, "\\n\r*\n", "\\n")
         output = string.gsub(output, ", \\n", "\\n")
         output = string.gsub(output, "%.000 FPS", " FPS")
+
+        if contains(output, "MPEG Audio, Layer 3") then
+            output = replace(output, "MPEG Audio, Layer 3", "MP3")
+        end
 
         show_text(output, 5000, 16)
     end
