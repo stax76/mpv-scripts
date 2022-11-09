@@ -27,8 +27,17 @@
 
 key_bindings = {}
 
+function is_protocol(path)
+    return type(path) == 'string' and (path:match('^%a[%a%d_-]+://') ~= nil or path:match('^%a[%a%d_-]+:\\?') ~= nil)
+end
+
 function delete_file(path)
     local is_windows = package.config:sub(1,1) == "\\"
+
+    if not path or is_protocol(path) then
+        mp.commandv("show-text", "no file to delete")
+        return
+    end
 
     if is_windows then
         local ps_code = [[
@@ -69,7 +78,7 @@ function remove_current_file()
     end
 
     mp.set_property_number("playlist-pos", new_pos)
-    mp.command("playlist-remove " .. pos)
+    if pos >= 0 then mp.command("playlist-remove " .. pos) end
 end
 
 function handle_confirm_key()
@@ -123,15 +132,15 @@ function remove_bindings()
 end
 
 function client_message(event)
+    local path = mp.get_property("path")
     if event.args[1] == "delete-file" and #event.args == 1 then
-        local path = mp.get_property("path")
         remove_current_file()
         delete_file(path)
     elseif event.args[1] == "delete-file" and #event.args == 3 and #key_bindings == 0 then
         confirm_key = event.args[2]
         mp.add_timeout(10, cleanup)
         add_bindings()
-        file_to_delete = mp.get_property("path")
+        file_to_delete = path
         mp.commandv("show-text", event.args[3], "10000")
     end
 end
