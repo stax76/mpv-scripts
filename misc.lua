@@ -56,6 +56,12 @@
     #Navigates to the last file in the playlist
     END script-message-to misc execute-lua-code "mp.set_property_number('playlist-pos', mp.get_property_number('playlist-count') - 1)"
 
+
+
+    Playlist Next/Prev
+    ------------------
+    Like the regular playlist-next/playlist-prev, but does not restart the file
+    in case the first or last track already plays, shows a message instead.
 ]]--
 
 ----- options
@@ -260,3 +266,28 @@ function on_print_media_info()
 end
 
 mp.register_script_message("print-media-info", on_print_media_info)
+
+----- Playlist Next/Prev
+
+mp.register_script_message("playlist-next", function ()
+    local count = mp.get_property_number("playlist-count")
+    local pos = mp.get_property_number("playlist-pos")
+
+    if pos == count - 1 then
+        mp.command("show-text 'Already last track'")
+        return
+    end
+
+    mp.set_property_number("playlist-pos", pos +1)
+end)
+
+mp.register_script_message("playlist-prev", function ()
+    local pos = mp.get_property_number("playlist-pos")
+
+    if pos == 0 then
+        mp.command("show-text 'Already first track'")
+        return
+    end
+
+    mp.set_property_number("playlist-pos", pos - 1)
+end)
