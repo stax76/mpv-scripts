@@ -60,8 +60,24 @@
 
     Playlist Next/Prev
     ------------------
-    Like the regular playlist-next/playlist-prev, but does not restart the file
-    in case the first or last track already plays, shows a message instead.
+    Like the regular playlist-next/playlist-prev, but does not restart playback
+    of the first or last file, in case the first or last track already plays,
+    instead shows a OSD message.
+
+    F11  script-message playlist-prev # Go to previous file in playlist
+    F12  script-message playlist-next # Go to next file in playlist
+
+
+
+    Playlist First/Last
+    -------------------
+    Navigates to the first or last track in the playlist,
+    in case the first or last track already plays, it does not
+    restart playback, instead shows a OSD message.
+
+    Home  script-message playlist-first # Go to first file in playlist
+    End   script-message playlist-last  # Go to last file in playlist
+
 ]]--
 
 ----- options
@@ -271,6 +287,7 @@ mp.register_script_message("print-media-info", on_print_media_info)
 
 mp.register_script_message("playlist-next", function ()
     local count = mp.get_property_number("playlist-count")
+    if count == 0 then return end
     local pos = mp.get_property_number("playlist-pos")
 
     if pos == count - 1 then
@@ -278,10 +295,12 @@ mp.register_script_message("playlist-next", function ()
         return
     end
 
-    mp.set_property_number("playlist-pos", pos +1)
+    mp.set_property_number("playlist-pos", pos + 1)
 end)
 
 mp.register_script_message("playlist-prev", function ()
+    local count = mp.get_property_number("playlist-count")
+    if count == 0 then return end
     local pos = mp.get_property_number("playlist-pos")
 
     if pos == 0 then
@@ -290,4 +309,32 @@ mp.register_script_message("playlist-prev", function ()
     end
 
     mp.set_property_number("playlist-pos", pos - 1)
+end)
+
+----- Playlist First/Last
+
+mp.register_script_message("playlist-first", function ()
+    local count = mp.get_property_number("playlist-count")
+    if count == 0 then return end
+    local pos = mp.get_property_number("playlist-pos")
+
+    if pos == 0 then
+        mp.command("show-text 'Already first track'")
+        return
+    end
+
+    mp.set_property_number("playlist-pos", 0)
+end)
+
+mp.register_script_message("playlist-last", function ()
+    local count = mp.get_property_number("playlist-count")
+    if count == 0 then return end
+    local pos = mp.get_property_number("playlist-pos")
+
+    if pos == count - 1 then
+        mp.command("show-text 'Already last track'")
+        return
+    end
+
+    mp.set_property_number("playlist-pos", count - 1)
 end)
