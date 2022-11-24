@@ -1,10 +1,41 @@
 
 --[[
 
+    This script consist of several very small unrelated features,
+    It should be no problem to delete not used code sections,
+    in order to further improve efficiency.
+
+
+
+    Show media info on screen
+    -------------------------
+    Prints media info on the screen.
+    
+    Depends on the CLI tool 'mediainfo':
+    https://mediaarea.net/en/MediaInfo/Download
+
+    It's necessary to add a binding to input.conf:
+    ctrl+i script-message-to misc print-media-info
+
+
+
+    Load files/URLs from clipboard
+    ------------------------------
+    Loads one or multiple files/URLs from the clipboard.
+    The clipboard format can be of type string or file object.
+    Allows appending to the playlist.
+    On Linux requires xclip being installed.
+    The script provides the following default bindings:
+
+    ctrl+v script-binding load-from-clipboard
+    ctrl+V script-binding append-from-clipboard
+
+
+
     Jump to a random position in the playlist
     -----------------------------------------
     It's necessary to add a binding to input.conf:
-    ctrl+r  script-message-to misc playlist-random
+    ctrl+r script-message-to misc playlist-random
 
     If pos=last it jumps to first instead of random.
 
@@ -16,7 +47,39 @@
     as long as a file is opened.
 
     It's necessary to add a binding to input.conf:
-    ctrl+q  script-message-to misc quick-bookmark
+    ctrl+q script-message-to misc quick-bookmark
+
+ 
+
+    Playlist Next/Prev
+    ------------------
+    Like the regular playlist-next/playlist-prev, but does not restart playback
+    of the first or last file, in case the first or last track already plays,
+    instead shows a OSD message.
+
+    F11 script-message playlist-prev # Go to previous file in playlist
+    F12 script-message playlist-next # Go to next file in playlist
+
+
+
+    Playlist First/Last
+    -------------------
+    Navigates to the first or last track in the playlist,
+    in case the first or last track already plays, it does not
+    restart playback, instead shows a OSD message.
+
+    Home script-message playlist-first # Go to first file in playlist
+    End  script-message playlist-last  # Go to last file in playlist
+
+
+
+    Execute Lua code
+    ----------------
+    Allows to execute Lua Code directly from input.conf.
+
+    It's necessary to add a binding to input.conf:
+    #Navigates to the last file in the playlist
+    END script-message-to misc execute-lua-code "mp.set_property_number('playlist-pos', mp.get_property_number('playlist-count') - 1)"
 
 
 
@@ -33,50 +96,6 @@
 
     Must be enabled in conf file:
     ~~home/script-opts/misc.conf: alternative_seek_text=yes
- 
-
-
-    Show media info on screen
-    -------------------------
-    Prints media info on the screen.
-    
-    Depends on the CLI tool 'mediainfo':
-    https://mediaarea.net/en/MediaInfo/Download
-
-    It's necessary to add a binding to input.conf:
-    ctrl+i  script-message-to misc print-media-info
- 
-
-
-    Execute Lua code
-    ----------------
-    Allows to execute Lua Code directly from input.conf.
-
-    It's necessary to add a binding to input.conf:
-    #Navigates to the last file in the playlist
-    END script-message-to misc execute-lua-code "mp.set_property_number('playlist-pos', mp.get_property_number('playlist-count') - 1)"
-
-
-
-    Playlist Next/Prev
-    ------------------
-    Like the regular playlist-next/playlist-prev, but does not restart playback
-    of the first or last file, in case the first or last track already plays,
-    instead shows a OSD message.
-
-    F11  script-message playlist-prev # Go to previous file in playlist
-    F12  script-message playlist-next # Go to next file in playlist
-
-
-
-    Playlist First/Last
-    -------------------
-    Navigates to the first or last track in the playlist,
-    in case the first or last track already plays, it does not
-    restart playback, instead shows a OSD message.
-
-    Home  script-message playlist-first # Go to first file in playlist
-    End   script-message playlist-last  # Go to last file in playlist
 
 ]]--
 
@@ -103,13 +122,10 @@ function contains(input, find)
     end
 end
 
-function replace(str, what, with)
-    if is_empty(str) then return "" end
-    if is_empty(what) then return str end
-    if with == nil then with = "" end
-    what = string.gsub(what, "[%(%)%.%+%-%*%?%[%]%^%$%%]", "%%%1")
-    with = string.gsub(with, "[%%]", "%%%%")
-    return string.gsub(str, what, with)
+function trim(input)
+    if not is_empty(input) then
+        return input:match "^%s*(.-)%s*$"
+    end
 end
 
 ----- math
@@ -121,6 +137,7 @@ end
 ----- file
 
 function file_exists(path)
+    if is_empty(path) then return false end
     local file = io.open(path, "r")
 
     if file ~= nil then
@@ -135,9 +152,15 @@ function file_write(path, content)
     file:close()
 end
 
+----- shared
+
+is_windows = package.config:sub(1,1) == "\\"
+
+msg = require "mp.msg"
+
 ----- Jump to a random position in the playlist
 
-function random_jump()
+mp.register_script_message("playlist-random", function ()
     local count = mp.get_property_number("playlist-count")
     local new_pos = math.random(0, count - 1)
     local current_pos = mp.get_property_number("playlist-pos")
@@ -147,38 +170,32 @@ function random_jump()
     end
 
     mp.set_property_number("playlist-pos", new_pos)
-end
-
-mp.register_script_message("playlist-random", random_jump)
+end)
 
 ----- Quick Bookmark
 
 quick_bookmark_position = 0
 quick_bookmark_file = ""
 
-function quick_bookmark()
+mp.register_script_message("quick-bookmark", function ()
     if quick_bookmark_position == 0 then
         quick_bookmark_position = mp.get_property_number("time-pos")
         quick_bookmark_file = mp.get_property("path")
 
         if quick_bookmark_position ~= 0 then
-            mp.command("show-text 'Bookmark Saved'")
+            mp.osd_message("Bookmark Saved")
         end
     elseif quick_bookmark_file == mp.get_property("path") then
         mp.set_property_number("time-pos", quick_bookmark_position)
         quick_bookmark_position = 0
     end
-end
-
-mp.register_script_message("quick-bookmark", quick_bookmark)
+end)
 
 ----- Execute Lua code
 
-function execute_lua_code(code)
+mp.register_script_message("execute-lua-code", function (code)
     loadstring(code)()
-end
-
-mp.register_script_message("execute-lua-code", execute_lua_code)
+end)
 
 ----- Alternative seek OSD message
 
@@ -214,7 +231,7 @@ function on_seek()
     end
 
     if position ~= 0 then
-        mp.commandv("show-text", format(position) .. " / " .. format(duration))
+        mp.osd_message(format(position) .. " / " .. format(duration))
     end
 end
 
@@ -228,8 +245,6 @@ media_info_format = [[General;N: %FileNameExtension%\\nG: %Format%, %FileSize/St
 Video;V: %Format%, %Format_Profile%, %Width%x%Height%, %BitRate/String%, %FrameRate% FPS\\n
 Audio;A: %Language/String%, %Format%, %Format_Profile%, %BitRate/String%, %Channel(s)% ch, %SamplingRate/String%, %Title%\\n
 Text;S: %Language/String%, %Format%, %Format_Profile%, %Title%\\n]]
-
-is_windows = package.config:sub(1,1) == "\\"
 
 if is_windows then
     format_file = os.getenv("TEMP") .. "/media-info-format-2.txt"
@@ -253,17 +268,15 @@ function on_print_media_info()
         return
     end
 
-    local arg2 = "--inform=file://" .. format_file
-
-    local r = mp.command_native({
+    local proc_result = mp.command_native({
         name = "subprocess",
         playback_only = false,
         capture_stdout = true,
-        args = {"mediainfo", arg2, path},
+        args = {"mediainfo", "--inform=file://" .. format_file, path},
     })
 
-    if r.status == 0 then
-        local output = r.stdout
+    if proc_result.status == 0 then
+        local output = proc_result.stdout
 
         output = string.gsub(output, ", , ,", ",")
         output = string.gsub(output, ", ,", ",")
@@ -272,10 +285,7 @@ function on_print_media_info()
         output = string.gsub(output, "\\n\r*\n", "\\n")
         output = string.gsub(output, ", \\n", "\\n")
         output = string.gsub(output, "%.000 FPS", " FPS")
-
-        if contains(output, "MPEG Audio, Layer 3") then
-            output = replace(output, "MPEG Audio, Layer 3", "MP3")
-        end
+        output = string.gsub(output, "MPEG Audio, Layer 3", "MP3")
 
         show_text(output, 5000, 16)
     end
@@ -291,7 +301,7 @@ mp.register_script_message("playlist-next", function ()
     local pos = mp.get_property_number("playlist-pos")
 
     if pos == count - 1 then
-        mp.command("show-text 'Already last track'")
+        mp.osd_message("Already last track")
         return
     end
 
@@ -304,7 +314,7 @@ mp.register_script_message("playlist-prev", function ()
     local pos = mp.get_property_number("playlist-pos")
 
     if pos == 0 then
-        mp.command("show-text 'Already first track'")
+        mp.osd_message("Already first track")
         return
     end
 
@@ -319,7 +329,7 @@ mp.register_script_message("playlist-first", function ()
     local pos = mp.get_property_number("playlist-pos")
 
     if pos == 0 then
-        mp.command("show-text 'Already first track'")
+        mp.osd_message("Already first track")
         return
     end
 
@@ -332,9 +342,64 @@ mp.register_script_message("playlist-last", function ()
     local pos = mp.get_property_number("playlist-pos")
 
     if pos == count - 1 then
-        mp.command("show-text 'Already last track'")
+        mp.osd_message("Already last track")
         return
     end
 
     mp.set_property_number("playlist-pos", count - 1)
+end)
+
+----- Load files from clipboard
+
+function loadfiles(mode)
+    if is_windows then
+        local ps_code = [[
+            Add-Type -AssemblyName System.Windows.Forms
+            $containsFiles = [Windows.Forms.Clipboard]::ContainsFileDropList()
+            
+            if ($containsFiles) {
+                [Windows.Forms.Clipboard]::GetFileDropList() -join [Environment]::NewLine
+            } else {
+                Get-Clipboard
+            }
+        ]]
+
+        proc_args = { "powershell", "-command", ps_code }
+    else
+        proc_args = { "xclip", "-o", "-selection", "clipboard" }
+    end
+
+    subprocess = {
+        name = "subprocess",
+        args = proc_args,
+        playback_only = false,
+        capture_stdout = true,
+        capture_stderr = true
+    }
+
+    proc_result = mp.command_native(subprocess)
+
+    if proc_result.status < 0 then
+        msg.error("Error string: " .. proc_result.error_string)
+        msg.error("Error stderr: " .. proc_result.stderr)
+        return
+    end
+
+    proc_output = trim(proc_result.stdout)
+
+    if is_empty(proc_output) then return end
+
+    if contains(proc_output, "\n") then
+        mp.commandv("loadlist", "memory://" .. proc_output, mode)
+    else
+        mp.commandv("loadfile", proc_output, mode)
+    end
+end
+
+mp.add_key_binding("ctrl+v", "load-from-clipboard", function ()
+    loadfiles("replace")
+end)
+
+mp.add_key_binding("ctrl+V", "append-from-clipboard", function ()
+    loadfiles("append")
 end)
