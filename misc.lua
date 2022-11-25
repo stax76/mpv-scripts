@@ -1,21 +1,22 @@
 
 --[[
 
-    This script consist of several very small unrelated features,
-    It should be no problem to delete not used code sections,
-    in order to further improve efficiency.
+    This script consist of various small unrelated features.
+
+    Not used code sections can be removed.
+
+    Bindings must be added manually to input.conf.
 
 
 
     Show media info on screen
     -------------------------
-    Prints media info on the screen.
+    Prints detailed media info on the screen.
     
     Depends on the CLI tool 'mediainfo':
     https://mediaarea.net/en/MediaInfo/Download
 
-    It's necessary to add a binding to input.conf:
-    ctrl+i script-message-to misc print-media-info
+    i script-message-to misc print-media-info
 
 
 
@@ -25,16 +26,14 @@
     The clipboard format can be of type string or file object.
     Allows appending to the playlist.
     On Linux requires xclip being installed.
-    The script provides the following default bindings:
 
-    ctrl+v script-binding load-from-clipboard
-    ctrl+V script-binding append-from-clipboard
+    ctrl+v script-message-to misc load-from-clipboard
+    ctrl+V script-message-to misc append-from-clipboard
 
 
 
     Jump to a random position in the playlist
     -----------------------------------------
-    It's necessary to add a binding to input.conf:
     ctrl+r script-message-to misc playlist-random
 
     If pos=last it jumps to first instead of random.
@@ -46,7 +45,6 @@
     Creates or restores a single bookmark that persists
     as long as a file is opened.
 
-    It's necessary to add a binding to input.conf:
     ctrl+q script-message-to misc quick-bookmark
 
  
@@ -57,8 +55,8 @@
     of the first or last file, in case the first or last track already plays,
     instead shows a OSD message.
 
-    F11 script-message playlist-prev # Go to previous file in playlist
-    F12 script-message playlist-next # Go to next file in playlist
+    F11 script-message-to misc playlist-prev # Go to previous file in playlist
+    F12 script-message-to misc playlist-next # Go to next file in playlist
 
 
 
@@ -68,8 +66,17 @@
     in case the first or last track already plays, it does not
     restart playback, instead shows a OSD message.
 
-    Home script-message playlist-first # Go to first file in playlist
-    End  script-message playlist-last  # Go to last file in playlist
+    Home script-message-to misc playlist-first # Go to first file in playlist
+    End  script-message-to misc playlist-last  # Go to last file in playlist
+
+
+
+    Restart mpv
+    -----------
+    Restarts mpv restoring the properties path, time-pos,
+    pause and volume, the playlist is not restored.
+
+    r script-message-to misc restart-mpv
 
 
 
@@ -396,10 +403,36 @@ function loadfiles(mode)
     end
 end
 
-mp.add_key_binding("ctrl+v", "load-from-clipboard", function ()
+mp.register_script_message("load-from-clipboard", function ()
     loadfiles("replace")
 end)
 
-mp.add_key_binding("ctrl+V", "append-from-clipboard", function ()
+mp.register_script_message("append-from-clipboard", function ()
     loadfiles("append")
+end)
+
+----- Restart mpv
+
+mp.register_script_message("restart-mpv", function ()
+    local restart_args = {
+        "mpv",
+        "--pause=" .. mp.get_property("pause"),
+        "--volume=" .. mp.get_property("volume"),
+    }
+
+    local playlist_pos = mp.get_property_number("playlist-pos")
+
+    if playlist_pos > -1 then
+        table.insert(restart_args, "--start=" .. mp.get_property("time-pos"))
+        table.insert(restart_args, mp.get_property("path"))
+    end
+
+    mp.command_native({
+        name = "subprocess",
+        playback_only = false,
+        detach = true,
+        args = restart_args,
+    })
+
+    mp.command("quit")
 end)
