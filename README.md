@@ -9,23 +9,26 @@ at the beginning of the script.
 
 # Search Menu
 
-## About
+### About
 
 Search Menu is a searchable menu based on Rofi or terminal based on fzf.
 
-## Installation
+### Installation
 
-Extract the search menu folder at `~~/scripts/search_menu`, don't rename it.
+Save the search menu folder at `~~/scripts/search_menu`,
+it contains main.lua and a Python script.
 
-## Configuration
+See Dependencies section to install dependencies.
 
-### mpv.conf
+### Configuration
+
+#### mpv.conf
 
 Windows: `input-ipc-server = \\.\pipe\mpvsocket`
 
 Linux: `input-ipc-server = /tmp/mpvsocket`
 
-### Conf file at `~~/scripts-opts/search_menu.conf`:
+#### Conf file at `~~/scripts-opts/search_menu.conf`:
 
 ```
 #mode=gnome-terminal+sh    # Requires Linux and Gnome Terminal
@@ -36,7 +39,7 @@ Linux: `input-ipc-server = /tmp/mpvsocket`
 #mode=windows-terminal+ns  # Requires Windows, Windows Terminal and Nushell
 ```
 
-### input.conf:
+#### input.conf:
 
 ```
 F1 script-message-to search_menu show-search-menu binding        # Search Binding
@@ -54,7 +57,7 @@ On Linux Alacritty has the advantage of not having any UI apart from the termina
 
 The Rofi configuration has like mpv a learning curve.
 
-## Dependencies
+### Dependencies
 
 Which dependencies are required depend
 on which mode and feature is used.
@@ -66,23 +69,17 @@ on which mode and feature is used.
 - https://alacritty.org - Alternative for Gnome Terminal and Windows Terminal.
 - https://www.nushell.sh - Starts 200 ms faster than PowerShell.
 
-## Usage
+### Usage
 
 Invoke a menu via shortcut key, type a search keyword, use up/down key to select,
 enter key to confirm, escape key to close.
 
-## Similar Projects
+### Similar Projects
 
 - https://github.com/Seme4eg/mpv-scripts/tree/master#m-x
 - https://github.com/CogentRedTester/mpv-search-page
 - https://codeberg.org/NRK/mpv-toolbox/src/branch/master/mdmenu
 - https://github.com/mpvnet-player/mpv.net#command-palette
-
-## Context Menu Projects
-
-- https://gitlab.com/carmanaught/mpvcontextmenu
-- https://github.com/nezumisama/mpvmenu
-- https://gist.github.com/avih/bee746200b5712220b8bd2f230e535de
 
 # Screenshots
 
