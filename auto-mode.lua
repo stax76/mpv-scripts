@@ -18,19 +18,30 @@
 
 ]]--
 
--- start config
 
--- video is the default mode, this is only called if the previous file wasn't video
+----- start config
+
+-- video mode
+
 function on_video_mode_activate()
     mp.set_property("osd-playing-msg", "${media-title}")       -- in video mode use media-title
     mp.command("script-message osc-visibility auto no_osd")    -- set osc visibility to auto
 end
 
+function on_video_mode_deactivate()
+end
+
+-- audio mode
+
 function on_audio_mode_activate()
     mp.set_property("osd-playing-msg", "${media-title}")       -- in audio mode use media-title
-    mp.set_property("display-tags", "Artist,Title,Date")       -- Used by the property 'filtered-metadata'
-    mp.command("script-message osc-visibility never no_osd")   -- disable osc for images
+    mp.command("script-message osc-visibility never no_osd")   -- in audio mode disable the osc
 end
+
+function on_audio_mode_deactivate()
+end
+
+-- image mode
 
 function on_image_mode_activate()
     mp.set_property("osd-playing-msg", "")                     -- disable osd-playing-msg for images
@@ -38,15 +49,11 @@ function on_image_mode_activate()
     mp.command("script-message osc-visibility never no_osd")   -- disable osc for images
 end
 
-function on_video_mode_deactivate()
-end
-
-function on_audio_mode_deactivate()
-end
-
 function on_image_mode_deactivate()
     mp.set_property("background", "#000000")                   -- use black background for audio and video
 end
+
+-- called whenever the file extension changes
 
 function on_type_change(old_ext, new_ext)
     if new_ext == ".gif" then
@@ -58,9 +65,13 @@ function on_type_change(old_ext, new_ext)
     end
 end
 
+-- binding configuration
+
 audio_mode_bindings = {
-    { "Left",   function () mp.command("no-osd seek -10") end,         "repeatable" }, -- audio seek length longer than video seek length
-    { "Right",  function () mp.command("no-osd seek  10") end,         "repeatable" }, -- audio seek length longer than video seek length
+    { "Left",   function () mp.command("no-osd seek -10") end,         "repeatable" }, -- make audio mode seek length longer than video mode seek length
+    { "Right",  function () mp.command("no-osd seek  10") end,         "repeatable" }, -- make audio mode seek length longer than video mode seek length
+    { "Ctrl++",  function () mp.command("add volume  5") end,         "repeatable" }, -- increase volume by 5
+    { "Ctrl+-",  function () mp.command("add volume -5") end,         "repeatable" }, -- decrease volume by 5
 }
 
 image_mode_bindings = {
@@ -69,15 +80,18 @@ image_mode_bindings = {
     { "LEFT",       function () mp.command("playlist-prev") end,                 "repeatable" }, -- show previous image
     { "RIGHT",      function () mp.command("playlist-next") end,                 "repeatable" }, -- show next image
     { "SPACE",      function () mp.command("playlist-next") end,                 "repeatable" }, -- show next image
-    { "WHEEL_UP",   function () mp.command("add video-zoom  0.1") end,           "repeatable" }, -- show next image
-    { "WHEEL_DOWN", function () mp.command("add video-zoom -0.1") end,           "repeatable" }, -- show next image
+    { "WHEEL_UP",   function () mp.command("add video-zoom  0.1") end,           "repeatable" }, -- increase image size
+    { "WHEEL_DOWN", function () mp.command("add video-zoom -0.1") end,           "repeatable" }, -- decrease image size
     { "BS",         function () mp.command("no-osd set video-pan-y 0; no-osd set video-zoom 0") end }, -- reset image options
 }
+
+-- extension configuration
 
 image_file_extensions = { ".jpg", ".png", ".bmp", ".gif", ".webp" }
 audio_file_extensions = { ".mp3", ".ogg", ".opus", ".flac", ".m4a", ".mka", ".ac3", ".dts", ".dtshd", ".dtshr", ".dtsma", ".eac3", ".mp2", ".mpa", ".thd", ".w64", ".wav", ".aac" }
 
 ----- end config
+
 
 ----- string
 
@@ -106,7 +120,7 @@ function list_contains(list, value)
     return false
 end
 
------ mpv key bindings
+----- key bindings
 
 function add_bindings(definition)
     if type(active_bindings) ~= "table" then
@@ -130,7 +144,7 @@ function remove_bindings()
     end
 end
 
------ image-mode
+----- main
 
 active_mode = "video"
 last_type = nil
