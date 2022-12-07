@@ -31,13 +31,19 @@ Linux: `input-ipc-server = /tmp/mpvsocket`
 #### Conf file at `~~/scripts-opts/search_menu.conf`:
 
 ```
-#mode=gnome-terminal+sh    # Requires Linux and Gnome Terminal
+#mode=gnome-terminal+sh    # Requires Linux and Gnome Terminal, default on Linux
 #mode=alacritty+sh         # Requires Linux and Alacritty
 #mode=rofi                 # Requires Linux and Rofi
 #mode=alacritty+ns         # Requires Windows, Alacritty and Nushell
-#mode=windows-terminal+ps  # Requires Windows and Windows Terminal
+#mode=windows-terminal+ps  # Requires Windows and Windows Terminal, default on Windows
 #mode=windows-terminal+ns  # Requires Windows, Windows Terminal and Nushell
 ```
+
+On Windows Alacritty and Nushell have the advantage of a faster startup.
+
+On Linux Alacritty has the advantage of not having any UI apart from the terminal.
+
+The Rofi configuration has like mpv a learning curve.
 
 #### input.conf:
 
@@ -50,12 +56,6 @@ F8 script-message-to search_menu show-search-menu playlist       # Search Playli
 Alt+a script-message-to search_menu show-search-menu audio-track # Search Audio Track
 Alt+s script-message-to search_menu show-search-menu sub-track   # Search Subtitle Track
 ```
-
-On Windows Alacritty and Nushell have the advantage of a faster startup.
-
-On Linux Alacritty has the advantage of not having any UI apart from the terminal.
-
-The Rofi configuration has like mpv a learning curve.
 
 ### Dependencies
 
@@ -90,8 +90,8 @@ is printing media info on the screen.
 
 ## Rofi based search menu
 
-![Rofi based search menu](screenshots/rofi.png)
+![Rofi search menu](screenshots/rofi.png)
 
 ## Terminal based search menu
 
-![Terminal based search menu](screenshots/search_menu-binding.png)
+![Terminal search menu](screenshots/search_menu-binding.png)
