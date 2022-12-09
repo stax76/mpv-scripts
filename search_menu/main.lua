@@ -146,22 +146,22 @@ mp.register_script_message("show-search-menu", function (mode)
 
     local py_file = '~~home/scripts/search_menu/search_menu.py'
     py_file = mp.command_native({"expand-path", py_file})
-    local dash_code = 'fp="' .. py_file .. '"; python $fp "$(python $fp | fzf)"'
+    local dash_code = 'fp="' .. py_file .. '"; python $fp "$(python $fp | fzf --exact)"'
 
     if o.mode == "gnome-terminal+sh" then
         proc_args = { 'gnome-terminal', '--', 'sh', '-c', dash_code }
     elseif o.mode == 'alacritty+sh' then
         proc_args = { 'alacritty', '-t', title, '-e', 'sh', '-c', dash_code }
     elseif o.mode == 'alacritty+ns' then
-        local nu_code = "\"python '" .. py_file .. "' (python '" .. py_file .. "' | fzf | str trim)\""
+        local nu_code = "\"python '" .. py_file .. "' (python '" .. py_file .. "' | fzf --exact | str trim)\""
         proc_args = { 'alacritty', '-t', title, '-e', 'nu', '-c', nu_code }
     elseif o.mode == 'rofi' then
         proc_args = { 'rofi', '-modi', mode .. ':"' .. py_file .. '"', '-show', mode }
     elseif o.mode == 'windows-terminal+ps' then
-        local ps_code = "python '" .. py_file .. "' (python '" .. py_file .. "' | fzf)"
+        local ps_code = "python '" .. py_file .. "' (python '" .. py_file .. "' | fzf --exact)"
         proc_args = { 'wt', '--focus', '--', 'powershell', '-noprofile', '-nologo', '-command', ps_code }
     elseif o.mode == 'windows-terminal+ns' then
-        local nu_code = "python '" .. py_file .. "' (python '" .. py_file .. "' | fzf | str trim)"
+        local nu_code = "python '" .. py_file .. "' (python '" .. py_file .. "' | fzf --exact | str trim)"
         proc_args = { 'wt', '--focus', '--', 'nu', '-c', nu_code }
     else
         msg.error("Unknown mode '" .. o.mode .. "'.")
