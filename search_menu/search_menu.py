@@ -5,6 +5,12 @@ import json
 import sys
 import pathlib
 
+class Binding:
+    text = ""
+    cmd = ""
+    key = ""
+    comment = ""
+    priority = ""
 
 def execute(cmd):
     if os.name == 'nt':
@@ -27,27 +33,37 @@ def execute(cmd):
 
 def binding(mode):
     json_list = json.loads(os.getenv('SEARCH_MENU_BINDING'))
+    binding_list = []
     for i in json_list:
-        cmd = i.get('cmd')
-        if cmd == None or cmd == "" or cmd == 'ignore':
+        b = Binding()
+        b.cmd = i.get('cmd')
+        if b.cmd == None or b.cmd == "" or b.cmd == 'ignore':
             continue
-        comment = i.get('comment')
-        key = i.get('key')
-        text = comment
-        if text == None or text == "":
-            text = cmd
+        b.comment = i.get('comment')
+        b.key = i.get('key')
+        b.priority = i.get('priority')
+        binding_list.append(b)
+    for i in binding_list:
+        for i2 in binding_list:
+            if i.key == i2.key and i.priority < i2.priority:
+                i.key = 'shadowed'
+                break
+    for b in binding_list:
+        b.text = b.comment
+        if b.text == None or b.text == "":
+            b.text = b.cmd
         if mode == 'binding':
-            text = text + " (" + key + ")"
+            b.text = b.text + " (" + b.key + ")"
         else:
-            if text == cmd:
-                text = text + " (" + key + ")"
+            if b.text == b.cmd:
+                b.text = b.text + " (" + b.key + ")"
             else:
-                text = cmd + " (" + key + ") " + text
-        if len(sys.argv) == 2 and sys.argv[1] == text:
-            execute(cmd + "\n")
+                b.text = b.cmd + " (" + b.key + ") " + b.text
+        if len(sys.argv) == 2 and sys.argv[1] == b.text:
+            execute(b.cmd + "\n")
             break
         elif len(sys.argv) == 1:
-            print(text)
+            print(b.text)
 
 def playlist():
     playlist_text = os.getenv('SEARCH_MENU_PLAYLIST')
@@ -62,7 +78,6 @@ def playlist():
 
 def command():
     json_list = json.loads(os.getenv('SEARCH_MENU_COMMAND'))
-
     for cmd in json_list:
         text = cmd.get('name')
         if text == 'ignore':
