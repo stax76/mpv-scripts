@@ -32,6 +32,28 @@
 
 
 
+    Cycle audio and subtitle tracks
+    -------------------------------
+    If there are 20+ subtitle tracks, it's annoying cycling through all
+    of them. This feature allows you to cycle only through languages
+    you actually know. If more than 5 tracks exist, only languages
+    defined by alang/slang are cycled.
+
+    In mpv.conf define your languages:
+    alang = de,deu,ger,en,eng #German/English
+    slang = en,eng,de,deu,ger #English/German
+
+    If you don't know the language IDs, use the terminal,
+    mpv prints the language IDs there whenever a video file is loaded.
+
+    SHARP script-message-to misc cycle-known-tracks audio
+    j     script-message-to misc cycle-known-tracks sub
+
+    If you prefer a menu, you can use:
+    https://github.com/dyphire/mpv-scripts/blob/main/track-list.lua
+
+
+
     Jump to a random position in the playlist
     -----------------------------------------
     ctrl+r script-message-to misc playlist-random
@@ -133,6 +155,30 @@ function trim(input)
     if not is_empty(input) then
         return input:match "^%s*(.-)%s*$"
     end
+end
+
+function split(input, sep)
+    local tbl = {}
+
+    if not is_empty(input) then
+        for str in string.gmatch(input, "([^" .. sep .. "]+)") do
+            table.insert(tbl, str)
+        end
+    end
+
+    return tbl
+end
+
+----- list
+
+function list_contains(list, value)
+    for _, v in pairs(list) do
+        if v == value then
+            return true
+        end
+    end
+
+    return false
 end
 
 ----- math
@@ -436,3 +482,68 @@ mp.register_script_message("restart-mpv", function ()
 
     mp.command("quit")
 end)
+
+----- Cycle audio and subtitle tracks
+
+mp.register_script_message("cycle-known-tracks", function (mode)
+    if mode == "audio" then
+        cycle_tracks("alang", "aid", "audio")
+    else
+        cycle_tracks("slang", "sid", "sub")
+    end
+end)
+
+function cycle_tracks(lang_prop, id_prop, type_name)
+    local prop = mp.get_property(lang_prop)
+    prop = string.gsub(prop, " ", "")
+    local lang_list = split(prop, ",")
+    local id_list = {-1}
+    local track_count = mp.get_property_number("track-list/count")
+    local count = 1
+
+    for i = 0, (track_count - 1) do
+        local track_type = mp.get_property("track-list/" .. i .. "/type")
+        local lang = mp.get_property("track-list/" .. i .. "/lang")
+
+        if track_type == type_name then
+            count = count + 1
+
+            if list_contains(lang_list, lang) or lang == nil then
+                local id = mp.get_property_number("track-list/" .. i .. "/id")
+                table.insert(id_list, id)
+            end
+        end
+    end
+
+    if count < 5 or prop == "" then
+        mp.command("cycle " .. type_name)
+        return
+    end
+
+    local id = mp.get_property_number(id_prop)
+
+    if id == nil then
+        id = -1
+    end
+
+    local counter = 0
+
+    while counter < count do
+        counter = counter + 1
+        id = id + 1
+
+        if id >= count then
+            id = -1
+        end
+
+        if list_contains(id_list, id) then
+            if id == -1 then
+                mp.command("set " .. id_prop .. " no")
+            else
+                mp.command("set " .. id_prop .. " " .. id)
+            end
+
+            break
+        end
+    end
+end
