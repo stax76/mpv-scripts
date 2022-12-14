@@ -49,8 +49,10 @@
     SHARP script-message-to misc cycle-known-tracks audio
     j     script-message-to misc cycle-known-tracks sub
 
-    If you prefer a menu, you can use:
+    If you prefer a menu:
     https://github.com/dyphire/mpv-scripts/blob/main/track-list.lua
+    https://github.com/stax76/mpv-scripts#search-menu
+    https://codeberg.org/NRK/mpv-toolbox/src/branch/master/mdmenu
 
 
 
