@@ -12,7 +12,7 @@ at the beginning of the script.
 - [history.lua](history.lua) - Writes date, time, playtime and filename to a log file.
 - [osm.lua](osm.lua) - Shows a customizable on screen menu.
 - [misc.lua](misc.lua)
-  - Show detailed media info on screen.
+  - Show detailed media info on screen ([Screenshot](#screenshot-misclua)).
   - Cycle audio and subtitle tracks, include only languages you know.
   - Load or append files/URLs from clipboard.
   - Jump to a random position in the playlist.
@@ -83,7 +83,7 @@ Alt+s script-message-to search_menu show-search-menu sub-track   # Search Subtit
 Which dependencies are required depend
 on which mode and feature is used.
 
-- [Python](https://www.python.org)
+- [Python](https://www.python.org) - Always required.
 - [Rofi](https://github.com/davatorium/rofi) - Required launcher app for rofi mode, depends on Linux and X11.
 - [fzf](https://github.com/junegunn/fzf) - Required CLI tool for modes other than rofi (terminal modes).
 - [MediaInfo](https://mediaarea.net/en/MediaInfo) - Required CLI tool to search audio or subtitle tacks.
@@ -95,7 +95,7 @@ on which mode and feature is used.
 Invoke a menu via shortcut key, type a search keyword, use up/down key to select,
 enter key to confirm, escape key to close.
 
-### Similar Projects
+### Related Projects
 
 - https://github.com/Seme4eg/mpv-scripts/tree/master#m-x
 - https://github.com/CogentRedTester/mpv-search-page
