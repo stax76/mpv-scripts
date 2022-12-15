@@ -1,6 +1,8 @@
 
 --[[
 
+    https://github.com/stax76/mpv-scripts
+
     All this script does is writing to a log file.
     
     It writes:

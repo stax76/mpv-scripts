@@ -1,4 +1,6 @@
 
+-- https://github.com/stax76/mpv-scripts
+
 ----- string
 
 function is_empty(input)

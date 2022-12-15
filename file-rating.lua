@@ -1,6 +1,8 @@
 
 --[[
 
+    https://github.com/stax76/mpv-scripts
+
     This script writes a star rating to the filename
     of rated files when mpv shuts down. When a file
     is rated the last modified file date is set to now.

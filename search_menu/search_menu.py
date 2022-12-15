@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# https://github.com/stax76/mpv-scripts
+
 import os
 import json
 import sys

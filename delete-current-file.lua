@@ -1,6 +1,8 @@
 
 --[[
 
+    https://github.com/stax76/mpv-scripts
+
     This script instantly deletes the file that is currently playing
     via keyboard shortcut, the file is moved to the recycle bin and
     removed from the playlist.

@@ -1,6 +1,8 @@
 
 --[[
 
+    https://github.com/stax76/mpv-scripts
+
     This script changes options depending on what type of
     file is played. It uses the file extension to detect
     if the current file is a video, audio or image file.
@@ -68,8 +70,8 @@ end
 -- binding configuration
 
 audio_mode_bindings = {
-    { "Left",   function () mp.command("no-osd seek -10") end,         "repeatable" }, -- make audio mode seek length longer than video mode seek length
-    { "Right",  function () mp.command("no-osd seek  10") end,         "repeatable" }, -- make audio mode seek length longer than video mode seek length
+    { "Left",   function () mp.command("no-osd seek -10") end,        "repeatable" }, -- make audio mode seek length longer than video mode seek length
+    { "Right",  function () mp.command("no-osd seek  10") end,        "repeatable" }, -- make audio mode seek length longer than video mode seek length
     { "Ctrl++",  function () mp.command("add volume  5") end,         "repeatable" }, -- increase volume by 5
     { "Ctrl+-",  function () mp.command("add volume -5") end,         "repeatable" }, -- decrease volume by 5
 }

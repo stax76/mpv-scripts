@@ -1,6 +1,8 @@
 
 --[[
 
+https://github.com/stax76/mpv-scripts
+
 Shows a customizable on screen menu,
 which is useful to navigate via remote control.
 

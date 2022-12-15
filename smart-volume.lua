@@ -1,6 +1,8 @@
 
 --[[
 
+    https://github.com/stax76/mpv-scripts
+
     This script records the volume per song in order to restore
     it in future sessions.
 

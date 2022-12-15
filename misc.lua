@@ -1,6 +1,8 @@
 
 --[[
 
+    https://github.com/stax76/mpv-scripts
+
     This script consist of various small unrelated features.
 
     Not used code sections can be removed.
