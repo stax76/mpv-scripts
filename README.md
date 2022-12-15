@@ -1,21 +1,23 @@
 
-Collection of mpv scripts for Windows and Linux, MacOS support is limited.
-
-Screenshots are at the bottom of this page.  
+Collection of mpv scripts for Windows and Linux, macOS support is limited.
 
 Search Menu is documented here, all other scripts are
 documented directly in the script via a code comment
 at the beginning of the script.
 
-# Search Menu
+# search_menu
 
 ### About
 
 Search Menu is a searchable menu based on Rofi or terminal based on fzf.
 
+![Terminal search menu](screenshots/search_menu-binding.png)
+
+![Rofi search menu](screenshots/rofi.png)
+
 ### Installation
 
-Save the search menu folder at `~~/scripts/search_menu`,
+Save the search menu folder at `~~/scripts/search_menu/`,
 it contains main.lua and a Python script.
 
 See Dependencies section to install dependencies.
@@ -81,17 +83,8 @@ enter key to confirm, escape key to close.
 - https://codeberg.org/NRK/mpv-toolbox/src/branch/master/mdmenu
 - https://github.com/mpvnet-player/mpv.net#command-palette
 
-# Screenshots
+# Screenshot misc.lua
 
-misc.lua has various features, among them
-is printing media info on the screen.
+misc.lua has various features, among them is printing media info on the screen.
 
 ![media-info](screenshots/media-info.jpg)
-
-## Rofi based search menu
-
-![Rofi search menu](screenshots/rofi.png)
-
-## Terminal based search menu
-
-![Terminal search menu](screenshots/search_menu-binding.png)
