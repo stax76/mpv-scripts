@@ -28,7 +28,7 @@ at the beginning of the script.
 
 search_menu is a searchable menu (command palette) based on [Rofi](https://github.com/davatorium/rofi) (Linux) or terminal based on [fzf](https://github.com/junegunn/fzf) (cross-platform).
 
-It provides a searchable menu for bindings, commands, properties, playlist entries, audio and subtitle tracks.
+It provides a searchable menu for bindings, commands, properties, playlist entries and audio/subtitle tracks.
 
 ![Terminal search menu](screenshots/search_menu-binding.png)
 
@@ -64,7 +64,7 @@ On Windows Alacritty and Nushell have the advantage of a faster startup.
 
 On Linux Alacritty has the advantage of not having any UI apart from the terminal.
 
-The Rofi configuration has like mpv a steep learning curve.
+Rofi has like mpv a steep learning curve.
 
 #### input.conf:
 
@@ -83,12 +83,12 @@ Alt+s script-message-to search_menu show-search-menu sub-track   # Search Subtit
 Which dependencies are required depend
 on which mode and feature is used.
 
-- https://www.python.org
-- https://github.com/davatorium/rofi - Required launcher app for rofi mode, depends on Linux and X11.
-- https://github.com/junegunn/fzf - Required CLI tool for modes other than rofi (terminal modes).
-- https://mediaarea.net/en/MediaInfo - Required CLI tool to search audio or subtitle tacks.
-- https://alacritty.org - Modern, simple and fast alternative for Gnome Terminal and Windows Terminal.
-- https://www.nushell.sh - Modern shell that starts 200 ms faster than PowerShell.
+- [Python](https://www.python.org)
+- [Rofi](https://github.com/davatorium/rofi) - Required launcher app for rofi mode, depends on Linux and X11.
+- [fzf](https://github.com/junegunn/fzf) - Required CLI tool for modes other than rofi (terminal modes).
+- [MediaInfo](https://mediaarea.net/en/MediaInfo) - Required CLI tool to search audio or subtitle tacks.
+- [Alacritty](https://alacritty.org) - Modern, simple and fast terminal emulator.
+- [Nushell](https://www.nushell.sh) - Modern shell that starts 200 ms faster than PowerShell.
 
 ### Usage
 
