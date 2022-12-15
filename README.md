@@ -5,6 +5,23 @@ search_menu is documented here, all other scripts are
 documented directly in the script via code comment
 at the beginning of the script.
 
+- [search_menu](#search_menu) - Searchable menu to search for bindings, commands, properties, playlist entries and audio/subtitle tracks
+- [auto-mode.lua](#auto-mode.lua) - Use mpv as video player, music player and image viewer 
+- [delete-current-file.lua](#delete-current-file.lua) - Moves the currently playing file instantly to the recycle bin
+- [file-rating.lua](#file-rating.lua) - Writes a star rating to the filename of the currently playing file
+- [history.lua](#history.lua) - Writes date, time, playtime and filename to a log file
+- [osm.lua](#osm.lua) - Shows a customizable on screen menu
+- [misc.lua](#misc.lua)
+  - Show detailed media info on screen
+  - Cycle audio and subtitle tracks, include only languages you know
+  - Load or append files/URLs from clipboard
+  - Jump to a random position in the playlist
+  - Navigate in playlist to next/previous/first/last file
+  - Restart mpv restoring the properties path, time-pos, pause and volume
+  - Execute Lua code from input.conf
+  - When seeking display position and duration like so: 70:00 / 80:00
+- [smart-volume.lua](#smart-volume.lua) - Records and restores the relative volume for music
+
 # search_menu
 
 ### About
