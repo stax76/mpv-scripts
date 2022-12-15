@@ -1,15 +1,17 @@
 
 Collection of mpv scripts for Windows and Linux, macOS support is limited.
 
-Search Menu is documented here, all other scripts are
-documented directly in the script via a code comment
+search_menu is documented here, all other scripts are
+documented directly in the script via code comment
 at the beginning of the script.
 
 # search_menu
 
 ### About
 
-Search Menu is a searchable menu based on Rofi or terminal based on fzf.
+search_menu is a searchable menu (command palette) based on [Rofi](https://github.com/davatorium/rofi) (Linux) or terminal based on [fzf](https://github.com/junegunn/fzf) (cross-platform).
+
+It provides a searchable menu for bindings, commands, properties, playlist entries, audio and subtitle tracks.
 
 ![Terminal search menu](screenshots/search_menu-binding.png)
 
@@ -17,10 +19,10 @@ Search Menu is a searchable menu based on Rofi or terminal based on fzf.
 
 ### Installation
 
+See Dependencies section to install dependencies.
+
 Save the search menu folder at `~~/scripts/search_menu/`,
 it contains main.lua and a Python script.
-
-See Dependencies section to install dependencies.
 
 ### Configuration
 
@@ -45,7 +47,7 @@ On Windows Alacritty and Nushell have the advantage of a faster startup.
 
 On Linux Alacritty has the advantage of not having any UI apart from the terminal.
 
-The Rofi configuration has like mpv a learning curve.
+The Rofi configuration has like mpv a steep learning curve.
 
 #### input.conf:
 
@@ -65,11 +67,11 @@ Which dependencies are required depend
 on which mode and feature is used.
 
 - https://www.python.org
-- https://github.com/davatorium/rofi - Required for rofi mode, depends on Linux and X11.
-- https://github.com/junegunn/fzf - Required for modes other than rofi (terminal modes).
-- https://mediaarea.net/en/MediaInfo - Required to search audio or subtitle tacks.
-- https://alacritty.org - Alternative for Gnome Terminal and Windows Terminal.
-- https://www.nushell.sh - Starts 200 ms faster than PowerShell.
+- https://github.com/davatorium/rofi - Required launcher app for rofi mode, depends on Linux and X11.
+- https://github.com/junegunn/fzf - Required CLI tool for modes other than rofi (terminal modes).
+- https://mediaarea.net/en/MediaInfo - Required CLI tool to search audio or subtitle tacks.
+- https://alacritty.org - Modern, simple and fast alternative for Gnome Terminal and Windows Terminal.
+- https://www.nushell.sh - Modern shell that starts 200 ms faster than PowerShell.
 
 ### Usage
 
@@ -81,7 +83,8 @@ enter key to confirm, escape key to close.
 - https://github.com/Seme4eg/mpv-scripts/tree/master#m-x
 - https://github.com/CogentRedTester/mpv-search-page
 - https://codeberg.org/NRK/mpv-toolbox/src/branch/master/mdmenu
-- https://github.com/mpvnet-player/mpv.net#command-palette
+- https://github.com/mpvnet-player/mpv.net
+- https://github.com/tsl0922/ImPlay
 
 # Screenshot misc.lua
 
