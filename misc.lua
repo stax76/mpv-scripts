@@ -56,7 +56,7 @@
 
     ## If more than 5 tracks exist, only known are cycled,
     ## define 0 to always cycle only known tracks.
-    #max_audio_track_count=5 
+    #max_audio_track_count=5
     #max_sub_track_count=5
 
     If you prefer a menu:
@@ -132,18 +132,14 @@
 
     01:10:00 / 01:20:00
 
-    In input.conf set the input command prefix
-    no-osd infront of the seek commands.
-
-    Must be enabled in conf file:
-    ~~home/script-opts/misc.conf: alternative_seek_text=yes
+    input.conf:
+    Right no-osd seek 5; script-message-to misc show-position
 
 ]]--
 
 ----- options
 
 local o = {
-    alternative_seek_text = false,
     include_no_audio = false,
     include_no_sub = true,
     max_audio_track_count = 5,
@@ -268,7 +264,7 @@ end)
 
 ----- Alternative seek OSD message
 
-function add_zero(value)
+function pad_zero(value)
     local value = round(value)
 
     if value > 9 then
@@ -278,7 +274,7 @@ function add_zero(value)
     end
 end
 
-function format(value)
+function format_pos(value)
     local seconds = round(value)
 
     if seconds < 0 then
@@ -288,10 +284,10 @@ function format(value)
     local pos_min_floor = math.floor(seconds / 60)
     local sec_rest = seconds - pos_min_floor * 60
 
-    return add_zero(pos_min_floor) .. ":" .. add_zero(sec_rest)
+    return pad_zero(pos_min_floor) .. ":" .. pad_zero(sec_rest)
 end
 
-function on_seek()
+function show_pos()
     local position = mp.get_property_number("time-pos")
     local duration = mp.get_property_number("duration")
 
@@ -300,13 +296,13 @@ function on_seek()
     end
 
     if position ~= 0 then
-        mp.osd_message(format(position) .. " / " .. format(duration))
+        mp.osd_message(format_pos(position) .. " / " .. format_pos(duration))
     end
 end
 
-if o.alternative_seek_text then
-    mp.register_event("seek", on_seek)
-end
+mp.register_script_message("show-position", function (mode)
+    mp.add_timeout(0.05, show_pos)
+end)
 
 ----- Print media info on screen
 
