@@ -44,11 +44,14 @@ highlight_color=00ccff
 cursor_icon="➜"
 indent_icon="\h\h\h"
 
+If the command contains 'keep-open' in the comment,
+the menu stays open after the command is executed.
+
 ]]--
 
 ----- string
 
-function string_contains(value, find)
+function contains(value, find)
     return value:find(find, 1, true)
 end
 
@@ -151,10 +154,10 @@ function invoke()
     local index = selected_index
     local cmd = active_menu[index][2]
 
-    if not string_contains(cmd, "#no-close") then
+    if not contains(cmd, "#keep-open") then
         close()
     end
-    
+
     mp.command(cmd)
 end
 

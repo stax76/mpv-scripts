@@ -72,8 +72,6 @@ end
 audio_mode_bindings = {
     { "Left",   function () mp.command("no-osd seek -10") end,        "repeatable" }, -- make audio mode seek length longer than video mode seek length
     { "Right",  function () mp.command("no-osd seek  10") end,        "repeatable" }, -- make audio mode seek length longer than video mode seek length
-    { "Ctrl++",  function () mp.command("add volume  5") end,         "repeatable" }, -- increase volume by 5
-    { "Ctrl+-",  function () mp.command("add volume -5") end,         "repeatable" }, -- decrease volume by 5
 }
 
 image_mode_bindings = {

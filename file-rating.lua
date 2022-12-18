@@ -19,7 +19,7 @@
 
 ----- string
 
-function string_contains(value, find)
+function contains(value, find)
     return value:find(find, 1, true)
 end
 
@@ -122,7 +122,7 @@ function rate_file(path, rating)
     local base = file_base_name(file_name(path))
 
     for i = 0, 5 do
-        if string_contains(base, " (" .. i .. "stars)") then
+        if contains(base, " (" .. i .. "stars)") then
             base = string_replace(base, " (" .. i .. "stars)", "")
             break
         end

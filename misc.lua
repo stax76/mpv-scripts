@@ -38,10 +38,9 @@
     -------------------------------
     If there are 20+ subtitle tracks, it's annoying cycling through all
     of them. This feature allows you to cycle only through languages
-    you actually know. If more than 5 tracks exist, only languages
-    defined by alang/slang are cycled.
+    you actually know.
 
-    In mpv.conf define your languages:
+    In mpv.conf define your known languages:
     alang = de,deu,ger,en,eng #German/English
     slang = en,eng,de,deu,ger #English/German
 
@@ -50,6 +49,15 @@
 
     SHARP script-message-to misc cycle-known-tracks audio
     j     script-message-to misc cycle-known-tracks sub
+
+    ~~home/script-opts/misc.conf:
+    #include_no_audio=no
+    #include_no_sub=yes
+
+    ## If more than 5 tracks exist, only known are cycled,
+    ## define 0 to always cycle only known tracks.
+    #max_audio_track_count=5 
+    #max_sub_track_count=5
 
     If you prefer a menu:
     https://github.com/dyphire/mpv-scripts/blob/main/track-list.lua
@@ -136,6 +144,10 @@
 
 local o = {
     alternative_seek_text = false,
+    include_no_audio = false,
+    include_no_sub = true,
+    max_audio_track_count = 5,
+    max_sub_track_count = 5,
 }
 
 opt = require "mp.options"
@@ -501,33 +513,54 @@ function cycle_tracks(lang_prop, id_prop, type_name)
     local prop = mp.get_property(lang_prop)
     prop = string.gsub(prop, " ", "")
     local lang_list = split(prop, ",")
-    local id_list = {-1}
+    local id_list = {}
+    local count = 0
+
+    if (o.include_no_audio and type_name == "audio") or
+        (o.include_no_sub and type_name == "sub") then
+
+        table.insert(id_list, -1)
+        count = 1
+    end
+
     local track_count = mp.get_property_number("track-list/count")
-    local count = 1
+
+    for i = 0, (track_count - 1) do
+        local track_type = mp.get_property("track-list/" .. i .. "/type")
+
+        if track_type == type_name then
+            count = count + 1
+        end
+    end
+
+    local max_count = o.max_audio_track_count
+
+    if type_name == "sub" then
+        max_count = o.max_sub_track_count
+    end
 
     for i = 0, (track_count - 1) do
         local track_type = mp.get_property("track-list/" .. i .. "/type")
         local lang = mp.get_property("track-list/" .. i .. "/lang")
 
         if track_type == type_name then
-            count = count + 1
+            if list_contains(lang_list, lang) or lang == nil or
+                lang_prop == "" or count < max_count then
 
-            if list_contains(lang_list, lang) or lang == nil then
                 local id = mp.get_property_number("track-list/" .. i .. "/id")
                 table.insert(id_list, id)
             end
         end
     end
 
-    if count < 5 or prop == "" then
-        mp.command("cycle " .. type_name)
+    if #id_list < 2 then
         return
     end
 
     local id = mp.get_property_number(id_prop)
 
     if id == nil then
-        id = -1
+        id = id_list[1]
     end
 
     local counter = 0
@@ -536,8 +569,8 @@ function cycle_tracks(lang_prop, id_prop, type_name)
         counter = counter + 1
         id = id + 1
 
-        if id >= count then
-            id = -1
+        if id > count then
+            id = id_list[1]
         end
 
         if list_contains(id_list, id) then

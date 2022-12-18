@@ -44,7 +44,7 @@ end
 
 ----- string
 
-function string_contains(value, find)
+function contains(value, find)
     return value:find(find, 1, true)
 end
 
@@ -77,8 +77,8 @@ function normalize_path(path)
 
     local is_windows = package.config:sub(1,1) == "\\"
 
-    if is_windows and ((string_contains(path, ":/") and not string_contains(path, "://")) or
-       (string_contains(path, ":\\") and string_contains(path, "/"))) then
+    if is_windows and ((contains(path, ":/") and not contains(path, "://")) or
+       (contains(path, ":\\") and contains(path, "/"))) then
 
         path = string_replace(path, "/", "\\")
     end
