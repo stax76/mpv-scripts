@@ -3,51 +3,102 @@
 
 https://github.com/stax76/mpv-scripts
 
-Shows a customizable on screen menu,
-which is useful to navigate via remote control.
+This script shows a customizable on screen menu.
+
+Some code parts are derived from:
+
+https://github.com/dyphire/mpv-scripts/blob/main/chapter-list.lua
+
 
 Usage:
-1. Define menus at: ~~/script-opts/osm-menu.conf
+
+Download the following dependency:
+
+https://github.com/CogentRedTester/mpv-scroll-list/blob/master/scroll-list.lua
+
+Save it at: ~~/script-modules/scroll-list.lua
+
+
+Define menus using INI format at: ~~/script-opts/osm-menu.conf
 
 osm-menu.conf example:
 
 [main]
-Write watch later config = write-watch-later-config
-Power = script-message-to osm show-menu power
+Quit = quit
+Zoom = script-message-to osm show-menu zoom
 
-[power]
-Shutdown = run shutdown.exe -f -s
-Sleep    = run powershell.exe -Command "[Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms');[Windows.Forms.Application]::SetSuspendState('Suspend',$false,$false)"
+[zoom]
+Zoom In  = add video-zoom  0.1 #keep-open
+Zoom Out = add video-zoom -0.1 #keep-open
 
 
-2. Add a binding to your input.conf file:
-CTRL+M script-message-to osm show-menu main
+Add a binding to your input.conf file:
+<key> script-message-to osm show-menu main
 
-3. Show the menu and navigate it with the keys:
-LEFT   Close the menu
-RIGHT  Invoke the selection
-UP     Move the selection up
-DOWN   Move the selection down
-ENTER  Invoke the selection
-SPACE  Invoke the selection
-BS     Close the menu
-ESC    Close the menu
 
-4. Optionally define options at: ~~/script-opts/osm.conf
+Show the menu and navigate it with the keys:
 
-# Spaces before and after the
-# equal sign or not allowed.
-font_scale=90
-border_size=1.0
-# BGR
-highlight_color=00ccff
-cursor_icon="➜"
-indent_icon="\h\h\h"
+Move selection up:   UP, WHEEL_UP
+Move selection down: DOWN, WHEEL_DOWN
+Invoke selection:    ENTER, RIGHT, SPACE, MBTN_LEFT
+Close menu:          LEFT, ESC, BS, MBTN_RIGHT
+HOME:                Move selection to top
+END:                 Move selection to bottom
+PGUP:                Move selection page up
+PGDWN:               Move selection page down
+
+
+Optionally create and configure options at: ~~/script-opts/osm.conf
+
+## https://fileformats.fandom.com/wiki/SubStation_Alpha#Style_overrides
+## https://github.com/CogentRedTester/mpv-scroll-list
+
+#header_style={\q2\fs45\c&00ccff&}
+#list_style={\q2\fs45\c&Hffffff&}
+#selected_style={\c&H00ccff&}
+#wrapper_style={\c&00ccff&\fs35}
+#cursor=➜\h
+#show_header=no
+#num_entries=12
+
+#key_move_begin=HOME
+#key_move_end=END
+#key_move_pageup=PGUP
+#key_move_pagedown=PGDWN
+#key_scroll_down=DOWN WHEEL_DOWN
+#key_scroll_up=UP WHEEL_UP
+#key_invoke=ENTER SPACE RIGHT MBTN_LEFT
+#key_close=ESC LEFT BS MBTN_RIGHT
+
 
 If the command contains 'keep-open' in the comment,
 the menu stays open after the command is executed.
 
 ]]--
+
+----- options
+
+local o = {
+    header_style = "{\\q2\\fs45\\c&00ccff&}",
+    list_style = "{\\q2\\fs45\\c&Hffffff&}",
+    selected_style = "{\\c&H00ccff&}",
+    wrapper_style = "{\\c&00ccff&\\fs35}",
+    cursor = "➜\\h",
+    show_header = false,
+    num_entries = 12,
+
+    key_move_begin = "HOME",
+    key_move_end = "END",
+    key_move_pageup = "PGUP",
+    key_move_pagedown = "PGDWN",
+    key_scroll_down = "DOWN WHEEL_DOWN",
+    key_scroll_up = "UP WHEEL_UP",
+    key_invoke = "ENTER SPACE RIGHT MBTN_LEFT",
+    key_close = "ESC LEFT BS MBTN_RIGHT",
+}
+
+opt = require "mp.options"
+opt.read_options(o)
 
 ----- string
 
@@ -57,7 +108,7 @@ end
 
 ----- file
 
--- ini reader from: https://forum.rainmeter.net/viewtopic.php?t=38190
+-- https://forum.rainmeter.net/viewtopic.php?t=38190
 function read_ini(input_file)
     local file = assert(io.open(input_file, 'r'), 'Unable to open ' .. input_file)
     local tbl = {}
@@ -95,136 +146,80 @@ end
 ----- osm
 
 menus = {}
-bindings = {}
-selected_index = 1
+lists = {}
+msg = require "mp.msg"
 
-local o = {
-    font_scale = 90,
-    border_size = 1.0,
-    -- BGR
-    highlight_color = "00ccff",
-    cursor_icon = "➜",
-    indent_icon = [[\h\h\h]],
-}
+local function add_keys(list, keys, name, fn, flags)
+    local i = 1
 
-opt = require "mp.options"
-opt.read_options(o)
+    for key in keys:gmatch("%S+") do
+        table.insert(list.keybinds, { key, name .. i, fn, flags })
+        i = i + 1
+    end
+end
 
 function show(name)
     mp.command("script-message osc-idlescreen no no_osd")
+    local menu = menus[name]
 
-    active_menu = menus[name]
-
-    if active_menu == nil then
-        print(name .. ' is unknown.')
-        return nil
+    if menu == nil then
+        msg.error("A menu named '" .. name .. "' does not exist.")
+        return
     end
 
-    close()
-    add_bindings()
-    draw()
-end
+    if lists[name] == nil then
+        local list = dofile(mp.command_native({"expand-path", "~~/script-modules/scroll-list.lua"}))
 
-function draw()
-    local text = string.format("{\\fscx%f}{\\fscy%f}{\\bord%f}", o.font_scale, o.font_scale, o.border_size)
-    text = text .. '\\N\\N'
-    local hi_start = string.format("{\\1c&H%s}", o.highlight_color)
-    local hi_end = "{\\1c&HFFFFFF}"
+        list.name = name
+        list.menu = menu
+        list.cursor = o.cursor
+        list.list_style = o.list_style
+        list.header_style = o.header_style
+        list.wrapper_style = o.wrapper_style
+        list.selected_style = o.selected_style
+        list.num_entries = o.num_entries
+        list.list = {}
 
-    for index, value in ipairs(active_menu) do
-        local name = value[1]
+        function list:invoke()
+            local cmd = self.menu[self.selected][2]
 
-        if index == selected_index then
-            text = text .. hi_start .. ' ' .. o.cursor_icon .. ' ' .. name .. hi_end .. "\\N"
-        else
-            text = text .. ' ' .. o.indent_icon .. ' ' .. name .. "\\N"
+            if not contains(cmd, "keep-open") then
+                list:close()
+            end
+
+            mp.command(cmd)
         end
+
+        if o.show_header then
+            list.header = name .. "\\N ----------------------------------------------"
+        else
+            list.header = "\\N"
+        end
+
+        for index, value in ipairs(menu) do
+            list.list[index] = { ass = value[1] }
+        end
+
+        list.keybinds = {}
+
+        add_keys(list, o.key_scroll_down, 'scroll_down', function() list:scroll_down() end, {repeatable = true})
+        add_keys(list, o.key_scroll_up, 'scroll_up', function() list:scroll_up() end, {repeatable = true})
+        add_keys(list, o.key_move_pageup, 'move_pageup', function() list:move_pageup() end, {})
+        add_keys(list, o.key_move_pagedown, 'move_pagedown', function() list:move_pagedown() end, {})
+        add_keys(list, o.key_move_begin, 'move_begin', function() list:move_begin() end, {})
+        add_keys(list, o.key_move_end, 'move_end', function() list:move_end() end, {})
+        add_keys(list, o.key_invoke, 'invoke', function() list:invoke() end, {})
+        add_keys(list, o.key_close, 'close', function() list:close() end, {})
+
+        lists[name] = list
     end
 
-    mp.set_osd_ass(0, 0, text)
+    lists[name]:open()
 end
 
-function close()
-    selected_index = 1
-    mp.set_osd_ass(0, 0, "")
-    remove_bindings()
-end
-
-function invoke()
-    local index = selected_index
-    local cmd = active_menu[index][2]
-
-    if not contains(cmd, "#keep-open") then
-        close()
-    end
-
-    mp.command(cmd)
-end
-
-function up()
-    selected_index = selected_index - 1
-
-    if selected_index < 1 then
-        selected_index = #active_menu
-    end
-
-    draw()
-end
-
-function down()
-    selected_index = selected_index + 1
-
-    if selected_index > #active_menu then
-        selected_index = 1
-    end
-
-    draw()
-end
-
-function get_bindings()
-    return {
-        { 'LEFT',  close },
-        { 'RIGHT', invoke },
-        { 'UP',    up },
-        { 'DOWN',  down },
-        { 'ENTER', invoke },
-        { 'SPACE', invoke },
-        { 'BS',    close },
-        { 'ESC',   close },
-    }
-end
-
-function add_bindings()
-    if #bindings > 0 then
-        return
-    end
-
-    local script_name = mp.get_script_name()
-
-    for _, bind in ipairs(get_bindings()) do
-        local name = script_name .. "_key_" .. (#bindings + 1)
-        bindings[#bindings + 1] = name
-        mp.add_forced_key_binding(bind[1], name, bind[2])
-    end
-end
-
-function remove_bindings()
-    if #bindings == 0 then
-        return
-    end
-
-    for _, name in ipairs(bindings) do
-        mp.remove_key_binding(name)
-    end
-
-    bindings = {}
-end
-
-function show_menu(name)
+mp.register_script_message("show-menu", function (name)
     show(name)
-end
-
-mp.register_script_message("show-menu", show_menu)
+end)
 
 menu_conf_path = mp.command_native({"expand-path", "~~/script-opts"}) .. "/osm-menu.conf"
 
@@ -233,6 +228,7 @@ ini = read_ini(menu_conf_path)
 for k, v in pairs(ini.ini) do
     if k ~= '_default_' then
         menus[k] = {}
+
         for _, v2 in ipairs(ini.key_order[k]) do
             table.insert(menus[k], { v2, v[v2]})
         end
