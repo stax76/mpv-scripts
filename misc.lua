@@ -608,13 +608,13 @@ mp.register_script_message("quick-bookmark", function ()
     path = string.gsub(path, "/", "")
     path = string.gsub(path, "\\", "")
     path = string.gsub(path, ":", "")
+    path = utils.join_path(folder, path)
 
-    local file = utils.join_path(folder, path)
-
-    if file_exists(file) then
-        mp.set_property_number("time-pos", tonumber(file_read(file)))
-        os.remove(file)
+    if file_exists(path) then
+        mp.set_property_number("time-pos", tonumber(file_read(path)))
+        os.remove(path)
     else
-        file_write(file, mp.get_property("time-pos"))
+        file_write(path, mp.get_property("time-pos"))
+        mp.osd_message("Bookmark saved")
     end
 end)
