@@ -18,6 +18,7 @@
     Depends on the CLI tool 'mediainfo':
     https://mediaarea.net/en/MediaInfo/Download
 
+    In input.conf add:
     i script-message-to misc print-media-info
 
 
@@ -29,6 +30,7 @@
     Allows appending to the playlist.
     On Linux requires xclip being installed.
 
+    In input.conf add:
     ctrl+v script-message-to misc load-from-clipboard
     ctrl+V script-message-to misc append-from-clipboard
 
@@ -47,6 +49,7 @@
     If you don't know the language IDs, use the terminal,
     mpv prints the language IDs there whenever a video file is loaded.
 
+    In input.conf add:
     SHARP script-message-to misc cycle-known-tracks audio
     j     script-message-to misc cycle-known-tracks sub
 
@@ -68,6 +71,7 @@
 
     Jump to a random position in the playlist
     -----------------------------------------
+    In input.conf add:
     ctrl+r script-message-to misc playlist-random
 
     If pos=last it jumps to first instead of random.
@@ -76,9 +80,16 @@
 
     Quick Bookmark
     --------------
-    Creates or restores a single bookmark that persists
-    as long as a file is opened.
+    Creates or restores a single bookmark.
 
+    Usage:
+    Create a folder in the following location:
+    ~~home/script-settings/quick-bookmark/
+    Or create it somewhere else, config at:
+    ~~home/script-opts/misc.conf:
+    quick_bookmark_folder=<folder path>
+
+    In input.conf add:
     ctrl+q script-message-to misc quick-bookmark
 
  
@@ -140,13 +151,16 @@
 ----- options
 
 local o = {
+    -- Cycle audio and subtitle tracks
     include_no_audio = false,
     include_no_sub = true,
     max_audio_track_count = 5,
     max_sub_track_count = 5,
+    -- Quick Bookmark
+    quick_bookmark_folder = "~~home/script-settings/quick-bookmark/",
 }
 
-opt = require "mp.options"
+local opt = require "mp.options"
 opt.read_options(o)
 
 ----- string
@@ -211,6 +225,13 @@ function file_exists(path)
     end
 end
 
+function file_read(file_path)
+    local file = assert(io.open(file_path, "r"))
+    local content = file:read("*all")
+    file:close()
+    return content
+end
+
 function file_write(path, content)
     local file = assert(io.open(path, "w"))
     file:write(content)
@@ -219,9 +240,17 @@ end
 
 ----- shared
 
-is_windows = package.config:sub(1,1) == "\\"
+local is_windows = package.config:sub(1,1) == "\\"
+local msg = require "mp.msg"
+local utils = require "mp.utils"
 
-msg = require "mp.msg"
+function get_temp_dir()
+    if is_windows then
+        return os.getenv("TEMP") .. "\\"
+    else
+        return "/tmp/"
+    end
+end
 
 ----- Jump to a random position in the playlist
 
@@ -235,25 +264,6 @@ mp.register_script_message("playlist-random", function ()
     end
 
     mp.set_property_number("playlist-pos", new_pos)
-end)
-
------ Quick Bookmark
-
-quick_bookmark_position = 0
-quick_bookmark_file = ""
-
-mp.register_script_message("quick-bookmark", function ()
-    if quick_bookmark_position == 0 then
-        quick_bookmark_position = mp.get_property_number("time-pos")
-        quick_bookmark_file = mp.get_property("path")
-
-        if quick_bookmark_position ~= 0 then
-            mp.osd_message("Bookmark Saved")
-        end
-    elseif quick_bookmark_file == mp.get_property("path") then
-        mp.set_property_number("time-pos", quick_bookmark_position)
-        quick_bookmark_position = 0
-    end
 end)
 
 ----- Execute Lua code
@@ -306,27 +316,23 @@ end)
 
 ----- Print media info on screen
 
-media_info_format = [[General;N: %FileNameExtension%\\nG: %Format%, %FileSize/String%, %Duration/String%, %OverallBitRate/String%, %Recorded_Date%\\n
-Video;V: %Format%, %Format_Profile%, %Width%x%Height%, %BitRate/String%, %FrameRate% FPS\\n
-Audio;A: %Language/String%, %Format%, %Format_Profile%, %BitRate/String%, %Channel(s)% ch, %SamplingRate/String%, %Title%\\n
-Text;S: %Language/String%, %Format%, %Format_Profile%, %Title%\\n]]
-
-if is_windows then
-    format_file = os.getenv("TEMP") .. "/media-info-format-2.txt"
-else
-    format_file = "/tmp/media-info-format-2.txt"
-end
-
-if not file_exists(format_file) then
-    file_write(format_file, media_info_format)
-end
-
 function show_text(text, duration, font_size)
     mp.command('show-text "${osd-ass-cc/0}{\\\\fs' .. font_size ..
         '}${osd-ass-cc/1}' .. text .. '" ' .. duration)
 end
 
-function on_print_media_info()
+function get_media_info()
+    local media_info_format = [[General;N: %FileNameExtension%\\nG: %Format%, %FileSize/String%, %Duration/String%, %OverallBitRate/String%, %Recorded_Date%\\n
+Video;V: %Format%, %Format_Profile%, %Width%x%Height%, %BitRate/String%, %FrameRate% FPS\\n
+Audio;A: %Language/String%, %Format%, %Format_Profile%, %BitRate/String%, %Channel(s)% ch, %SamplingRate/String%, %Title%\\n
+Text;S: %Language/String%, %Format%, %Format_Profile%, %Title%\\n]]
+
+    local format_file = get_temp_dir() .. "media-info-format-2.txt"
+
+    if not file_exists(format_file) then
+        file_write(format_file, media_info_format)
+    end
+
     local path = mp.get_property("path")
 
     if contains(path, "://") or not file_exists(path) then
@@ -352,11 +358,13 @@ function on_print_media_info()
         output = string.gsub(output, "%.000 FPS", " FPS")
         output = string.gsub(output, "MPEG Audio, Layer 3", "MP3")
 
-        show_text(output, 5000, 16)
+        return output
     end
 end
 
-mp.register_script_message("print-media-info", on_print_media_info)
+mp.register_script_message("print-media-info", function ()
+    show_text(get_media_info(), 5000, 16)
+end)
 
 ----- Playlist Next/Prev
 
@@ -580,3 +588,33 @@ function cycle_tracks(lang_prop, id_prop, type_name)
         end
     end
 end
+
+----- Quick Bookmark
+
+mp.register_script_message("quick-bookmark", function ()
+    local path = mp.get_property("path")
+
+    if is_empty(path) then
+        return
+    end
+
+    local folder = mp.command_native({"expand-path", o.quick_bookmark_folder})
+
+    if utils.file_info(folder) == nil then
+        msg.error("Bookmark folder not found, create it at:\n" .. folder)
+        return
+    end
+
+    path = string.gsub(path, "/", "")
+    path = string.gsub(path, "\\", "")
+    path = string.gsub(path, ":", "")
+
+    local file = utils.join_path(folder, path)
+
+    if file_exists(file) then
+        mp.set_property_number("time-pos", tonumber(file_read(file)))
+        os.remove(file)
+    else
+        file_write(file, mp.get_property("time-pos"))
+    end
+end)
