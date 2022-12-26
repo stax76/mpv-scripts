@@ -80,7 +80,7 @@
 
     Quick Bookmark
     --------------
-    Creates or restores a single bookmark.
+    Creates or restores a bookmark. Supports one bookmark per video.
 
     Usage:
     Create a folder in the following location:
