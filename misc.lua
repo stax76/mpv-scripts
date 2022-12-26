@@ -605,10 +605,7 @@ mp.register_script_message("quick-bookmark", function ()
         return
     end
 
-    path = string.gsub(path, "/", "")
-    path = string.gsub(path, "\\", "")
-    path = string.gsub(path, ":", "")
-    path = utils.join_path(folder, path)
+    path = utils.join_path(folder, string.gsub(path, "[/\\:]", ""))
 
     if file_exists(path) then
         mp.set_property_number("time-pos", tonumber(file_read(path)))
