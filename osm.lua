@@ -48,7 +48,7 @@ PGUP:                Move selection page up
 PGDWN:               Move selection page down
 
 
-Optionally create and configure options at: ~~/script-opts/osm.conf
+Configuration: ~~/script-opts/osm.conf
 
 ## https://fileformats.fandom.com/wiki/SubStation_Alpha#Style_overrides
 ## https://github.com/CogentRedTester/mpv-scroll-list

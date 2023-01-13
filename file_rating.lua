@@ -114,7 +114,7 @@ function join_path(p1, p2)
     return utils.join_path(p1, p2)
 end
 
------ file-rating
+----- file_rating
 
 ratings = {}
 

@@ -53,7 +53,7 @@
     SHARP script-message-to misc cycle-known-tracks audio
     j     script-message-to misc cycle-known-tracks sub
 
-    ~~home/script-opts/misc.conf:
+    ~~/script-opts/misc.conf:
     #include_no_audio=no
     #include_no_sub=yes
 
@@ -84,9 +84,9 @@
 
     Usage:
     Create a folder in the following location:
-    ~~home/script-settings/quick-bookmark/
+    ~~/script-settings/quick-bookmark/
     Or create it somewhere else, config at:
-    ~~home/script-opts/misc.conf:
+    ~~/script-opts/misc.conf:
     quick_bookmark_folder=<folder path>
 
     In input.conf add:
@@ -157,7 +157,7 @@ local o = {
     max_audio_track_count = 5,
     max_sub_track_count = 5,
     -- Quick Bookmark
-    quick_bookmark_folder = "~~home/script-settings/quick-bookmark/",
+    quick_bookmark_folder = "~~/script-settings/quick-bookmark/",
 }
 
 local opt = require "mp.options"
@@ -605,7 +605,12 @@ mp.register_script_message("quick-bookmark", function ()
         return
     end
 
-    path = utils.join_path(folder, string.gsub(path, "[/\\:]", ""))
+    if file_exists(path) then
+        _, path = utils.split_path(path)
+        path = utils.join_path(folder, path)
+    else
+        path = utils.join_path(folder, string.gsub(path, "[/\\:]", ""))
+    end
 
     if file_exists(path) then
         mp.set_property_number("time-pos", tonumber(file_read(path)))

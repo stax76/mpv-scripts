@@ -18,7 +18,7 @@
     There are two conf options:
 
     exclude=<list of folders to be excluded, separated via semicolon>
-    storage_path=~~home/history.log
+    storage_path=~~/history.log
 
     Similar or related scripts:
     https://github.com/yuukidach/mpv-scripts/blob/master/history-bookmark.lua
@@ -114,7 +114,7 @@ path = ""
 
 local o = {
     exclude = "",
-    storage_path = "~~home/history.log",
+    storage_path = "~~/history.log",
 }
 
 opt = require "mp.options"

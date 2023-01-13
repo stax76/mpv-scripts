@@ -35,8 +35,8 @@ end
 
 ----- main
 
-utils = require "mp.utils"
-msg = require "mp.msg"
+local utils = require "mp.utils"
+local msg = require "mp.msg"
 
 local o = {
     mode = "",
@@ -146,7 +146,7 @@ mp.register_script_message("show-search-menu", function (mode)
         return
     end
 
-    local py_file = '~~home/scripts/search_menu/search_menu.py'
+    local py_file = '~~/scripts/search_menu/search_menu.py'
     py_file = mp.command_native({"expand-path", py_file})
     local dash_code = 'fp="' .. py_file .. '"; python $fp "$(python $fp | fzf --exact)"'
 
@@ -186,5 +186,5 @@ mp.register_script_message("search_menu-command", function (value)
 end)
 
 mp.register_script_message("search_menu-property", function (value)
-    mp.commandv('script-message-to', 'console', 'type', 'print-text ${' .. value .. "}")
+    mp.commandv('script-message-to', 'console', 'type', 'print-text ${' .. value .. '}')
 end)

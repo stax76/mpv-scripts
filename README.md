@@ -1,14 +1,17 @@
 
-Collection of mpv scripts for Windows and Linux, macOS support is limited.
+Collection of mpv scripts for Windows and Linux, macOS support is limited/untested.
 
-search_menu is documented here, all other scripts are
-documented directly in the script via code comment
-at the beginning of the script.
+command_palette and search_menu are documented here, all other scripts are
+documented directly in the script via code comment at the beginning of the script.
 
-- [search_menu](#search_menu) - Searchable menu to search for bindings, commands, properties, playlist entries and audio/subtitle tracks.
-- [auto-mode.lua](auto-mode.lua) - Use mpv as video player, music player and image viewer.
-- [delete-current-file.lua](delete-current-file.lua) - Moves the currently playing file instantly to the recycle bin.
-- [file-rating.lua](file-rating.lua) - Writes a star rating to the filename of the currently playing file.
+- [command_palette](#command_palette) - Searchable menu for bindings, commands, properties,
+  the playlist, chapters and audio/subtitle tracks. This script is available as
+  preview version as I intent to improve it.
+- [search_menu](#search_menu) - Searchable menu for bindings, commands, properties, playlist
+  entries and audio/subtitle tracks.
+- [auto_mode.lua](auto_mode.lua) - Use mpv as video player, music player and image viewer.
+- [delete_current_file.lua](delete_current_file.lua) - Moves the currently playing file instantly to the recycle bin.
+- [file_rating.lua](file_rating.lua) - Writes a star rating to the filename of the currently playing file.
 - [history.lua](history.lua) - Writes date, time, playtime and filename to a log file.
 - [osm.lua](osm.lua) - Shows a customizable on screen menu.
 - [misc.lua](misc.lua)
@@ -20,13 +23,44 @@ at the beginning of the script.
   - Restart mpv restoring the properties path, time-pos, pause and volume.
   - Execute Lua code from input.conf.
   - When seeking display position and duration like so: 70:00 / 80:00.
-- [smart-volume.lua](smart-volume.lua) - Records and restores the relative volume for music.
+- [smart_volume.lua](smart_volume.lua) - Records and restores the relative volume for music.
+
+# command_palette
+
+![command_palette](screenshots/command_palette.png)
+
+command_palette is a searchable menu for bindings, commands, properties,
+the playlist, chapters and audio/subtitle tracks.
+
+This script is available as preview version as I intent to improve it.
+
+### Installation
+
+1. Save the script at: `~~/scripts/command_palette.lua`
+2. Download [extended-menu](https://github.com/Seme4eg/mpv-scripts/blob/master/script-modules/extended-menu.lua)
+   and save it at: `~~/scripts/script-modules/extended-menu.lua`
+
+### Usage
+
+Add bindings to input.conf:
+
+```
+F1    script-message-to command_palette show-command-palette bindings   # Show Bindings
+F2    script-message-to command_palette show-command-palette commands   # Show Commands
+F3    script-message-to command_palette show-command-palette properties # Show Properties
+F8    script-message-to command_palette show-command-palette playlist   # Show Playlist
+C     script-message-to command_palette show-command-palette chapters   # Show Chapters
+Alt+a script-message-to command_palette show-command-palette audio      # Show Audio Tracks
+Alt+s script-message-to command_palette show-command-palette subtitle   # Show Subtitle Tracks
+```
+
+Showing audio and subtitle tracks requires the installation of the CLI tool mediainfo.
 
 # search_menu
 
 ### About
 
-search_menu is a searchable menu (command palette) based on [Rofi](https://github.com/davatorium/rofi) (Linux) or terminal based on [fzf](https://github.com/junegunn/fzf) (cross-platform).
+search_menu is very similar to command_palette, it's based on the external tools [Rofi](https://github.com/davatorium/rofi) (Linux) or terminal based on [fzf](https://github.com/junegunn/fzf) (cross-platform).
 
 It provides a searchable menu for bindings, commands, properties, playlist entries and audio/subtitle tracks.
 
