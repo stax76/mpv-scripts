@@ -113,6 +113,7 @@ local em = require "extended-menu"
 local menu = em:new(o)
 local menu_content = { list = {}, current_i = nil }
 local osc_visibility = nil
+local media_info_cache = {}
 local original_set_active_func = em.set_active
 local original_get_line_func = em.get_line
 
@@ -121,12 +122,19 @@ function em:set_active(active)
 
     if not active and osc_visibility then
         mp.command("script-message osc-visibility " .. osc_visibility .. " no_osd")
+        osc_visibility = nil
     end
 end
 
 menu.index_field = "index"
 
 function get_media_info()
+    local path = mp.get_property("path")
+
+    if media_info_cache[path] then
+        return media_info_cache[path]
+    end
+
     local format_file = get_temp_dir() .. mp.get_script_name() .. " media-info-format-v1.txt"
 
     if not file_exists(format_file) then
@@ -137,8 +145,6 @@ Text;S: %Language/String%, %Format%, %Format_Profile%, %Title%\\n]]
 
         file_write(format_file, media_info_format)
     end
-
-    local path = mp.get_property("path")
 
     if contains(path, "://") or not file_exists(path) then
         return
@@ -163,6 +169,8 @@ Text;S: %Language/String%, %Format%, %Format_Profile%, %Title%\\n]]
         output = string.gsub(output, "\\n", "\n")
         output = string.gsub(output, "%.000 FPS", " FPS")
         output = string.gsub(output, "MPEG Audio, Layer 3", "MP3")
+
+        media_info_cache[path] = output
 
         return output
     end
@@ -353,7 +361,10 @@ mp.register_script_message("show-command-palette", function (name)
 
     if is_empty(mp.get_property("path")) then
         osc_visibility = utils.shared_script_property_get("osc-visibility")
-        mp.command("script-message osc-visibility never no_osd")
+
+        if osc_visibility then
+            mp.command("script-message osc-visibility never no_osd")
+        end
     else
         osc_visibility = nil
     end
