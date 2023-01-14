@@ -53,6 +53,16 @@ function first_to_upper(str)
     return (str:gsub("^%l", string.upper))
 end
 
+----- list
+
+function list_contains(list, value)
+    for _, v in pairs(list) do
+        if v == value then
+            return true
+        end
+    end
+end
+
 ----- path
 
 function get_temp_dir()
@@ -321,6 +331,20 @@ mp.register_script_message("show-command-palette", function (name)
 
         function menu:submit(val)
             mp.command("set sid " .. ((val.index == id) and 'no' or val.index))
+        end
+    elseif name == "profiles" then
+        local profiles = utils.parse_json(mp.get_property("profile-list"))
+        local ignore_list = {"builtin-pseudo-gui", "encoding", "libmpv", "pseudo-gui", "default"}
+
+        for k, v in ipairs(profiles) do
+            if not list_contains(ignore_list, v.name) then
+                table.insert(menu_content.list, { index = k, content = v.name })
+            end
+        end
+
+        function menu:submit(val)
+            mp.command("show-text " .. val.content);
+            mp.command("apply-profile " .. val.content);
         end
     else
         msg.error("Unknown mode " .. name)

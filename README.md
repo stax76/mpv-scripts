@@ -5,8 +5,7 @@ command_palette and search_menu are documented here, all other scripts are
 documented directly in the script via code comment at the beginning of the script.
 
 - [command_palette](#command_palette) - Searchable menu for bindings, commands, properties,
-  the playlist, chapters and audio/subtitle tracks. This script is available as
-  preview version as I intent to improve it.
+  the playlist, chapters, profiles and audio/subtitle tracks.
 - [search_menu](#search_menu) - Searchable menu for bindings, commands, properties, playlist
   entries and audio/subtitle tracks.
 - [auto_mode.lua](auto_mode.lua) - Use mpv as video player, music player and image viewer.
@@ -30,9 +29,7 @@ documented directly in the script via code comment at the beginning of the scrip
 ![command_palette](screenshots/command_palette.png)
 
 command_palette is a searchable menu for bindings, commands, properties,
-the playlist, chapters and audio/subtitle tracks.
-
-This script is available as preview version as I intent to improve it.
+the playlist, chapters, profiles and audio/subtitle tracks.
 
 ### Installation
 
@@ -45,16 +42,33 @@ This script is available as preview version as I intent to improve it.
 Add bindings to input.conf:
 
 ```
-F1    script-message-to command_palette show-command-palette bindings   # Show Bindings
-F2    script-message-to command_palette show-command-palette commands   # Show Commands
-F3    script-message-to command_palette show-command-palette properties # Show Properties
-F8    script-message-to command_palette show-command-palette playlist   # Show Playlist
-C     script-message-to command_palette show-command-palette chapters   # Show Chapters
-Alt+a script-message-to command_palette show-command-palette audio      # Show Audio Tracks
-Alt+s script-message-to command_palette show-command-palette subtitle   # Show Subtitle Tracks
+F1    script-message-to command_palette show-command-palette bindings   # Show bindings
+F2    script-message-to command_palette show-command-palette commands   # Show commands
+F3    script-message-to command_palette show-command-palette properties # Show properties
+F8    script-message-to command_palette show-command-palette playlist   # Show playlist
+Alt+c script-message-to command_palette show-command-palette chapters   # Show chapters
+Alt+a script-message-to command_palette show-command-palette audio      # Show audio tracks
+Alt+s script-message-to command_palette show-command-palette subtitle   # Show subtitle tracks
+Alt+p script-message-to command_palette show-command-palette profiles   # Show profiles
 ```
 
+### Dependencies
+
 Showing audio and subtitle tracks requires the installation of the CLI tool mediainfo.
+
+### Credits
+
+- https://github.com/Seme4eg/mpv-scripts
+- https://github.com/CogentRedTester/mpv-search-page
+
+### Related Projects
+
+- https://github.com/Seme4eg/mpv-scripts/tree/master#m-x
+- https://github.com/Seme4eg/mpv-scripts/tree/master/script-modules
+- https://github.com/CogentRedTester/mpv-search-page
+- https://codeberg.org/NRK/mpv-toolbox/src/branch/master/mdmenu
+- https://github.com/mpvnet-player/mpv.net
+- https://github.com/tsl0922/ImPlay
 
 # search_menu
 
@@ -128,14 +142,6 @@ on which mode and feature is used.
 
 Invoke a menu via shortcut key, type a search keyword, use up/down key to select,
 enter key to confirm, escape key to close.
-
-### Related Projects
-
-- https://github.com/Seme4eg/mpv-scripts/tree/master#m-x
-- https://github.com/CogentRedTester/mpv-search-page
-- https://codeberg.org/NRK/mpv-toolbox/src/branch/master/mdmenu
-- https://github.com/mpvnet-player/mpv.net
-- https://github.com/tsl0922/ImPlay
 
 # Screenshot misc.lua
 
