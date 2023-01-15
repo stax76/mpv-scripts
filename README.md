@@ -5,7 +5,7 @@ command_palette and search_menu are documented here, all other scripts are
 documented directly in the script via code comment at the beginning of the script.
 
 - [command_palette](#command_palette) - Searchable menu for bindings, commands, properties,
-  the playlist, chapters, profiles and audio/subtitle tracks.
+  the playlist, chapters, profiles and audio/subtitle/video tracks.
 - [search_menu](#search_menu) - Searchable menu for bindings, commands, properties, playlist
   entries and audio/subtitle tracks.
 - [auto_mode.lua](auto_mode.lua) - Use mpv as video player, music player and image viewer.
@@ -29,7 +29,7 @@ documented directly in the script via code comment at the beginning of the scrip
 ![command_palette](screenshots/command_palette.png)
 
 command_palette is a searchable menu for bindings, commands, properties,
-the playlist, chapters, profiles and audio/subtitle tracks.
+the playlist, chapters, profiles and audio/subtitle/video tracks.
 
 ### Installation
 
@@ -49,6 +49,7 @@ F8    script-message-to command_palette show-command-palette playlist   # Show p
 Alt+c script-message-to command_palette show-command-palette chapters   # Show chapters
 Alt+a script-message-to command_palette show-command-palette audio      # Show audio tracks
 Alt+s script-message-to command_palette show-command-palette subtitle   # Show subtitle tracks
+Alt+v script-message-to command_palette show-command-palette video      # Show video tracks
 Alt+p script-message-to command_palette show-command-palette profiles   # Show profiles
 ```
 

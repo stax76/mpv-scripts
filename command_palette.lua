@@ -340,6 +340,22 @@ mp.register_script_message("show-command-palette", function (name)
         function menu:submit(val)
             mp.command("set sid " .. ((val.index == id) and 'no' or val.index))
         end
+    elseif name == "video" then
+        local tracks = split(get_media_info() .. "\nV: None", "\n")
+        local id = 0
+
+        for _, v in ipairs(tracks) do
+            if starts_with(v, "V: ") then
+                id = id + 1
+                table.insert(menu_content.list, { index = id, content = string.sub(v, 4) })
+            end
+        end
+
+        menu_content.current_i = mp.get_property_number("vid") or id
+
+        function menu:submit(val)
+            mp.command("set vid " .. ((val.index == id) and 'no' or val.index))
+        end
     elseif name == "profiles" then
         local profiles = utils.parse_json(mp.get_property("profile-list"))
         local ignore_list = {"builtin-pseudo-gui", "encoding", "libmpv", "pseudo-gui", "default"}
