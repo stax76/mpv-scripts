@@ -316,12 +316,20 @@ end)
 
 ----- Print media info on screen
 
+local media_info_cache = {}
+
 function show_text(text, duration, font_size)
     mp.command('show-text "${osd-ass-cc/0}{\\\\fs' .. font_size ..
         '}${osd-ass-cc/1}' .. text .. '" ' .. duration)
 end
 
 function get_media_info()
+    local path = mp.get_property("path")
+
+    if media_info_cache[path] then
+        return media_info_cache[path]
+    end
+
     local media_info_format = [[General;N: %FileNameExtension%\\nG: %Format%, %FileSize/String%, %Duration/String%, %OverallBitRate/String%, %Recorded_Date%\\n
 Video;V: %Format%, %Format_Profile%, %Width%x%Height%, %BitRate/String%, %FrameRate% FPS\\n
 Audio;A: %Language/String%, %Format%, %Format_Profile%, %BitRate/String%, %Channel(s)% ch, %SamplingRate/String%, %Title%\\n
@@ -332,8 +340,6 @@ Text;S: %Language/String%, %Format%, %Format_Profile%, %Title%\\n]]
     if not file_exists(format_file) then
         file_write(format_file, media_info_format)
     end
-
-    local path = mp.get_property("path")
 
     if contains(path, "://") or not file_exists(path) then
         return
@@ -357,6 +363,8 @@ Text;S: %Language/String%, %Format%, %Format_Profile%, %Title%\\n]]
         output = string.gsub(output, ", \\n", "\\n")
         output = string.gsub(output, "%.000 FPS", " FPS")
         output = string.gsub(output, "MPEG Audio, Layer 3", "MP3")
+
+        media_info_cache[path] = output
 
         return output
     end
