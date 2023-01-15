@@ -71,7 +71,7 @@ def playlist():
     playlist_text = os.getenv('SEARCH_MENU_PLAYLIST')
     playlist_lines = playlist_text.splitlines()
     for x in range(0, len(playlist_lines)):
-        text = pathlib.Path(playlist_lines[x]).name
+        text = os.path.basename(playlist_lines[x])
         if len(sys.argv) == 1:
             print(text)
         elif len(sys.argv) == 2 and sys.argv[1] == text:
