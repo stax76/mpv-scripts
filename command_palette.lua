@@ -308,6 +308,21 @@ mp.register_script_message("show-command-palette", function (name)
         function menu:submit(val)
             mp.commandv('script-message-to', 'console', 'type', "print-text ${" .. val.content .. "}")
         end
+    elseif name == "options" then
+        local options = split(mp.get_property("options"), ",")
+
+        for k, v in ipairs(options) do
+            local type = mp.get_property_osd("option-info/" .. v .. "/type", "")
+            local default =mp.get_property_osd("option-info/" .. v .. "/default-value", "")
+            v = v .. "   (type: " .. type .. ", default: " .. default .. ")"
+            table.insert(menu_content.list, { index = k, content = v })
+        end
+
+        function menu:submit(val)
+            print(val.content)
+            local prop = string.match(val.content, '%S+')
+            mp.commandv("script-message-to", "console", "type", "set " .. prop .. " ")
+        end
     elseif name == "audio" then
         local tracks = split(get_media_info() .. "\nA: None", "\n")
         local id = 0

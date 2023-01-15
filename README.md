@@ -4,8 +4,7 @@ Collection of mpv scripts for Windows and Linux, macOS support is limited/untest
 command_palette and search_menu are documented here, all other scripts are
 documented directly in the script via code comment at the beginning of the script.
 
-- [command_palette](#command_palette) - Searchable menu for bindings, commands, properties,
-  the playlist, chapters, profiles and audio/subtitle/video tracks.
+- [command_palette](#command_palette) - Searchable menu for bindings, playlist, chapters, profiles, audio/subtitle/video tracks, commands, properties, options.
 - [search_menu](#search_menu) - Searchable menu for bindings, commands, properties, playlist
   entries and audio/subtitle tracks.
 - [auto_mode.lua](auto_mode.lua) - Use mpv as video player, music player and image viewer.
@@ -28,8 +27,7 @@ documented directly in the script via code comment at the beginning of the scrip
 
 ![command_palette](screenshots/command_palette.png)
 
-command_palette is a searchable menu for bindings, commands, properties,
-the playlist, chapters, profiles and audio/subtitle/video tracks.
+command_palette is a searchable menu for bindings, playlist, chapters, profiles, audio/subtitle/video tracks, commands, properties, options.
 
 ### Installation
 
@@ -45,6 +43,7 @@ Add bindings to input.conf:
 F1    script-message-to command_palette show-command-palette bindings   # Show bindings
 F2    script-message-to command_palette show-command-palette commands   # Show commands
 F3    script-message-to command_palette show-command-palette properties # Show properties
+F4    script-message-to command_palette show-command-palette options    # Show options
 F8    script-message-to command_palette show-command-palette playlist   # Show playlist
 Alt+c script-message-to command_palette show-command-palette chapters   # Show chapters
 Alt+a script-message-to command_palette show-command-palette audio      # Show audio tracks
