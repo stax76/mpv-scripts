@@ -267,8 +267,13 @@ mp.register_script_message("show-command-palette", function (name)
         if count == 0 then return end
 
         for i = 0, (count - 1) do
-            local filename = file_name(mp.get_property("playlist/" .. i .. "/filename"))
-            table.insert(menu_content.list, { index = i + 1, content = filename })
+            local text = mp.get_property("playlist/" .. i .. "/title")
+
+            if text == nil then
+                text = file_name(mp.get_property("playlist/" .. i .. "/filename"))
+            end
+
+            table.insert(menu_content.list, { index = i + 1, content = text })
         end
 
         menu_content.current_i = mp.get_property_number("playlist-pos") + 1
