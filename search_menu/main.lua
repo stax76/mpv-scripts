@@ -118,8 +118,13 @@ mp.register_script_message("show-search-menu", function (mode)
         local playlist = {}
 
         for i = 0, (count - 1) do
-            local filename = mp.get_property("playlist/" .. i .. "/filename")
-            table.insert(playlist, filename)
+            local name = mp.get_property("playlist/" .. i .. "/title")
+
+            if name == nil then
+                name = mp.get_property("playlist/" .. i .. "/filename")
+            end
+
+            table.insert(playlist, name)
         end
 
         local playlist_text =  table.concat(playlist, "\n")

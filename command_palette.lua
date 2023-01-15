@@ -78,6 +78,7 @@ end
 ---- file
 
 function file_exists(path)
+    if is_empty(path) then return false end
     local file = io.open(path, "r")
 
     if file ~= nil then
