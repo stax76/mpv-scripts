@@ -5,7 +5,6 @@
 import os
 import json
 import sys
-import pathlib
 
 class Binding:
     text = ""
