@@ -15,7 +15,7 @@ documented directly in the script via code comment at the beginning of the scrip
 - [misc.lua](misc.lua)
   - Show detailed media info on screen ([Screenshot](#screenshot-misclua)).
   - Cycle audio and subtitle tracks, include only languages you know.
-  - Load or append files/URLs from clipboard.
+  - Paste/Load/Append files/URLs from clipboard.
   - Jump to a random position in the playlist.
   - Navigate in playlist to next/previous/first/last file.
   - Restart mpv restoring the properties path, time-pos, pause and volume.
