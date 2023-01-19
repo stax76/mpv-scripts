@@ -118,6 +118,41 @@ local media_info_cache = {}
 local original_set_active_func = em.set_active
 local original_get_line_func = em.get_line
 
+function em:get_bindings()
+    local bindings = {
+        { 'esc',         function() self:set_active(false) end                         },
+        { 'enter',       function() self:handle_enter() end                            },
+        { 'bs',          function() self:handle_backspace() end                        },
+        { 'del',         function() self:handle_del() end                              },
+        { 'ins',         function() self:handle_ins() end                              },
+        { 'left',        function() self:prev_char() end                               },
+        { 'right',       function() self:next_char() end                               },
+        { 'ctrl+f',      function() self:next_char() end                               },
+        { 'up',          function() self:change_selected_index(-1) end                 },
+        { 'down',        function() self:change_selected_index(1) end                  },
+        { 'ctrl+up',     function() self:move_history(-1) end                          },
+        { 'ctrl+down',   function() self:move_history(1) end                           },
+        { 'ctrl+left',   function() self:prev_word() end                               },
+        { 'ctrl+right',  function() self:next_word() end                               },
+        { 'home',        function() self:go_home() end                                 },
+        { 'end',         function() self:go_end() end                                  },
+        { 'pgup',        function() self:change_selected_index(-o.lines_to_show) end   },
+        { 'pgdwn',       function() self:change_selected_index(o.lines_to_show) end    },
+        { 'ctrl+u',      function() self:del_to_start() end                            },
+        { 'ctrl+v',      function() self:paste(true) end                               },
+        { 'ctrl+bs',     function() self:del_word() end                                },
+        { 'ctrl+del',    function() self:del_next_word() end                           },
+        { 'kp_dec',      function() self:handle_char_input('.') end                    },
+    }
+
+    for i = 0, 9 do
+        bindings[#bindings + 1] =
+            {'kp' .. i, function() self:handle_char_input('' .. i) end}
+    end
+
+    return bindings
+end
+
 function em:set_active(active)
     original_set_active_func(self, active)
 
