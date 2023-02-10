@@ -33,7 +33,7 @@ command_palette is a searchable menu for bindings, playlist, chapters, profiles,
 
 1. Save the script at: `~~/scripts/command_palette.lua`
 2. Download [extended-menu](https://github.com/Seme4eg/mpv-scripts/blob/master/script-modules/extended-menu.lua)
-   and save it at: `~~/scripts/script-modules/extended-menu.lua`
+   and save it at: `~~/script-modules/extended-menu.lua`
 
 ### Usage
 
