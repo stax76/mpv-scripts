@@ -146,6 +146,20 @@
     input.conf:
     Right no-osd seek 5; script-message-to misc show-position
 
+
+
+    Load folder
+    -----------
+    Clears the playlist and loads files in a given
+    folder using absolute filepaths. mpv uses relative
+    filepaths which isn't compatible with scripts that
+    only support absolute filepaths. In combination
+    with CogentRedTester's cycle-commands.lua script allows
+    cycling folders via binding. Depends on autoload.lua.
+
+    input.conf:
+    <key> script-message-to misc load-folder "<folder path>"
+
 ]]--
 
 ----- options
@@ -628,3 +642,27 @@ mp.register_script_message("quick-bookmark", function ()
         mp.osd_message("Bookmark saved")
     end
 end)
+
+--- Load folder
+
+function load_folder(folder)
+    local items = utils.readdir(folder)
+
+    if items == nil then
+        msg.error("Error loading folder: " .. folder)
+        return
+    end
+
+    local path = utils.join_path(folder, items[1])
+    info = utils.file_info(path)
+
+    if info == nil then
+        msg.error("Error loading folder: " .. folder)
+    elseif info["is_dir"] then
+        load_folder(path)
+    elseif info["is_file"] then
+        mp.commandv("loadfile", path)
+    end
+end
+
+mp.register_script_message("load-folder", load_folder)
