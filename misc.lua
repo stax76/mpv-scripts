@@ -256,6 +256,7 @@ end
 
 mp.register_script_message("playlist-random", function ()
     local count = mp.get_property_number("playlist-count")
+    math.randomseed(os.time())
     local new_pos = math.random(0, count - 1)
     local current_pos = mp.get_property_number("playlist-pos")
 
