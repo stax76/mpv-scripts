@@ -49,6 +49,12 @@ function split(input, sep)
     return tbl
 end
 
+function replace(str, what, with)
+    what = string.gsub(what, "[%(%)%.%+%-%*%?%[%]%^%$%%]", "%%%1")
+    with = string.gsub(with, "[%%]", "%%%%")
+    return string.gsub(str, what, with)
+end
+
 function first_to_upper(str)
     return (str:gsub("^%l", string.upper))
 end
@@ -256,6 +262,14 @@ mp.register_script_message("show-command-palette", function (name)
             v.key = "(" .. v.key .. ")"
 
             if not is_empty(v.comment) then
+                if contains(v.comment, "custom-menu: ") then
+                    v.comment = replace(v.comment, "custom-menu: ", "")
+                end
+
+                if contains(v.comment, "menu: ") then
+                    v.comment = replace(v.comment, "menu: ", "")
+                end
+
                 v.comment = first_to_upper(v.comment)
             end
         end
