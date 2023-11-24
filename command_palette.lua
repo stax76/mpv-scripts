@@ -162,10 +162,10 @@ end
 function em:set_active(active)
     original_set_active_func(self, active)
 
-    if not active and osc_visibility then
-        mp.command("script-message osc-visibility " .. osc_visibility .. " no_osd")
-        osc_visibility = nil
-    end
+    -- if not active and osc_visibility then
+    --     mp.command("script-message osc-visibility " .. osc_visibility .. " no_osd")
+    --     osc_visibility = nil
+    -- end
 end
 
 menu.index_field = "index"
@@ -451,6 +451,8 @@ mp.register_script_message("show-command-palette", function (name)
         if osc_visibility then
             mp.command("script-message osc-visibility never no_osd")
         end
+
+        mp.command("script-message osc-visibility never no_osd")
     else
         osc_visibility = nil
     end
