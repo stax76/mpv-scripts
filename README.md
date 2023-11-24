@@ -4,7 +4,7 @@ Collection of mpv scripts for Windows and Linux, macOS support is limited/untest
 command_palette and search_menu are documented here, all other scripts are
 documented directly in the script via code comment at the beginning of the script.
 
-- [powershell-completion](#powershell/mpv-powershell-completion.ps1) - PowerShell command line completion.
+- [powershell-completion](powershell/mpv-powershell-completion.ps1) - PowerShell command line completion.
 - [command_palette](#command_palette) - Searchable menu for bindings, playlist, chapters, profiles, audio/subtitle/video tracks, commands, properties, options.
 - [search_menu](#search_menu) - Searchable menu for bindings, commands, properties, playlist
   entries and audio/subtitle tracks.
