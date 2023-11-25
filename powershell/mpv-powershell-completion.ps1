@@ -1,8 +1,23 @@
-#!/bin/pwsh
-
 # PowerShell command line completion for the mpv/mpv.net media player.
 
 # It can be installed by dot sourcing it in the PowerShell profile.
+
+#
+# This file is part of mpv.
+#
+# mpv is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# mpv is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with mpv.  If not, see <http://www.gnu.org/licenses/>.
+#
 
 $Options = New-Object Collections.Generic.List[Object]
 $UpdateOptions = @('vo', 'ao', 'profile', 'hwdec', 'audio-device', 'scale', 'tscale',
@@ -23,42 +38,42 @@ Function SetOptions
     {
         $line = $line.Trim()
 
-        if (-not $line.StartsWith("--"))
+        if (-not $line.StartsWith('--'))
         {
             continue
         }
 
-        $table = @{ value = ""; type = ""; choices = $null }
+        $table = @{ value = ''; type = ''; choices = $null }
 
-        if ($line.Contains(" "))
+        if ($line.Contains(' '))
         {
-            $table["name"] = $line.Substring(2, $line.IndexOf(" ") - 2)
-            $value = $line.Substring($line.IndexOf(" ") + 1).Trim()
+            $table['name'] = $line.Substring(2, $line.IndexOf(' ') - 2)
+            $value = $line.Substring($line.IndexOf(' ') + 1).Trim()
 
-            if ($value.Contains("("))
+            if ($value.Contains('('))
             {
-                $value = $value.Substring(0, $value.IndexOf("(")).TrimEnd()
+                $value = $value.Substring(0, $value.IndexOf('(')).TrimEnd()
             }
 
-            $table["value"] = $value
+            $table['value'] = $value
         }
         else
         {
-            $table["name"] = $line.Substring(2)
+            $table['name'] = $line.Substring(2)
         }
 
-        if ($value.StartsWith("Choices:"))
+        if ($table['value'].StartsWith('Choices:'))
         {
-            $table["type"] = "choice"
-            $table["choices"] = $value.Substring(8).TrimStart() -split " "
+            $table['type'] = 'choice'
+            $table['choices'] = $table['value'].Substring(8).TrimStart() -split ' '
         }
 
-        if ($value.StartsWith('Flag'))
+        if ($table['value'].StartsWith('Flag'))
         {
             $table['type'] = 'flag'
         }
 
-        if ($value.Contains('[file]') -or $table["name"].Contains('-file'))
+        if ($table['value'].Contains('[file]') -or $table['name'].Contains('-file'))
         {
             $table['type'] = 'file'
         }
