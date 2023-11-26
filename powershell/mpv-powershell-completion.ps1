@@ -1,4 +1,4 @@
-# PowerShell command line completion for the mpv/mpv.net media player.
+# PowerShell command line completion for the mpv media player.
 
 # It can be installed by dot sourcing it in the PowerShell profile.
 
@@ -20,8 +20,22 @@
 #
 
 $Options = New-Object Collections.Generic.List[Object]
-$UpdateOptions = @('vo', 'ao', 'profile', 'hwdec', 'audio-device', 'scale', 'tscale',
-                   'error-diffusion', 'vulkan-device')
+
+$DynamicOptions = @(
+    @{ name = 'vaapi-device'; pattern = '^\s*([-\w]+)' },
+    @{ name = 'd3d11-adapter'; pattern = 'description: (.+)' },
+    @{ name = 'vulkan-device'; pattern = "^\s*('.+?')" },
+    @{ name = 'audio-device'; pattern = "^\s*('\S+')" },
+    @{ name = 'hwdec'; pattern = '^\s*([-\w]+)' },
+    @{ name = 'error-diffusion'; pattern = '^\s*([-\w]+)' },
+    @{ name = 'scale'; pattern = '^\s*([-\w]+)' },
+    @{ name = 'cscale'; pattern = '^\s*([-\w]+)' },
+    @{ name = 'dscale'; pattern = '^\s*([-\w]+)' },
+    @{ name = 'tscale'; pattern = '^\s*([-\w]+)' },
+    @{ name = 'profile'; pattern = '^\s*([-\w]+)' },
+    @{ name = 'ao'; pattern = '^\s*([-\w]+)' },
+    @{ name = 'vo'; pattern = '^\s*([-\w]+)' }
+)
 
 Function SetOptions
 {
@@ -43,11 +57,11 @@ Function SetOptions
             continue
         }
 
-        $table = @{ value = ''; type = ''; choices = $null }
+        $name = ''; $value = ''; $type = ''; $choices = $null;
 
         if ($line.Contains(' '))
         {
-            $table['name'] = $line.Substring(2, $line.IndexOf(' ') - 2)
+            $name = $line.Substring(2, $line.IndexOf(' ') - 2)
             $value = $line.Substring($line.IndexOf(' ') + 1).Trim()
 
             if ($value.Contains('('))
@@ -55,36 +69,34 @@ Function SetOptions
                 $value = $value.Substring(0, $value.IndexOf('(')).TrimEnd()
             }
 
-            $table['value'] = $value
+            $value = $value
         }
         else
         {
-            $table['name'] = $line.Substring(2)
+            $name = $line.Substring(2)
         }
 
-        if ($table['value'].StartsWith('Choices:'))
+        if ($value.StartsWith('Choices:'))
         {
-            $table['type'] = 'choice'
-            $table['choices'] = $table['value'].Substring(8).TrimStart() -split ' '
+            $type = 'choice'
+            $choices = $value.Substring(8).TrimStart() -split ' '
         }
 
-        if ($table['value'].StartsWith('Flag'))
+        if ($value.StartsWith('Flag'))
         {
-            $table['type'] = 'flag'
+            $type = 'flag'
         }
 
-        if ($table['value'].Contains('[file]') -or $table['name'].Contains('-file'))
+        if ($value.Contains('[file]') -or $name.Contains('-file'))
         {
-            $table['type'] = 'file'
+            $type = 'file'
         }
 
-        if ($table['type'] -eq 'flag')
+        $table = @{ name = $name; value = $value; type = $type; choices = $choices }
+
+        if ($type -eq 'flag')
         {
-            $noTable = @{ name = 'no-' + $table['name'];
-                          value = $table['value'];
-                          type = '';
-                          choices = $null
-                        }
+            $noTable = @{ name = 'no-' + $name; value = $value; type = ''; choices = $null }
             $Options.Add($table)
             $Options.Add($noTable)
         }
@@ -117,19 +129,7 @@ Function Update-Option($name)
         return
     }
 
-    $dynamicOptions = @(
-        @{ name = 'vulkan-device'; pattern = "^\s*('.+?')" },
-        @{ name = 'audio-device'; pattern = "^\s*('\S+')" },
-        @{ name = 'hwdec'; pattern = '^\s*([-\w]+)' },
-        @{ name = 'error-diffusion'; pattern = '^\s*([-\w]+)' },
-        @{ name = 'tscale'; pattern = '^\s*([-\w]+)' },
-        @{ name = 'scale'; pattern = '^\s*([-\w]+)' },
-        @{ name = 'profile'; pattern = '^\s*([-\w]+)' },
-        @{ name = 'ao'; pattern = '^\s*([-\w]+)' },
-        @{ name = 'vo'; pattern = '^\s*([-\w]+)' }
-     )
-
-    foreach ($opt in $dynamicOptions)
+    foreach ($opt in $DynamicOptions)
     {
         if ($name -eq $opt.name)
         {
@@ -139,6 +139,8 @@ Function Update-Option($name)
                  Select-Object -Unique | Sort-Object
 
             $output = $output | foreach { if ($_ -match "'\w+'") { $_ -replace "'", '' } else { $_ } }
+            $output = $output | foreach { if ($_ -match "^'.+'$") { $_ -replace "'", '' } else { $_ } }
+            $output = $output | foreach { if ($_.Contains(' ') -or $_.Contains('{')) { '"' + $_ + '"' } else { $_ } }
 
             if ($output -is [string])
             {
@@ -189,11 +191,11 @@ Function Get-Completion($cursorPosition, $wordToComplete, $commandName)
             $argName = $commandName.Substring($commandName.IndexOf('=') + 1)
         }
 
-        foreach ($it in $UpdateOptions)
+        foreach ($it in $DynamicOptions)
         {
-            if ($shortCommandName -eq $it)
+            if ($shortCommandName -eq $it.name)
             {
-                Update-Option $it
+                Update-Option $it.name
                 break
             }
         }
