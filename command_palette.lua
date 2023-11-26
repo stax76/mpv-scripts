@@ -119,7 +119,6 @@ package.path = mp.command_native({ "expand-path", "~~/script-modules/?.lua;" }) 
 local em = require "extended-menu"
 local menu = em:new(o)
 local menu_content = { list = {}, current_i = nil }
-local osc_visibility = nil
 local media_info_cache = {}
 local original_set_active_func = em.set_active
 local original_get_line_func = em.get_line
@@ -162,10 +161,10 @@ end
 function em:set_active(active)
     original_set_active_func(self, active)
 
-    -- if not active and osc_visibility then
-    --     mp.command("script-message osc-visibility " .. osc_visibility .. " no_osd")
-    --     osc_visibility = nil
-    -- end
+    if not active and (osc_visibility == "auto" or osc_visibility == "always") then
+        mp.command("script-message osc-visibility " .. osc_visibility .. " no_osd")
+        osc_visibility = nil
+    end
 end
 
 menu.index_field = "index"
@@ -445,16 +444,14 @@ mp.register_script_message("show-command-palette", function (name)
         return
     end
 
-    if is_empty(mp.get_property("path")) then
-        osc_visibility = utils.shared_script_property_get("osc-visibility")
+    local is_older_than_v0_36 = string.find(mp.get_property("mpv-version"), 'mpv v0%.[1-3][0-5]%.') == 1
 
-        if osc_visibility then
+    if is_empty(mp.get_property("path")) and not is_older_than_v0_36 then
+        osc_visibility = mp.get_property_native("user-data/osc/visibility")
+
+        if osc_visibility == "auto" or osc_visibility == "always" then
             mp.command("script-message osc-visibility never no_osd")
         end
-
-        mp.command("script-message osc-visibility never no_osd")
-    else
-        osc_visibility = nil
     end
 
     menu:init(menu_content)
