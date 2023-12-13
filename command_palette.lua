@@ -295,8 +295,12 @@ mp.register_script_message("show-command-palette", function (name)
         menu.filter_by_fields = {'cmd', 'key', 'comment'}
         em.get_line = binding_get_line
     elseif name == "chapters" then
-        local count = mp.get_property("chapter-list/count")
-        if count == 0 then return end
+        local count = mp.get_property_number("chapter-list/count")
+
+        if count == 0 then
+            mp.commandv("show-text", "Chapter: (unavailable)")
+            return
+        end
 
         for i = 0, count do
             local title = mp.get_property("chapter-list/" .. i .. "/title")
