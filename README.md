@@ -1,11 +1,11 @@
 
-Collection of mpv scripts for Windows and Linux, macOS support is limited/untested.
+Collection of mpv user scripts.
 
 command_palette and search_menu are documented here, all other scripts are
 documented directly in the script via code comment at the beginning of the script.
 
 - [powershell-completion](powershell/mpv-powershell-completion.ps1) - PowerShell command line completion.
-- [command_palette](#command_palette) - Searchable menu for bindings, playlist, chapters, profiles, audio/subtitle/video tracks, commands, properties, options.
+- [command_palette](#command_palette) - Searchable menu for bindings, playlist, chapters, profiles, audio/subtitle/video tracks, commands, properties, options, audio devices.
 - [search_menu](#search_menu) - Searchable menu for bindings, commands, properties, playlist
   entries and audio/subtitle tracks.
 - [auto_mode.lua](auto_mode.lua) - Use mpv as video player, music player and image viewer.
@@ -28,13 +28,13 @@ documented directly in the script via code comment at the beginning of the scrip
 
 ![command_palette](screenshots/command_palette.png)
 
-command_palette is a searchable menu for bindings, playlist, chapters, profiles, audio/subtitle/video tracks, commands, properties, options.
+command_palette is a searchable menu for bindings, playlist, chapters, profiles, audio/subtitle/video tracks, commands, properties, options, audio devices.
 
 ### Installation
 
-1. Save the script at: `~~/scripts/command_palette.lua`
+1. Save the script at: `<mpv conf folder>/scripts/command_palette.lua`
 2. Download [extended-menu](https://github.com/Seme4eg/mpv-scripts/blob/master/script-modules/extended-menu.lua)
-   and save it at: `~~/script-modules/extended-menu.lua`
+   and save it at: `<mpv conf folder>/script-modules/extended-menu.lua`
 
 ### Usage
 
@@ -48,9 +48,10 @@ F4    script-message-to command_palette show-command-palette options    # Show o
 F8    script-message-to command_palette show-command-palette playlist   # Show playlist
 Alt+c script-message-to command_palette show-command-palette chapters   # Show chapters
 Alt+a script-message-to command_palette show-command-palette audio      # Show audio tracks
-Alt+s script-message-to command_palette show-command-palette subtitle   # Show subtitle tracks
+Alt+s script-message-to command_palette show-command-palette subtitles  # Show subtitle tracks
 Alt+v script-message-to command_palette show-command-palette video      # Show video tracks
 Alt+p script-message-to command_palette show-command-palette profiles   # Show profiles
+Alt+d script-message-to command_palette show-command-palette audio-devices  # Show audio devices
 ```
 
 ### Dependencies
@@ -87,7 +88,7 @@ It provides a searchable menu for bindings, commands, properties, playlist entri
 
 See Dependencies section to install dependencies.
 
-Save the search menu folder at `~~/scripts/search_menu/`,
+Save the search menu folder at `<mpv conf folder>/scripts/search_menu/`,
 it contains main.lua and a Python script.
 
 ### Configuration
@@ -98,7 +99,7 @@ Windows: `input-ipc-server = \\.\pipe\mpvsocket`
 
 Linux: `input-ipc-server = /tmp/mpvsocket`
 
-#### Conf file at `~~/scripts-opts/search_menu.conf`:
+#### Conf file at `<mpv conf folder>/scripts-opts/search_menu.conf`:
 
 ```
 #mode=gnome-terminal+sh    # Requires Linux and Gnome Terminal, default on Linux

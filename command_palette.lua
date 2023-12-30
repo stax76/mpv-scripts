@@ -397,7 +397,7 @@ mp.register_script_message("show-command-palette", function (name)
         function menu:submit(val)
             mp.command("set aid " .. ((val.index == id) and 'no' or val.index))
         end
-    elseif name == "subtitle" then
+    elseif name == "subtitles" then
         local tracks = split(get_media_info() .. "\nS: None", "\n")
         local id = 0
 
@@ -442,6 +442,22 @@ mp.register_script_message("show-command-palette", function (name)
         function menu:submit(val)
             mp.command("show-text " .. val.content);
             mp.command("apply-profile " .. val.content);
+        end
+    elseif name == "audio-devices" then
+        local devices = utils.parse_json(mp.get_property("audio-device-list"))
+        local current_name = mp.get_property("audio-device")
+
+        for k, v in ipairs(devices) do
+            table.insert(menu_content.list, { index = k, name = v.name, content = v.description })
+
+            if v.name == current_name then
+                menu_content.current_i = k
+            end
+        end
+
+        function menu:submit(val)
+            mp.commandv("set", "audio-device", val.name)
+            mp.commandv("show-text", "audio-device: " .. val.content)
         end
     else
         msg.error("Unknown mode " .. name)
