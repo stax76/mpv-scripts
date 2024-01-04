@@ -70,6 +70,7 @@ function delete_file(path)
         mp.command_native({
             name = "subprocess",
             playback_only = false,
+            detach = true,
             args = { 'powershell', '-NoProfile', '-Command', ps_code },
         })
     else
