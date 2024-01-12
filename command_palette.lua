@@ -172,6 +172,10 @@ menu.index_field = "index"
 function get_media_info()
     local path = mp.get_property("path")
 
+    if contains(path, "://") or not file_exists(path) then
+        return
+    end
+
     if media_info_cache[path] then
         return media_info_cache[path]
     end
@@ -185,10 +189,6 @@ Audio;A: %Language/String%, %Format%, %Format_Profile%, %BitRate/String%, %Chann
 Text;S: %Language/String%, %Format%, %Format_Profile%, %Title%\\n]]
 
         file_write(format_file, media_info_format)
-    end
-
-    if contains(path, "://") or not file_exists(path) then
-        return
     end
 
     local proc_result = mp.command_native({
@@ -382,7 +382,9 @@ mp.register_script_message("show-command-palette", function (name)
             mp.commandv("script-message-to", "console", "type", "set " .. prop .. " ")
         end
     elseif name == "audio" then
-        local tracks = split(get_media_info() .. "\nA: None", "\n")
+        local mi = get_media_info()
+        if mi == nil then return end
+        local tracks = split(mi .. "\nA: None", "\n")
         local id = 0
 
         for _, v in ipairs(tracks) do
@@ -398,7 +400,9 @@ mp.register_script_message("show-command-palette", function (name)
             mp.command("set aid " .. ((val.index == id) and 'no' or val.index))
         end
     elseif name == "subtitles" then
-        local tracks = split(get_media_info() .. "\nS: None", "\n")
+        local mi = get_media_info()
+        if mi == nil then return end
+        local tracks = split(mi .. "\nS: None", "\n")
         local id = 0
 
         for _, v in ipairs(tracks) do
@@ -414,7 +418,9 @@ mp.register_script_message("show-command-palette", function (name)
             mp.command("set sid " .. ((val.index == id) and 'no' or val.index))
         end
     elseif name == "video" then
-        local tracks = split(get_media_info() .. "\nV: None", "\n")
+        local mi = get_media_info()
+        if mi == nil then return end
+        local tracks = split(mi .. "\nV: None", "\n")
         local id = 0
 
         for _, v in ipairs(tracks) do
