@@ -14,9 +14,9 @@
 
     It gives much better results than replay gain.
 
-    Configuration: ~~\script-opts\smart_volume.conf
+    Configuration: ~~\script-opts\average_volume.conf
     monitored_directories=<directories seperated with a semicolon>
-    #storage_path=~~/smart_volume.json
+    #storage_path=~~/average_volume.json
 
     Files not updated or orphaned get removed
     automatically after 500 days.
@@ -27,7 +27,7 @@
 
 local o = {
     monitored_directories = "",
-    storage_path = "~~/smart_volume.json",
+    storage_path = "~~/average_volume.json",
 }
 
 ----- math
@@ -136,7 +136,7 @@ function file_write(file_path, content)
     file:close()
 end
 
------ smart_volume
+----- average_volume
 
 local utils = require "mp.utils"
 local msg = require "mp.msg"

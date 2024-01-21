@@ -22,7 +22,7 @@ documented directly in the script via code comment at the beginning of the scrip
   - Restart mpv restoring the properties path, time-pos, pause and volume.
   - Execute Lua code from input.conf.
   - When seeking display position and duration like so: 70:00 / 80:00.
-- [smart_volume.lua](smart_volume.lua) - Records and restores the relative volume for music.
+- [average_volume.lua](average_volume.lua) - Records and restores the relative volume for music.
 
 # command_palette
 
