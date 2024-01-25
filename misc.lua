@@ -51,7 +51,8 @@
 
     In input.conf add:
     SHARP script-message-to misc cycle-known-tracks audio
-    j     script-message-to misc cycle-known-tracks sub
+    j     script-message-to misc cycle-known-tracks sub up
+    J     script-message-to misc cycle-known-tracks sub down
 
     ~~/script-opts/misc.conf:
     #include_no_audio=no
@@ -514,89 +515,35 @@ end)
 
 ----- Cycle audio and subtitle tracks
 
-mp.register_script_message("cycle-known-tracks", function (mode)
-    if mode == "audio" then
-        cycle_tracks("alang", "aid", "audio")
-    else
-        cycle_tracks("slang", "sid", "sub")
+mp.register_script_message("cycle-known-tracks", function (mode, dir)
+    local m = mode:sub(1,1)
+    local lang_list = {}
+    for _,lang in pairs(mp.get_property_native(m.."lang")) do
+        lang_list[lang:gsub(" ", "")] = true
     end
-end)
-
-function cycle_tracks(lang_prop, id_prop, type_name)
-    local prop = mp.get_property(lang_prop)
-    prop = string.gsub(prop, " ", "")
-    local lang_list = split(prop, ",")
-    local id_list = {}
+    local track_list = mp.get_property_native("track-list")
+    local id_list = {o["include_no_"..mode] and "no" or nil}
     local count = 0
+    local max_count = o["max_"..mode.."_track_count"]
 
-    if (o.include_no_audio and type_name == "audio") or
-        (o.include_no_sub and type_name == "sub") then
-
-        table.insert(id_list, -1)
-        count = 1
-    end
-
-    local track_count = mp.get_property_number("track-list/count")
-
-    for i = 0, (track_count - 1) do
-        local track_type = mp.get_property("track-list/" .. i .. "/type")
-
-        if track_type == type_name then
+    for _,track in pairs(track_list) do
+        if track.type == mode then
             count = count + 1
-        end
-    end
-
-    local max_count = o.max_audio_track_count
-
-    if type_name == "sub" then
-        max_count = o.max_sub_track_count
-    end
-
-    for i = 0, (track_count - 1) do
-        local track_type = mp.get_property("track-list/" .. i .. "/type")
-        local lang = mp.get_property("track-list/" .. i .. "/lang")
-
-        if track_type == type_name then
-            if list_contains(lang_list, lang) or lang == nil or
-                lang_prop == "" or count < max_count then
-
-                local id = mp.get_property_number("track-list/" .. i .. "/id")
-                table.insert(id_list, id)
-            end
+            if lang_list[track.lang] or not track.lang or
+                track.selected or not next(lang_list)
+            then table.insert(id_list, track.id) end
         end
     end
 
     if #id_list < 2 then
         return
+    elseif count <= max_count then
+       mp.command("cycle "..mode.." "..(dir or ""))
+    else
+        mp.command("cycle-values "..(dir == "down" and "!reverse " or "")..
+                    m.."id "..table.concat(id_list, " "))
     end
-
-    local id = mp.get_property_number(id_prop)
-
-    if id == nil then
-        id = id_list[1]
-    end
-
-    local counter = 0
-
-    while counter < count do
-        counter = counter + 1
-        id = id + 1
-
-        if id > count then
-            id = id_list[1]
-        end
-
-        if list_contains(id_list, id) then
-            if id == -1 then
-                mp.command("set " .. id_prop .. " no")
-            else
-                mp.command("set " .. id_prop .. " " .. id)
-            end
-
-            break
-        end
-    end
-end
+end)
 
 ----- Quick Bookmark
 
