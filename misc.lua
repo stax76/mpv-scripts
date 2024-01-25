@@ -64,10 +64,14 @@
     #max_sub_track_count=5
 
     If you prefer a menu:
-    https://github.com/dyphire/mpv-scripts/blob/main/track-list.lua
+    https://github.com/stax76/mpv-scripts?tab=readme-ov-file#command_palette
     https://github.com/stax76/mpv-scripts#search-menu
+    https://github.com/dyphire/mpv-scripts/blob/main/track-list.lua
     https://codeberg.org/NRK/mpv-toolbox/src/branch/master/mdmenu
+    https://github.com/tomasklaen/uosc
 
+    The code was originally written by stax76, it was later
+    greatly improved by kaoneko making it much shorter.
 
 
     Jump to a random position in the playlist
