@@ -41,17 +41,18 @@ command_palette is a searchable menu for bindings, playlist, chapters, profiles,
 Add bindings to input.conf:
 
 ```
-F1    script-message-to command_palette show-command-palette bindings   # Show bindings
-F2    script-message-to command_palette show-command-palette commands   # Show commands
-F3    script-message-to command_palette show-command-palette properties # Show properties
-F4    script-message-to command_palette show-command-palette options    # Show options
-F8    script-message-to command_palette show-command-palette playlist   # Show playlist
-Alt+c script-message-to command_palette show-command-palette chapters   # Show chapters
-Alt+a script-message-to command_palette show-command-palette audio      # Show audio tracks
-Alt+s script-message-to command_palette show-command-palette subtitles  # Show subtitle tracks
-Alt+v script-message-to command_palette show-command-palette video      # Show video tracks
-Alt+p script-message-to command_palette show-command-palette profiles   # Show profiles
-Alt+d script-message-to command_palette show-command-palette audio-devices  # Show audio devices
+Ctrl+p script-message-to command_palette show-command-palette "Command Palette"
+F1     script-message-to command_palette show-command-palette "Bindings"
+F2     script-message-to command_palette show-command-palette "Commands"
+F3     script-message-to command_palette show-command-palette "Properties"
+F4     script-message-to command_palette show-command-palette "Options"
+F8     script-message-to command_palette show-command-palette "Playlist"
+Alt+c  script-message-to command_palette show-command-palette "Chapters"
+Alt+a  script-message-to command_palette show-command-palette "Audio Tracks"
+Alt+s  script-message-to command_palette show-command-palette "Subtitle Tracks"
+Alt+v  script-message-to command_palette show-command-palette "Video Tracks"
+Alt+p  script-message-to command_palette show-command-palette "Profiles"
+Alt+d  script-message-to command_palette show-command-palette "Audio Devices"
 ```
 
 ### Dependencies

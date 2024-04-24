@@ -250,11 +250,11 @@ end
 mp.register_script_message("show-command-palette", function (name)
     menu_content.list = {}
     menu_content.current_i = 1
-    menu.search_heading = first_to_upper(name)
+    menu.search_heading = name
     menu.filter_by_fields = { "content" }
     em.get_line = original_get_line_func
 
-    if name == "bindings" then
+    if name == "Bindings" then
         local bindings = utils.parse_json(mp.get_property("input-bindings"))
 
         for _, v in ipairs(bindings) do
@@ -294,7 +294,7 @@ mp.register_script_message("show-command-palette", function (name)
 
         menu.filter_by_fields = {'cmd', 'key', 'comment'}
         em.get_line = binding_get_line
-    elseif name == "chapters" then
+    elseif name == "Chapters" then
         local count = mp.get_property_number("chapter-list/count")
 
         if count == 0 then
@@ -315,7 +315,7 @@ mp.register_script_message("show-command-palette", function (name)
         function menu:submit(val)
             mp.set_property_number("chapter", val.index - 1)
         end
-    elseif name == "playlist" then
+    elseif name == "Playlist" then
         local count = mp.get_property_number("playlist-count")
         if count == 0 then return end
 
@@ -334,7 +334,7 @@ mp.register_script_message("show-command-palette", function (name)
         function menu:submit(val)
             mp.set_property_number("playlist-pos", val.index - 1)
         end
-    elseif name == "commands" then
+    elseif name == "Commands" then
         local commands = utils.parse_json(mp.get_property("command-list"))
 
         for k, v in ipairs(commands) do
@@ -356,7 +356,7 @@ mp.register_script_message("show-command-palette", function (name)
             local cmd = string.match(val.content, '%S+')
             mp.commandv("script-message-to", "console", "type", cmd .. " ")
         end
-    elseif name == "properties" then
+    elseif name == "Properties" then
         local properties = split(mp.get_property("property-list"), ",")
 
         for k, v in ipairs(properties) do
@@ -366,7 +366,7 @@ mp.register_script_message("show-command-palette", function (name)
         function menu:submit(val)
             mp.commandv('script-message-to', 'console', 'type', "print-text ${" .. val.content .. "}")
         end
-    elseif name == "options" then
+    elseif name == "Options" then
         local options = split(mp.get_property("options"), ",")
 
         for k, v in ipairs(options) do
@@ -381,7 +381,7 @@ mp.register_script_message("show-command-palette", function (name)
             local prop = string.match(val.content, '%S+')
             mp.commandv("script-message-to", "console", "type", "set " .. prop .. " ")
         end
-    elseif name == "audio" then
+    elseif name == "Audio Tracks" then
         local mi = get_media_info()
         if mi == nil then return end
         local tracks = split(mi .. "\nA: None", "\n")
@@ -399,7 +399,7 @@ mp.register_script_message("show-command-palette", function (name)
         function menu:submit(val)
             mp.command("set aid " .. ((val.index == id) and 'no' or val.index))
         end
-    elseif name == "subtitles" then
+    elseif name == "Subtitle Tracks" then
         local mi = get_media_info()
         if mi == nil then return end
         local tracks = split(mi .. "\nS: None", "\n")
@@ -417,7 +417,7 @@ mp.register_script_message("show-command-palette", function (name)
         function menu:submit(val)
             mp.command("set sid " .. ((val.index == id) and 'no' or val.index))
         end
-    elseif name == "video" then
+    elseif name == "Video Tracks" then
         local mi = get_media_info()
         if mi == nil then return end
         local tracks = split(mi .. "\nV: None", "\n")
@@ -435,7 +435,7 @@ mp.register_script_message("show-command-palette", function (name)
         function menu:submit(val)
             mp.command("set vid " .. ((val.index == id) and 'no' or val.index))
         end
-    elseif name == "profiles" then
+    elseif name == "Profiles" then
         local profiles = utils.parse_json(mp.get_property("profile-list"))
         local ignore_list = {"builtin-pseudo-gui", "encoding", "libmpv", "pseudo-gui", "default"}
 
@@ -449,7 +449,7 @@ mp.register_script_message("show-command-palette", function (name)
             mp.command("show-text " .. val.content);
             mp.command("apply-profile " .. val.content);
         end
-    elseif name == "audio-devices" then
+    elseif name == "Audio Devices" then
         local devices = utils.parse_json(mp.get_property("audio-device-list"))
         local current_name = mp.get_property("audio-device")
 
@@ -465,8 +465,35 @@ mp.register_script_message("show-command-palette", function (name)
             mp.commandv("set", "audio-device", val.name)
             mp.commandv("show-text", "audio-device: " .. val.content)
         end
+    elseif name == "Command Palette" then
+        local modes = {
+            "Playlist",
+            "Audio Tracks",
+            "Subtitle Tracks",
+            "Video Tracks",
+            "Chapters",
+            "Profiles",
+            "Bindings",
+            "Commands",
+            "Properties",
+            "Options",
+            "Audio Devices"
+        }
+
+        for k, v in ipairs(modes) do
+            table.insert(menu_content.list, { content = v })
+        end
+
+        function menu:submit(val)
+            mp.commandv("script-message-to", "command_palette", "show-command-palette", val.content)
+        end
     else
-        msg.error("Unknown mode " .. name)
+        if name == nil then
+            msg.error("Unknown mode")
+        else
+            msg.error("Unknown mode: " .. name)
+        end
+
         return
     end
 
