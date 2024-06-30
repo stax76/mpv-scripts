@@ -240,7 +240,10 @@ mp.register_event("start-file", function (event)
         mp.set_property_number("volume", session_data[previous_name])
     elseif get_item(previous_name) ~= nil then
         local item = get_item(previous_name)
-        mp.set_property_number("volume", session_average + get_average(item.volumes))
+
+        if item ~= nil and #session_data > 1 then
+            mp.set_property_number("volume", session_average + get_average(item.volumes))
+        end
     else
         mp.set_property_number("volume", session_average)
     end

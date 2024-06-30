@@ -151,8 +151,7 @@ function em:get_bindings()
     }
 
     for i = 0, 9 do
-        bindings[#bindings + 1] =
-            {'kp' .. i, function() self:handle_char_input('' .. i) end}
+        bindings[#bindings + 1] = {'kp' .. i, function() self:handle_char_input('' .. i) end}
     end
 
     return bindings
@@ -218,33 +217,45 @@ Text;S: %Language/String%, %Format%, %Format_Profile%, %Title%\\n]]
 end
 
 function binding_get_line(self, _, v)
-    local a = assdraw.ass_new()
+    local ass = assdraw.ass_new()
     local cmd = self:ass_escape(v.cmd)
     local key = self:ass_escape(v.key)
     local comment = self:ass_escape(v.comment or '')
 
     if v.priority == -1 or v.priority == -2 then
         local why_inactive = (v.priority == -1) and 'Inactive' or 'Shadowed'
-        a:append(self:get_font_color('comment'))
+        ass:append(self:get_font_color('comment'))
 
         if comment ~= "" then
-            a:append(comment .. '\\h')
+            ass:append(comment .. '\\h')
         end
 
-        a:append(key .. '\\h(' .. why_inactive .. ')' .. '\\h' .. cmd)
-        return a.text
+        ass:append(key .. '\\h(' .. why_inactive .. ')' .. '\\h' .. cmd)
+        return ass.text
     end
 
     if comment ~= "" then
-        a:append(self:get_font_color('default'))
-        a:append(comment .. '\\h')
+        ass:append(self:get_font_color('default'))
+        ass:append(comment .. '\\h')
     end
 
-    a:append(self:get_font_color('accent'))
-    a:append(key)
-    a:append(self:get_font_color('comment'))
-    a:append(' ' .. cmd)
-    return a.text
+    ass:append(self:get_font_color('accent'))
+    ass:append(key)
+    ass:append(self:get_font_color('comment'))
+    ass:append(' ' .. cmd)
+    return ass.text
+end
+
+function command_palette_get_line(self, _, v)
+    local ass = assdraw.ass_new()
+
+    ass:append(self:get_font_color('default'))
+    ass:append(self:ass_escape(v.name or '') .. '\\h')
+
+    ass:append(self:get_font_color('accent'))
+    ass:append(self:ass_escape("(" .. v.key .. ")"))
+
+    return ass.text
 end
 
 mp.register_script_message("show-command-palette", function (name)
@@ -254,7 +265,43 @@ mp.register_script_message("show-command-palette", function (name)
     menu.filter_by_fields = { "content" }
     em.get_line = original_get_line_func
 
-    if name == "Bindings" then
+    if name == "Command Palette" then
+        local menu_items = {}
+        local bindings = utils.parse_json(mp.get_property("input-bindings"))
+
+        local modes = {
+            "Playlist",
+            "Audio Tracks",
+            "Subtitle Tracks",
+            "Video Tracks",
+            "Chapters",
+            "Profiles",
+            "Bindings",
+            "Commands",
+            "Properties",
+            "Options",
+            "Audio Devices"
+        }
+
+        for _, mode in ipairs(modes) do
+            for _, binding in ipairs(bindings) do
+                if contains(binding.cmd, "show-command-palette") then
+                    if contains(binding.cmd, '"' .. mode .. '"') then
+                        table.insert(menu_items, { name = mode, key = binding.key, cmd = binding.cmd })
+                    end
+                end
+            end
+        end
+
+        menu_content.list = menu_items
+
+        function menu:submit(tbl)
+            mp.command(tbl.cmd)
+        end
+
+        menu.filter_by_fields = {'name', 'key'}
+        em.get_line = command_palette_get_line
+    elseif name == "Bindings" then
         local bindings = utils.parse_json(mp.get_property("input-bindings"))
 
         for _, v in ipairs(bindings) do
@@ -464,28 +511,6 @@ mp.register_script_message("show-command-palette", function (name)
         function menu:submit(val)
             mp.commandv("set", "audio-device", val.name)
             mp.commandv("show-text", "audio-device: " .. val.content)
-        end
-    elseif name == "Command Palette" then
-        local modes = {
-            "Playlist",
-            "Audio Tracks",
-            "Subtitle Tracks",
-            "Video Tracks",
-            "Chapters",
-            "Profiles",
-            "Bindings",
-            "Commands",
-            "Properties",
-            "Options",
-            "Audio Devices"
-        }
-
-        for k, v in ipairs(modes) do
-            table.insert(menu_content.list, { content = v })
-        end
-
-        function menu:submit(val)
-            mp.commandv("script-message-to", "command_palette", "show-command-palette", val.content)
         end
     else
         if name == nil then

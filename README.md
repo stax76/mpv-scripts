@@ -26,7 +26,9 @@ documented directly in the script via code comment at the beginning of the scrip
 
 # command_palette
 
-![command_palette](screenshots/command_palette.png)
+![command_palette_main](screenshots/command_palette_main.webp)
+
+![command_palette_bindings](screenshots/command_palette_bindings.png)
 
 command_palette is a searchable menu for bindings, playlist, chapters, profiles, audio/subtitle/video tracks, commands, properties, options, audio devices.
 
@@ -41,18 +43,18 @@ command_palette is a searchable menu for bindings, playlist, chapters, profiles,
 Add bindings to input.conf:
 
 ```
-Ctrl+p script-message-to command_palette show-command-palette "Command Palette"
-F1     script-message-to command_palette show-command-palette "Bindings"
-F2     script-message-to command_palette show-command-palette "Commands"
-F3     script-message-to command_palette show-command-palette "Properties"
-F4     script-message-to command_palette show-command-palette "Options"
-F8     script-message-to command_palette show-command-palette "Playlist"
-Alt+c  script-message-to command_palette show-command-palette "Chapters"
-Alt+a  script-message-to command_palette show-command-palette "Audio Tracks"
-Alt+s  script-message-to command_palette show-command-palette "Subtitle Tracks"
-Alt+v  script-message-to command_palette show-command-palette "Video Tracks"
-Alt+p  script-message-to command_palette show-command-palette "Profiles"
-Alt+d  script-message-to command_palette show-command-palette "Audio Devices"
+Ctrl+p script-message-to command_palette show-command-palette "Command Palette" # Command Palette
+F1     script-message-to command_palette show-command-palette "Bindings" # Bindings
+F2     script-message-to command_palette show-command-palette "Commands" # Commands
+F3     script-message-to command_palette show-command-palette "Properties" # Properties
+F4     script-message-to command_palette show-command-palette "Options" # Options
+F8     script-message-to command_palette show-command-palette "Playlist" # Playlist
+Alt+c  script-message-to command_palette show-command-palette "Chapters" # Chapters
+Alt+a  script-message-to command_palette show-command-palette "Audio Tracks" # Audio Tracks
+Alt+s  script-message-to command_palette show-command-palette "Subtitle Tracks" # Subtitle Tracks
+Alt+v  script-message-to command_palette show-command-palette "Video Tracks" # Video Tracks
+Alt+p  script-message-to command_palette show-command-palette "Profiles" # Profiles
+Alt+d  script-message-to command_palette show-command-palette "Audio Devices" # Audio Devices
 ```
 
 ### Dependencies
