@@ -4,7 +4,8 @@
     https://github.com/stax76/mpv-scripts
 
     All this script does is writing to a log file.
-    
+    It logs only files that were played for longer than 60 seconds.
+
     It writes:
     
     1. The date and time:     10.09.2022 19:50
