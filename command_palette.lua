@@ -168,6 +168,19 @@ end
 
 menu.index_field = "index"
 
+local function format_time(t, duration)
+    local h = math.floor(t / (60 * 60))
+    t = t - (h * 60 * 60)
+    local m = math.floor(t / 60)
+    local s = t - (m * 60)
+
+    if duration >= 60 * 60 or h > 0 then
+        return string.format("%.2d:%.2d:%.2d", h, m, s)
+    end
+
+    return string.format("%.2d:%.2d", m, s)
+end
+
 function get_media_info()
     local path = mp.get_property("path")
 
@@ -342,22 +355,20 @@ mp.register_script_message("show-command-palette", function (name)
         menu.filter_by_fields = {'cmd', 'key', 'comment'}
         em.get_line = binding_get_line
     elseif name == "Chapters" then
-        local count = mp.get_property_number("chapter-list/count")
+        local default_index = mp.get_property_native("chapter")
 
-        if count == 0 then
+        if default_index == nil then
             mp.commandv("show-text", "Chapter: (unavailable)")
             return
         end
 
-        for i = 0, count do
-            local title = mp.get_property("chapter-list/" .. i .. "/title")
+        local duration = mp.get_property_native("duration", math.huge)
 
-            if title then
-                table.insert(menu_content.list, { index = i + 1, content = title })
-            end
+        for i, chapter in ipairs(mp.get_property_native("chapter-list")) do
+            table.insert(menu_content.list, { index = i, content = format_time(chapter.time, duration) .. " " .. chapter.title })
         end
 
-        menu_content.current_i = mp.get_property_number("chapter") + 1
+        menu_content.current_i = default_index + 1
 
         function menu:submit(val)
             mp.set_property_number("chapter", val.index - 1)

@@ -43,18 +43,31 @@ command_palette is a searchable menu for bindings, playlist, chapters, profiles,
 Add bindings to input.conf:
 
 ```
-Ctrl+p script-message-to command_palette show-command-palette "Command Palette" # Command Palette
-F1     script-message-to command_palette show-command-palette "Bindings" # Bindings
-F2     script-message-to command_palette show-command-palette "Commands" # Commands
-F3     script-message-to command_palette show-command-palette "Properties" # Properties
-F4     script-message-to command_palette show-command-palette "Options" # Options
-F8     script-message-to command_palette show-command-palette "Playlist" # Playlist
-Alt+c  script-message-to command_palette show-command-palette "Chapters" # Chapters
-Alt+a  script-message-to command_palette show-command-palette "Audio Tracks" # Audio Tracks
-Alt+s  script-message-to command_palette show-command-palette "Subtitle Tracks" # Subtitle Tracks
-Alt+v  script-message-to command_palette show-command-palette "Video Tracks" # Video Tracks
-Alt+p  script-message-to command_palette show-command-palette "Profiles" # Profiles
-Alt+d  script-message-to command_palette show-command-palette "Audio Devices" # Audio Devices
+Ctrl+p      script-message-to command_palette show-command-palette "Command Palette" # Command Palette
+F1          script-message-to command_palette show-command-palette "Bindings" # Bindings
+F2          script-message-to command_palette show-command-palette "Commands" # Commands
+F3          script-message-to command_palette show-command-palette "Properties" # Properties
+F4          script-message-to command_palette show-command-palette "Options" # Options
+F8          script-message-to command_palette show-command-palette "Playlist" # Playlist
+Alt+c       script-message-to command_palette show-command-palette "Chapters" # Chapters
+Alt+a       script-message-to command_palette show-command-palette "Audio Tracks" # Audio Tracks
+Alt+s       script-message-to command_palette show-command-palette "Subtitle Tracks" # Subtitle Tracks
+Alt+v       script-message-to command_palette show-command-palette "Video Tracks" # Video Tracks
+Alt+p       script-message-to command_palette show-command-palette "Profiles" # Profiles
+Alt+d       script-message-to command_palette show-command-palette "Audio Devices" # Audio Devices
+
+# select.lua is a mpv built-in script similar to command_palette.lua
+Ctrl+F1     script-binding select/select-binding # Bindings
+Ctrl+F3     script-binding select/show-properties # Properties
+Ctrl+F8     script-binding select/select-playlist # Playlist
+Ctrl+Alt+c  script-binding select/select-chapter # Chapters
+Ctrl+Alt+t  script-binding select/select-track # Tracks
+Ctrl+Alt+a  script-binding select/select-aid # Audio Tracks
+Ctrl+Alt+s  script-binding select/select-sid # Subtitle Tracks
+Ctrl+Alt+2  script-binding select/select-secondary-sid # Secondary Subtitle Tracks
+Ctrl+Alt+v  script-binding select/select-vid # Video Tracks
+Ctrl+Alt+l  script-binding select/select-subtitle-line # Subtitle Line
+Ctrl+Alt+d  script-binding select/select-audio-device # Audio Devices
 ```
 
 ### Dependencies
