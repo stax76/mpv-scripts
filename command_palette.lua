@@ -431,15 +431,15 @@ mp.register_script_message("show-command-palette", function (name)
 
         local items = {
             {"Playlist", 'script-message-to command_palette show-command-palette "Playlist"'},
+            {"Bindings", 'script-message-to command_palette show-command-palette "Bindings"'},
             {"Tracks", 'script-message-to command_palette show-command-palette "Tracks"'},
             {"Audio Tracks", 'script-message-to command_palette show-command-palette "Audio Tracks"'},
+            {"Video Tracks", 'script-message-to command_palette show-command-palette "Video Tracks"'},
             {"Subtitle Tracks", 'script-message-to command_palette show-command-palette "Subtitle Tracks"'},
             {"Secondary Subtitle", 'script-message-to command_palette show-command-palette "Secondary Subtitle"'},
             {"Subtitle Line", 'script-message-to command_palette show-command-palette "Subtitle Line"'},
-            {"Video Tracks", 'script-message-to command_palette show-command-palette "Video Tracks"'},
             {"Chapters", 'script-message-to command_palette show-command-palette "Chapters"'},
             {"Profiles", 'script-message-to command_palette show-command-palette "Profiles"'},
-            {"Bindings", 'script-message-to command_palette show-command-palette "Bindings"'},
             {"Commands", 'script-message-to command_palette show-command-palette "Commands"'},
             {"Properties", 'script-message-to command_palette show-command-palette "Properties"'},
             {"Options", 'script-message-to command_palette show-command-palette "Options"'},
