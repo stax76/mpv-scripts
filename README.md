@@ -5,8 +5,10 @@ command_palette and search_menu are documented here, all other scripts are
 documented directly in the script via code comment at the beginning of the script.
 
 - [powershell-completion](powershell/mpv-powershell-completion.ps1) - Command line completion for mpv and mpv.net.
-- [command_palette](#command_palette) - Searchable menu for bindings, playlist
-  chapters, profiles, all tracks, audio tracks, video tracks, subtitle tracks, secondary subtitle tracks, subtitle lines, commands, properties, options, audio devices, Blu-ray Titles.
+- [command_palette](#command_palette) - Searchable menu for bindings,
+  playlist,chapters, profiles, all tracks, audio tracks, video tracks,
+  subtitle tracks, secondary subtitle tracks, subtitle lines, commands,
+  properties, options, audio devices, Blu-ray Titles.
 - [search_menu](#search_menu) - Searchable menu for bindings, commands, properties, playlist
   entries and audio/subtitle tracks.
 - [auto_mode.lua](auto_mode.lua) - Use mpv as video player, music player and image viewer.
