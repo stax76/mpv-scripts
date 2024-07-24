@@ -4,22 +4,22 @@
     https://github.com/stax76/mpv-scripts
 
     All this script does is writing to a log file.
-    It logs only files that were played for longer than 60 seconds.
-
+    
     It writes:
     
-    1. The date and time:     10.09.2022 19:50
-    2. How many minutes:      3
-    3. Filename and location: D:\Samples\Big Buck Bunny.mkv
+    1. The date and time:            10.09.2022 19:50
+    2. How many minutes were played: 3
+    3. Filename and location:        D:\Samples\Big Buck Bunny.mkv
 
-    This is how it looks:
+    This is how a log line looks:
     
     10.09.2022 19:50  3 D:\Samples\Big Buck Bunny.mkv
 
-    There are two conf options:
+    Conf options:
 
-    exclude=<list of folders to be excluded, separated via semicolon>
+    exclude=list of folders to be excluded, separated via semicolon
     storage_path=~~/history.log
+    minimal_play_time=60 # log only files that were played for longer than 60 seconds
 
     Similar or related scripts:
     https://github.com/yuukidach/mpv-scripts/blob/master/history-bookmark.lua
@@ -108,6 +108,10 @@ function file_append(path, content)
     h:close()
 end
 
+----- mpv
+
+local msg = require "mp.msg"
+
 ----- history
 
 time = 0 -- number of seconds since epoch
@@ -116,6 +120,7 @@ path = ""
 local o = {
     exclude = "",
     storage_path = "~~/history.log",
+    minimal_play_time = 60,
 }
 
 opt = require "mp.options"
@@ -137,7 +142,9 @@ end
 function history()
     local seconds = round(os.time() - time)
 
-    if not is_empty(path) and seconds > 60 and not discard() then
+    if not file_exists(o.storage_path) then
+        msg.error("Log file does not exist: " .. o.storage_path)
+    elseif not is_empty(path) and seconds > o.minimal_play_time and not discard() then
         local minutes = round(seconds / 60)
         local line = os.date("%d.%m.%Y %H:%M ") ..
             pad_left(tostring(minutes), 3) .. " " .. path .. "\n"

@@ -4,7 +4,7 @@ Collection of mpv user scripts.
 command_palette and search_menu are documented here, all other scripts are
 documented directly in the script via code comment at the beginning of the script.
 
-- [powershell-completion](powershell/mpv-powershell-completion.ps1) - PowerShell command line completion.
+- [powershell-completion](powershell/mpv-powershell-completion.ps1) - Command line completion for mpv and mpv.net.
 - [command_palette](#command_palette) - Searchable menu for bindings, playlist, chapters, profiles, audio/subtitle/video tracks, commands, properties, options, audio devices.
 - [search_menu](#search_menu) - Searchable menu for bindings, commands, properties, playlist
   entries and audio/subtitle tracks.
@@ -30,7 +30,24 @@ documented directly in the script via code comment at the beginning of the scrip
 
 ![command_palette_bindings](screenshots/command_palette_bindings.png)
 
-command_palette is a searchable menu for bindings, playlist, chapters, profiles, audio/subtitle/video tracks, commands, properties, options, audio devices.
+command_palette is a searchable menu for:
+
+- Command palette features
+- Bindings
+- Playlist
+- Chapters
+- Profiles
+- All tracks
+- Audio tracks
+- Video tracks
+- Subtitle tracks
+- Secondary subtitle tracks
+- Subtitle line
+- Commands
+- Properties
+- Options
+- Audio devices
+- Blu-ray Titles
 
 ### Installation
 
@@ -49,43 +66,32 @@ F2          script-message-to command_palette show-command-palette "Commands" # 
 F3          script-message-to command_palette show-command-palette "Properties" # Properties
 F4          script-message-to command_palette show-command-palette "Options" # Options
 F8          script-message-to command_palette show-command-palette "Playlist" # Playlist
-Alt+c       script-message-to command_palette show-command-palette "Chapters" # Chapters
+F9          script-message-to command_palette show-command-palette "Tracks" # Tracks
 Alt+a       script-message-to command_palette show-command-palette "Audio Tracks" # Audio Tracks
 Alt+s       script-message-to command_palette show-command-palette "Subtitle Tracks" # Subtitle Tracks
+Alt+b       script-message-to command_palette show-command-palette "Secondary Subtitle" # Secondary Subtitle
 Alt+v       script-message-to command_palette show-command-palette "Video Tracks" # Video Tracks
+Alt+c       script-message-to command_palette show-command-palette "Chapters" # Chapters
 Alt+p       script-message-to command_palette show-command-palette "Profiles" # Profiles
 Alt+d       script-message-to command_palette show-command-palette "Audio Devices" # Audio Devices
-
-# select.lua is a mpv built-in script similar to command_palette.lua
-Ctrl+F1     script-binding select/select-binding # Bindings
-Ctrl+F3     script-binding select/show-properties # Properties
-Ctrl+F8     script-binding select/select-playlist # Playlist
-Ctrl+Alt+c  script-binding select/select-chapter # Chapters
-Ctrl+Alt+t  script-binding select/select-track # Tracks
-Ctrl+Alt+a  script-binding select/select-aid # Audio Tracks
-Ctrl+Alt+s  script-binding select/select-sid # Subtitle Tracks
-Ctrl+Alt+2  script-binding select/select-secondary-sid # Secondary Subtitle Tracks
-Ctrl+Alt+v  script-binding select/select-vid # Video Tracks
-Ctrl+Alt+l  script-binding select/select-subtitle-line # Subtitle Line
-Ctrl+Alt+d  script-binding select/select-audio-device # Audio Devices
+Alt+l       script-message-to command_palette show-command-palette "Subtitle Line" # Subtitle Line
+Alt+t       script-message-to command_palette show-command-palette "Blu-ray Titles" # Blu-ray Titles
 ```
 
-### Dependencies
-
-Showing audio and subtitle tracks requires the installation of the CLI tool mediainfo.
+Available options can be found at the top of the source code.
 
 ### Credits
 
+- https://github.com/mpv-player/mpv/blob/master/player/lua/select.lua
 - https://github.com/Seme4eg/mpv-scripts
 - https://github.com/CogentRedTester/mpv-search-page
 
 ### Related Projects
 
-- https://github.com/Seme4eg/mpv-scripts/tree/master#m-x
-- https://github.com/Seme4eg/mpv-scripts/tree/master/script-modules
+- https://github.com/mpv-player/mpv/blob/master/player/lua/select.lua
+- https://github.com/Seme4eg/mpv-scripts
 - https://github.com/CogentRedTester/mpv-search-page
 - https://codeberg.org/NRK/mpv-toolbox/src/branch/master/mdmenu
-- https://github.com/mpvnet-player/mpv.net
 - https://github.com/tsl0922/ImPlay
 
 # search_menu

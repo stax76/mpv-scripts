@@ -4,7 +4,7 @@
 ----- options
 
 local o = {
-    lines_to_show = 10,
+    lines_to_show = 12,
     pause_on_open = false, -- does not work on my system when enabled, menu won't show
     resume_on_exit = "only-if-was-paused",
 
@@ -13,6 +13,8 @@ local o = {
     line_bottom_margin = 1,
     menu_x_padding = 5,
     menu_y_padding = 2,
+
+    use_mediainfo = false, -- use MediaInfo CLI tool for track info
 }
 
 local opt = require "mp.options"
@@ -113,6 +115,28 @@ function file_name(value)
 end
 
 ----- main
+
+local BluRayTitles = {}
+
+mp.enable_messages("info")
+
+mp.register_event('log-message', function(e)
+    if e.prefix ~= "bd" then
+        return
+    end
+
+    if contains(e.text, " 0 duration: ") then
+        BluRayTitles = {}
+    end
+
+    if contains(e.text, " duration: ") then
+        local match = string.match(e.text, "%d%d:%d%d:%d%d")
+
+        if match then
+            table.insert(BluRayTitles, match)
+        end
+    end
+end)
 
 package.path = mp.command_native({ "expand-path", "~~/script-modules/?.lua;" }) .. package.path
 
@@ -271,6 +295,129 @@ function command_palette_get_line(self, _, v)
     return ass.text
 end
 
+local function format_flags(track)
+    local flags = ""
+
+    for _, flag in ipairs({"default", "forced", "dependent", "visual-impaired",
+                           "hearing-impaired", "image", "external"}) do
+        if track[flag] then
+            flags = flags .. flag .. " "
+        end
+    end
+
+    if flags == "" then
+        return ""
+    end
+
+    return " [" .. flags:sub(1, -2) .. "]"
+end
+
+local function fix_codec(value)
+    if contains(value, "hdmv_pgs_subtitle") then
+        value = replace(value, "hdmv_pgs_subtitle", "pgs")
+    end
+
+    return value:upper()
+end
+
+local function get_language(lng)
+    if lng == nil or lng == "" then
+        return lng
+    end
+
+    if lng == "ara" then lng = "Arabic" end
+    if lng == "ben" then lng = "Bangla" end
+    if lng == "bng" then lng = "Bangla" end
+    if lng == "chi" then lng = "Chinese" end
+    if lng == "zho" then lng = "Chinese" end
+    if lng == "eng" then lng = "English" end
+    if lng == "fre" then lng = "French" end
+    if lng == "fra" then lng = "French" end
+    if lng == "ger" then lng = "German" end
+    if lng == "deu" then lng = "German" end
+    if lng == "hin" then lng = "Hindi" end
+    if lng == "ita" then lng = "Italian" end
+    if lng == "jpn" then lng = "Japanese" end
+    if lng == "kor" then lng = "Korean" end
+    if lng == "msa" then lng = "Malay" end
+    if lng == "por" then lng = "Portuguese" end
+    if lng == "pan" then lng = "Punjabi" end
+    if lng == "rus" then lng = "Russian" end
+    if lng == "spa" then lng = "Spanish" end
+    if lng == "und" then lng = "Undetermined" end
+
+    return lng
+end
+
+local function format_track(track)
+    local lng = get_language(track.lang)
+    return (track.selected and "●" or "○") .. (
+            (lng and lng .. " " or "") ..
+            fix_codec(track.codec and track.codec .. " " or "") ..
+            (track["demux-w"] and track["demux-w"] .. "x" .. track["demux-h"]
+             .. " " or "") ..
+            (track["demux-fps"] and not track.image
+             and string.format("%.4f", track["demux-fps"]):gsub("%.?0*$", "") ..
+             " fps " or "") ..
+            (track["demux-channel-count"] and track["demux-channel-count"] ..
+             "ch " or "") ..
+            (track["codec-profile"] and track.type == "audio"
+             and track["codec-profile"] .. " " or "") ..
+            (track["demux-samplerate"] and track["demux-samplerate"] / 1000 ..
+             " kHz " or "") ..
+            (track["demux-bitrate"] and string.format("%.0f", track["demux-bitrate"] / 1000)
+             .. " kbps " or "") ..
+            (track["hls-bitrate"] and string.format("%.0f", track["hls-bitrate"] / 1000)
+             .. " HLS kbps " or "")
+        ):sub(1, -2) .. format_flags(track) .. (track.title and " " .. track.title or "")
+end
+
+local function select(conf)
+    for k, v in ipairs(conf.items) do
+        table.insert(menu_content.list, { index = k, content = v })
+    end
+
+    if conf.default_item then
+        menu_content.current_i = conf.default_item
+    end
+
+    function menu:submit(value)
+        conf.submit(value)
+    end
+end
+
+local function select_track(property, type, error)
+    local tracks = {}
+    local items = {}
+    local default_item
+    local track_id = mp.get_property_native(property)
+
+    for _, track in ipairs(mp.get_property_native("track-list")) do
+        if track.type == type then
+            tracks[#tracks + 1] = track
+            items[#items + 1] = format_track(track)
+
+            if track.id == track_id then
+                default_item = #items
+            end
+        end
+    end
+
+    if #items == 0 then
+        mp.commandv("show-text", error)
+        return
+    end
+
+    select({
+        items = items,
+        default_item = default_item,
+        submit = function (tbl)
+            mp.command("set " .. property .. " " ..
+                (tracks[tbl.index].selected and "no" or tracks[tbl.index].id))
+        end,
+    })
+end
+
 mp.register_script_message("show-command-palette", function (name)
     menu_content.list = {}
     menu_content.current_i = 1
@@ -282,27 +429,39 @@ mp.register_script_message("show-command-palette", function (name)
         local menu_items = {}
         local bindings = utils.parse_json(mp.get_property("input-bindings"))
 
-        local modes = {
-            "Playlist",
-            "Audio Tracks",
-            "Subtitle Tracks",
-            "Video Tracks",
-            "Chapters",
-            "Profiles",
-            "Bindings",
-            "Commands",
-            "Properties",
-            "Options",
-            "Audio Devices"
+        local items = {
+            {"Playlist", 'script-message-to command_palette show-command-palette "Playlist"'},
+            {"Tracks", 'script-message-to command_palette show-command-palette "Tracks"'},
+            {"Audio Tracks", 'script-message-to command_palette show-command-palette "Audio Tracks"'},
+            {"Subtitle Tracks", 'script-message-to command_palette show-command-palette "Subtitle Tracks"'},
+            {"Secondary Subtitle", 'script-message-to command_palette show-command-palette "Secondary Subtitle"'},
+            {"Subtitle Line", 'script-message-to command_palette show-command-palette "Subtitle Line"'},
+            {"Video Tracks", 'script-message-to command_palette show-command-palette "Video Tracks"'},
+            {"Chapters", 'script-message-to command_palette show-command-palette "Chapters"'},
+            {"Profiles", 'script-message-to command_palette show-command-palette "Profiles"'},
+            {"Bindings", 'script-message-to command_palette show-command-palette "Bindings"'},
+            {"Commands", 'script-message-to command_palette show-command-palette "Commands"'},
+            {"Properties", 'script-message-to command_palette show-command-palette "Properties"'},
+            {"Options", 'script-message-to command_palette show-command-palette "Options"'},
+            {"Audio Devices", 'script-message-to command_palette show-command-palette "Audio Devices"'},
+            {"Blu-ray Titles", 'script-message-to command_palette show-command-palette "Blu-ray Titles"'},
         }
 
-        for _, mode in ipairs(modes) do
+        for _, item in ipairs(items) do
+            local found = false
+
             for _, binding in ipairs(bindings) do
                 if contains(binding.cmd, "show-command-palette") then
-                    if contains(binding.cmd, '"' .. mode .. '"') then
-                        table.insert(menu_items, { name = mode, key = binding.key, cmd = binding.cmd })
+                    if contains(binding.cmd, '"' .. item[1] .. '"') then
+                        table.insert(menu_items, { name = item[1], key = binding.key, cmd = binding.cmd })
+                        found = true
+                        break
                     end
                 end
+            end
+
+            if not found then
+                table.insert(menu_items, { name = item[1], key = "unassigned", cmd = item[2] })
             end
         end
 
@@ -439,60 +598,6 @@ mp.register_script_message("show-command-palette", function (name)
             local prop = string.match(val.content, '%S+')
             mp.commandv("script-message-to", "console", "type", "set " .. prop .. " ")
         end
-    elseif name == "Audio Tracks" then
-        local mi = get_media_info()
-        if mi == nil then return end
-        local tracks = split(mi .. "\nA: None", "\n")
-        local id = 0
-
-        for _, v in ipairs(tracks) do
-            if starts_with(v, "A: ") then
-                id = id + 1
-                table.insert(menu_content.list, { index = id, content = string.sub(v, 4) })
-            end
-        end
-
-        menu_content.current_i = mp.get_property_number("aid") or id
-
-        function menu:submit(val)
-            mp.command("set aid " .. ((val.index == id) and 'no' or val.index))
-        end
-    elseif name == "Subtitle Tracks" then
-        local mi = get_media_info()
-        if mi == nil then return end
-        local tracks = split(mi .. "\nS: None", "\n")
-        local id = 0
-
-        for _, v in ipairs(tracks) do
-            if starts_with(v, "S: ") then
-                id = id + 1
-                table.insert(menu_content.list, { index = id, content = string.sub(v, 4) })
-            end
-        end
-
-        menu_content.current_i = mp.get_property_number("sid") or id
-
-        function menu:submit(val)
-            mp.command("set sid " .. ((val.index == id) and 'no' or val.index))
-        end
-    elseif name == "Video Tracks" then
-        local mi = get_media_info()
-        if mi == nil then return end
-        local tracks = split(mi .. "\nV: None", "\n")
-        local id = 0
-
-        for _, v in ipairs(tracks) do
-            if starts_with(v, "V: ") then
-                id = id + 1
-                table.insert(menu_content.list, { index = id, content = string.sub(v, 4) })
-            end
-        end
-
-        menu_content.current_i = mp.get_property_number("vid") or id
-
-        function menu:submit(val)
-            mp.command("set vid " .. ((val.index == id) and 'no' or val.index))
-        end
     elseif name == "Profiles" then
         local profiles = utils.parse_json(mp.get_property("profile-list"))
         local ignore_list = {"builtin-pseudo-gui", "encoding", "libmpv", "pseudo-gui", "default"}
@@ -523,6 +628,182 @@ mp.register_script_message("show-command-palette", function (name)
             mp.commandv("set", "audio-device", val.name)
             mp.commandv("show-text", "audio-device: " .. val.content)
         end
+    elseif name == "Tracks" then
+        local tracks = {}
+
+        for i, track in ipairs(mp.get_property_native("track-list")) do
+            local type = track.image and "I" or track.type
+
+            if type == "video" then type = "V" end
+            if type == "audio" then type = "A" end
+            if type == "sub" then type = "S" end
+
+            tracks[i] = type .. ": " .. format_track(track)
+        end
+
+        if #tracks == 0 then
+            mp.commandv("show-text", "No available tracks")
+            return
+        end
+
+        select({
+            items = tracks,
+            submit = function (tbl)
+                local track = mp.get_property_native("track-list/" .. tbl.index - 1)
+
+                if track then
+                    mp.command("set " .. track.type .. " " .. (track.selected and "no" or track.id))
+                end
+            end,
+        })
+    elseif name == "Audio Tracks" then
+        if o.use_mediainfo then
+            local mi = get_media_info()
+            if mi == nil then return end
+            local tracks = split(mi .. "\nA: None", "\n")
+            local id = 0
+
+            for _, v in ipairs(tracks) do
+                if starts_with(v, "A: ") then
+                    id = id + 1
+                    table.insert(menu_content.list, { index = id, content = string.sub(v, 4) })
+                end
+            end
+
+            menu_content.current_i = mp.get_property_number("aid") or id
+
+            function menu:submit(val)
+                mp.command("set aid " .. ((val.index == id) and 'no' or val.index))
+            end
+        else
+            select_track("aid", "audio", "No available audio tracks")
+        end
+    elseif name == "Subtitle Tracks" then
+        if o.use_mediainfo then
+            local mi = get_media_info()
+            if mi == nil then return end
+            local tracks = split(mi .. "\nS: None", "\n")
+            local id = 0
+
+            for _, v in ipairs(tracks) do
+                if starts_with(v, "S: ") then
+                    id = id + 1
+                    table.insert(menu_content.list, { index = id, content = string.sub(v, 4) })
+                end
+            end
+
+            menu_content.current_i = mp.get_property_number("sid") or id
+
+            function menu:submit(val)
+                mp.command("set sid " .. ((val.index == id) and 'no' or val.index))
+            end
+        else
+            select_track("sid", "sub", "No available subtitle tracks")
+        end
+    elseif name == "Secondary Subtitle" then
+        select_track("secondary-sid", "sub", "No available subtitle tracks")
+    elseif name == "Video Tracks" then
+        if o.use_mediainfo then
+            local mi = get_media_info()
+            if mi == nil then return end
+            local tracks = split(mi .. "\nV: None", "\n")
+            local id = 0
+
+            for _, v in ipairs(tracks) do
+                if starts_with(v, "V: ") then
+                    id = id + 1
+                    table.insert(menu_content.list, { index = id, content = string.sub(v, 4) })
+                end
+            end
+
+            menu_content.current_i = mp.get_property_number("vid") or id
+
+            function menu:submit(val)
+                mp.command("set vid " .. ((val.index == id) and 'no' or val.index))
+            end
+        else
+            select_track("vid", "video", "No available video tracks")
+        end
+    elseif name == "Blu-ray Titles" then
+        if #BluRayTitles == 0 then
+            return
+        end
+
+        local items = {}
+
+        for k, v in ipairs(BluRayTitles) do
+            table.insert(items, "Title " .. k .. "   " .. v)
+        end
+
+        select({
+            items = items,
+            submit = function (tbl)
+                mp.commandv("loadfile", "bd://" .. (tbl.index - 1))
+            end,
+        })
+    elseif name == "Subtitle Line" then
+        local sub = mp.get_property_native("current-tracks/sub")
+
+        if sub == nil then
+            mp.commandv("show-text", "No subtitle is loaded")
+            return
+        end
+
+        if sub.external and sub["external-filename"]:find("^edl://") then
+            sub["external-filename"] = sub["external-filename"]:match('https?://.*')
+                                       or sub["external-filename"]
+        end
+
+        local r = mp.command_native({
+            name = "subprocess",
+            capture_stdout = true,
+            args = sub.external
+                and {"ffmpeg", "-loglevel", "error", "-i", sub["external-filename"],
+                     "-f", "lrc", "-map_metadata", "-1", "-fflags", "+bitexact", "-"}
+                or {"ffmpeg", "-loglevel", "error", "-i", mp.get_property("path"),
+                    "-map", "s:" .. sub["id"] - 1, "-f", "lrc", "-map_metadata",
+                    "-1", "-fflags", "+bitexact", "-"}
+        })
+
+        if r.error_string == "init" then
+            mp.commandv("show-text", "Failed to extract subtitles: ffmpeg not found")
+            return
+        elseif r.status ~= 0 then
+            mp.commandv("show-text", "Failed to extract subtitles")
+            return
+        end
+
+        local sub_lines = {}
+        local sub_times = {}
+        local default_item
+        local delay = mp.get_property_native("sub-delay")
+        local time_pos = mp.get_property_native("time-pos") - delay
+        local duration = mp.get_property_native("duration", math.huge)
+
+        -- Strip HTML and ASS tags.
+        for line in r.stdout:gsub("<.->", ""):gsub("{\\.-}", ""):gmatch("[^\n]+") do
+            -- ffmpeg outputs LRCs with minutes > 60 instead of adding hours.
+            sub_times[#sub_times + 1] = line:match("%d+") * 60 + line:match(":([%d%.]*)")
+            sub_lines[#sub_lines + 1] = format_time(sub_times[#sub_times], duration) ..
+                                        " " .. line:gsub(".*]", "", 1)
+
+            if sub_times[#sub_times] <= time_pos then
+                default_item = #sub_times
+            end
+        end
+
+        select({
+            items = sub_lines,
+            default_item = default_item,
+            submit = function (tbl)
+                -- Add an offset to seek to the correct line while paused without a video track.
+                if mp.get_property_native("current-tracks/video/image") ~= false then
+                    delay = delay + 0.1
+                end
+
+                mp.commandv("seek", sub_times[tbl.index] + delay, "absolute")
+            end,
+        })
     else
         if name == nil then
             msg.error("Unknown mode")

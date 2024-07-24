@@ -325,8 +325,10 @@ end)
 local media_info_cache = {}
 
 function show_text(text, duration, font_size)
-    mp.command('show-text "${osd-ass-cc/0}{\\\\fs' .. font_size ..
-        '}${osd-ass-cc/1}' .. text .. '" ' .. duration)
+    if text ~= "" and text ~= nil then
+        mp.command('show-text "${osd-ass-cc/0}{\\\\fs' .. font_size ..
+            '}${osd-ass-cc/1}' .. text .. '" ' .. duration)
+    end
 end
 
 function get_media_info()
