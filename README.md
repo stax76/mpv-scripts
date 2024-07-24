@@ -45,7 +45,7 @@ command_palette is a searchable menu for:
 - Video tracks
 - Subtitle tracks
 - Secondary subtitle tracks
-- Subtitle line
+- Subtitle lines
 - Commands
 - Properties
 - Options
