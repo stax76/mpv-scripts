@@ -12,12 +12,15 @@ local o = {
     line_bottom_margin = 1,
     menu_x_padding = 5,
     menu_y_padding = 2,
-    font_size = 0, -- 0 uses osd-width/osd-height
+    font_size = 16,
+    scale_with_window = false,
     use_mediainfo = false, -- use MediaInfo CLI tool for track info
 }
 
 local opt = require "mp.options"
 opt.read_options(o)
+
+local initial_font_size = o.font_size
 
 ----- string
 
@@ -435,18 +438,23 @@ mp.register_script_message("show-command-palette", function (name)
     menu.filter_by_fields = { "content" }
     em.get_line = original_get_line_func
 
-    if o.font_size == 0 then
-        local font_size = 40
+    local display_hidpi_scale = mp.get_property_native("display-hidpi-scale")
+
+    if o.scale_with_window then
+        local font_size = math.floor(initial_font_size * display_hidpi_scale)
         local width = mp.get_property_native("osd-width")
         local height = mp.get_property_native("osd-height")
+        local display_width = mp.get_property_native("display-width")
 
         if width > height then
-            font_size = math.floor(font_size * width / 1920)
+            font_size = math.floor(font_size * width / display_width)
         else
-            font_size = math.floor(font_size * height / 1920)
+            font_size = math.floor(font_size * height / display_width)
         end
 
         o.font_size = font_size
+    else
+        o.font_size = math.floor(initial_font_size * display_hidpi_scale)
     end
 
     if name == "Command Palette" then
