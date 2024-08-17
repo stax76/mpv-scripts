@@ -55,7 +55,8 @@ command_palette is a searchable menu for:
 ### Installation
 
 1. Save the script at: `<mpv conf folder>/scripts/command_palette.lua`
-2. Download [extended-menu](https://github.com/Seme4eg/mpv-scripts/blob/master/script-modules/extended-menu.lua)
+2. Create a empty text file for options at: `<mpv conf folder>/script-opts/command_palette.conf`
+3. Download [extended-menu](https://github.com/Seme4eg/mpv-scripts/blob/master/script-modules/extended-menu.lua)
    and save it at: `<mpv conf folder>/script-modules/extended-menu.lua`
 
 ### Usage
@@ -81,7 +82,22 @@ Alt+l       script-message-to command_palette show-command-palette "Subtitle Lin
 Alt+t       script-message-to command_palette show-command-palette "Blu-ray Titles" # Blu-ray Titles
 ```
 
-Available options can be found at the top of the source code.
+Available options and their defaults:
+
+```
+font_size=16
+scale_by_window=no
+lines_to_show=12
+pause_on_open=no  # might be buggy
+resume_on_exit="only-if-was-paused"
+
+# styles
+line_bottom_margin=1
+menu_x_padding=5
+menu_y_padding=2
+
+use_mediainfo=no  # use MediaInfo CLI tool for track info
+```
 
 ### Credits
 
