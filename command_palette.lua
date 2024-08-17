@@ -4,6 +4,8 @@
 ----- options
 
 local o = {
+    font_size = 16,
+    scale_by_window = false,
     lines_to_show = 12,
     pause_on_open = false, -- does not work on my system when enabled, menu won't show
     resume_on_exit = "only-if-was-paused",
@@ -12,15 +14,12 @@ local o = {
     line_bottom_margin = 1,
     menu_x_padding = 5,
     menu_y_padding = 2,
-    font_size = 16,
-    scale_with_osd_size = false,
+
     use_mediainfo = false, -- use MediaInfo CLI tool for track info
 }
 
 local opt = require "mp.options"
 opt.read_options(o)
-
-local initial_font_size = o.font_size
 
 ----- string
 
@@ -437,22 +436,6 @@ mp.register_script_message("show-command-palette", function (name)
     menu.search_heading = name
     menu.filter_by_fields = { "content" }
     em.get_line = original_get_line_func
-
-    if o.scale_with_osd_size then
-        local font_size = 40
-        local width = mp.get_property_native("osd-width")
-        local height = mp.get_property_native("osd-height")
-
-        if width > height then
-            font_size = math.floor(font_size * width / 1920)
-        else
-            font_size = math.floor(font_size * height / 1920)
-        end
-
-        o.font_size = font_size
-    else
-        o.font_size = math.floor(initial_font_size * mp.get_property_native("display-hidpi-scale"))
-    end
 
     if name == "Command Palette" then
         local menu_items = {}
