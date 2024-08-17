@@ -105,7 +105,7 @@ use_mediainfo=no  # use MediaInfo CLI tool for track info
 - https://github.com/Seme4eg/mpv-scripts
 - https://github.com/CogentRedTester/mpv-search-page
 
-### More mpv menu scripts:
+### More mpv menu scripts
 
 https://github.com/stax76/awesome-mpv?tab=readme-ov-file#menu
 
