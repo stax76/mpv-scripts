@@ -300,11 +300,16 @@ end
 function command_palette_get_line(self, _, v)
     local ass = assdraw.ass_new()
 
-    ass:append(self:get_font_color('default'))
-    ass:append(self:ass_escape(v.name or '') .. '\\h')
+    if v.key == "" then
+        ass:append(self:get_font_color('default'))
+        ass:append(self:ass_escape(v.name or ''))
+    else
+        ass:append(self:get_font_color('default'))
+        ass:append(self:ass_escape(v.name or '') .. '\\h')
 
-    ass:append(self:get_font_color('accent'))
-    ass:append(self:ass_escape("(" .. v.key .. ")"))
+        ass:append(self:get_font_color('accent'))
+        ass:append(self:ass_escape("(" .. v.key .. ")"))
+    end
 
     return ass.text
 end
@@ -444,40 +449,43 @@ mp.register_script_message("show-command-palette", function (name)
         local bindings = utils.parse_json(mp.get_property("input-bindings"))
 
         local items = {
-            {"Playlist", 'script-message-to command_palette show-command-palette "Playlist"'},
-            {"Tracks", 'script-message-to command_palette show-command-palette "Tracks"'},
-            {"Video Tracks", 'script-message-to command_palette show-command-palette "Video Tracks"'},
-            {"Audio Tracks", 'script-message-to command_palette show-command-palette "Audio Tracks"'},
-            {"Subtitle Tracks", 'script-message-to command_palette show-command-palette "Subtitle Tracks"'},
-            {"Secondary Subtitle", 'script-message-to command_palette show-command-palette "Secondary Subtitle"'},
-            {"Subtitle Line", 'script-message-to command_palette show-command-palette "Subtitle Line"'},
-            {"Chapters", 'script-message-to command_palette show-command-palette "Chapters"'},
-            {"Profiles", 'script-message-to command_palette show-command-palette "Profiles"'},
-            {"Bindings", 'script-message-to command_palette show-command-palette "Bindings"'},
-            {"Commands", 'script-message-to command_palette show-command-palette "Commands"'},
-            {"Properties", 'script-message-to command_palette show-command-palette "Properties"'},
-            {"Options", 'script-message-to command_palette show-command-palette "Options"'},
-            {"Audio Devices", 'script-message-to command_palette show-command-palette "Audio Devices"'},
-            {"Blu-ray Titles", 'script-message-to command_palette show-command-palette "Blu-ray Titles"'},
-            {"Stream Quality", 'script-message-to command_palette show-command-palette "Stream Quality" # Stream Quality'},
-            {"Aspect Ratio", 'script-message-to command_palette show-command-palette "Aspect Ratio" # Aspect Ratio'},
+            "Playlist",
+            "Tracks",
+            "Video Tracks",
+            "Audio Tracks",
+            "Subtitle Tracks",
+            "Secondary Subtitle",
+            "Subtitle Line",
+            "Chapters",
+            "Profiles",
+            "Bindings",
+            "Commands",
+            "Properties",
+            "Options",
+            "Audio Devices",
+            "Blu-ray Titles",
+            "Stream Quality",
+            "Aspect Ratio",
+            "Command Palette",
         }
 
         for _, item in ipairs(items) do
             local found = false
 
             for _, binding in ipairs(bindings) do
-                if contains(binding.cmd, "show-command-palette") then
-                    if contains(binding.cmd, '"' .. item[1] .. '"') then
-                        table.insert(menu_items, { name = item[1], key = binding.key, cmd = binding.cmd })
-                        found = true
-                        break
-                    end
+                if contains(binding.cmd, "show-command-palette") and
+                    (contains(binding.cmd, '"' .. item .. '"') or
+                    contains(binding.cmd, "'" .. item .. "'")) then
+
+                    table.insert(menu_items, { name = item, key = binding.key, cmd = binding.cmd })
+                    found = true
+                    break
                 end
             end
 
             if not found then
-                table.insert(menu_items, { name = item[1], key = "unassigned", cmd = item[2] })
+                local cmd = "script-message-to command_palette show-command-palette '" .. item .. "'"
+                table.insert(menu_items, { name = item, key = "", cmd = cmd })
             end
         end
 

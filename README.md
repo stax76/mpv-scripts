@@ -36,7 +36,7 @@ documented directly in the script via code comment at the beginning of the scrip
 
 command_palette is a searchable menu for:
 
-- Command palette features
+- Command palette
 - Bindings
 - Playlist
 - Chapters
@@ -51,9 +51,9 @@ command_palette is a searchable menu for:
 - Properties
 - Options
 - Audio devices
-- Blu-ray Titles
-- Stream Quality
-- Aspect Ratio
+- Blu-ray titles
+- Stream quality
+- Aspect ratio
 
 ### Installation
 
