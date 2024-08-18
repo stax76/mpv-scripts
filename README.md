@@ -8,7 +8,8 @@ documented directly in the script via code comment at the beginning of the scrip
 - [command_palette](#command_palette) - Searchable menu for bindings,
   playlist, chapters, profiles, all tracks, audio tracks, video tracks,
   subtitle tracks, secondary subtitle tracks, subtitle lines, commands,
-  properties, options, audio devices, Blu-ray Titles.
+  properties, options, audio devices, Blu-ray titles, stream quality,
+  aspect ratio.
 - [search_menu](#search_menu) - Searchable menu for bindings, commands, properties, playlist
   entries and audio/subtitle tracks.
 - [auto_mode.lua](auto_mode.lua) - Use mpv as video player, music player and image viewer.
@@ -51,6 +52,8 @@ command_palette is a searchable menu for:
 - Options
 - Audio devices
 - Blu-ray Titles
+- Stream Quality
+- Aspect Ratio
 
 ### Installation
 
@@ -80,6 +83,8 @@ Alt+p       script-message-to command_palette show-command-palette "Profiles" # 
 Alt+d       script-message-to command_palette show-command-palette "Audio Devices" # Audio Devices
 Alt+l       script-message-to command_palette show-command-palette "Subtitle Line" # Subtitle Line
 Alt+t       script-message-to command_palette show-command-palette "Blu-ray Titles" # Blu-ray Titles
+Alt+q       script-message-to command_palette show-command-palette "Stream Quality" # Stream Quality
+Alt+r       script-message-to command_palette show-command-palette "Aspect Ratio" # Aspect Ratio
 ```
 
 Available options and their defaults:
@@ -97,6 +102,8 @@ menu_x_padding=5
 menu_y_padding=2
 
 use_mediainfo=no  # use MediaInfo CLI tool for track info
+stream_quality_options=2160,1440,1080,720,480
+aspect_ratios=4:3,16:9,2.35:1,1.36,1.82,0,-1
 ```
 
 ### Credits
@@ -104,8 +111,9 @@ use_mediainfo=no  # use MediaInfo CLI tool for track info
 - https://github.com/mpv-player/mpv/blob/master/player/lua/select.lua
 - https://github.com/Seme4eg/mpv-scripts
 - https://github.com/CogentRedTester/mpv-search-page
+- https://github.com/tomasklaen/uosc
 
-### More mpv menu scripts
+### More menu scripts
 
 https://github.com/stax76/awesome-mpv?tab=readme-ov-file#menu
 
