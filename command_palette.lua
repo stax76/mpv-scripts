@@ -531,8 +531,8 @@ mp.register_script_message("show-command-palette", function (name)
 
         menu_content.list = bindings
 
-        function menu:submit(val)
-            mp.command(val.cmd)
+        function menu:submit(tbl)
+            mp.command(tbl.cmd)
         end
 
         menu.filter_by_fields = {'cmd', 'key', 'comment'}
@@ -553,8 +553,8 @@ mp.register_script_message("show-command-palette", function (name)
 
         menu_content.current_i = default_index + 1
 
-        function menu:submit(val)
-            mp.set_property_number("chapter", val.index - 1)
+        function menu:submit(tbl)
+            mp.set_property_number("chapter", tbl.index - 1)
         end
     elseif name == "Playlist" then
         local count = mp.get_property_number("playlist-count")
@@ -572,8 +572,8 @@ mp.register_script_message("show-command-palette", function (name)
 
         menu_content.current_i = mp.get_property_number("playlist-pos") + 1
 
-        function menu:submit(val)
-            mp.set_property_number("playlist-pos", val.index - 1)
+        function menu:submit(tbl)
+            mp.set_property_number("playlist-pos", tbl.index - 1)
         end
     elseif name == "Commands" then
         local commands = utils.parse_json(mp.get_property("command-list"))
@@ -592,9 +592,9 @@ mp.register_script_message("show-command-palette", function (name)
             table.insert(menu_content.list, { index = k, content = text })
         end
 
-        function menu:submit(val)
-            print(val.content)
-            local cmd = string.match(val.content, '%S+')
+        function menu:submit(tbl)
+            print(tbl.content)
+            local cmd = string.match(tbl.content, '%S+')
             mp.commandv("script-message-to", "console", "type", cmd .. " ")
         end
     elseif name == "Properties" then
@@ -604,8 +604,8 @@ mp.register_script_message("show-command-palette", function (name)
             table.insert(menu_content.list, { index = k, content = v })
         end
 
-        function menu:submit(val)
-            mp.commandv('script-message-to', 'console', 'type', "print-text ${" .. val.content .. "}")
+        function menu:submit(tbl)
+            mp.commandv('script-message-to', 'console', 'type', "print-text ${" .. tbl.content .. "}")
         end
     elseif name == "Options" then
         local options = split(mp.get_property("options"), ",")
@@ -617,9 +617,9 @@ mp.register_script_message("show-command-palette", function (name)
             table.insert(menu_content.list, { index = k, content = v })
         end
 
-        function menu:submit(val)
-            print(val.content)
-            local prop = string.match(val.content, '%S+')
+        function menu:submit(tbl)
+            print(tbl.content)
+            local prop = string.match(tbl.content, '%S+')
             mp.commandv("script-message-to", "console", "type", "set " .. prop .. " ")
         end
     elseif name == "Profiles" then
@@ -632,9 +632,9 @@ mp.register_script_message("show-command-palette", function (name)
             end
         end
 
-        function menu:submit(val)
-            mp.command("show-text " .. val.content);
-            mp.command("apply-profile " .. val.content);
+        function menu:submit(tbl)
+            mp.command("show-text " .. tbl.content);
+            mp.command("apply-profile " .. tbl.content);
         end
     elseif name == "Audio Devices" then
         local devices = utils.parse_json(mp.get_property("audio-device-list"))
@@ -754,8 +754,8 @@ mp.register_script_message("show-command-palette", function (name)
 
             menu_content.current_i = mp.get_property_number("aid") or id
 
-            function menu:submit(val)
-                mp.command("set aid " .. ((val.index == id) and 'no' or val.index))
+            function menu:submit(tbl)
+                mp.command("set aid " .. ((tbl.index == id) and 'no' or tbl.index))
             end
         else
             select_track("aid", "audio", "No available audio tracks")
@@ -776,8 +776,8 @@ mp.register_script_message("show-command-palette", function (name)
 
             menu_content.current_i = mp.get_property_number("sid") or id
 
-            function menu:submit(val)
-                mp.command("set sid " .. ((val.index == id) and 'no' or val.index))
+            function menu:submit(tbl)
+                mp.command("set sid " .. ((tbl.index == id) and 'no' or tbl.index))
             end
         else
             select_track("sid", "sub", "No available subtitle tracks")
@@ -800,8 +800,8 @@ mp.register_script_message("show-command-palette", function (name)
 
             menu_content.current_i = mp.get_property_number("vid") or id
 
-            function menu:submit(val)
-                mp.command("set vid " .. ((val.index == id) and 'no' or val.index))
+            function menu:submit(tbl)
+                mp.command("set vid " .. ((tbl.index == id) and 'no' or tbl.index))
             end
         else
             select_track("vid", "video", "No available video tracks")
@@ -919,4 +919,39 @@ mp.register_script_message('uosc-version', function(version)
     if major and minor and tonumber(major) >= 5 and tonumber(minor) >= 0 then
         uosc_available = true
     end
+end)
+
+mp.register_script_message("show-command-palette-json", function (json)
+    local menu_data = utils.parse_json(json)
+    menu_content.list = {}
+    menu_content.current_i = 1
+    menu.search_heading = menu_data.title
+    menu.filter_by_fields = { "content", "hint", "value_hint" }
+    em.get_line = original_get_line_func
+
+    for k, v in ipairs(menu_data.items) do
+        local values = v.value
+
+        if type(values) == "string" then
+            values = { values }
+        end
+
+        table.insert(menu_content.list, {
+            index = k,
+            content = v.title,
+            hint = v.hint,
+            values = values,
+            value_hint = table.concat(values, " "),
+        })
+
+        if menu_data.selected_index then
+            menu_content.current_i = menu_data.selected_index
+        end
+    end
+
+    function menu:submit(tbl)
+        mp.command_native(tbl.values)
+    end
+
+    menu:init(menu_content)
 end)
