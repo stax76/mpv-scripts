@@ -119,6 +119,15 @@ end
 
 ----- main
 
+local command_palette_version = 1
+mp.commandv('script-message', 'command-palette-version', command_palette_version)
+
+local is_older_than_v0_36 = string.find(mp.get_property("mpv-version"), 'mpv v0%.[1-3][0-5]%.') == 1
+
+if not is_older_than_v0_36 then
+    mp.set_property_native("user-data/command-palette/version", command_palette_version)
+end
+
 local BluRayTitles = {}
 
 mp.enable_messages("info")
@@ -895,8 +904,6 @@ mp.register_script_message("show-command-palette", function (name)
 
         return
     end
-
-    local is_older_than_v0_36 = string.find(mp.get_property("mpv-version"), 'mpv v0%.[1-3][0-5]%.') == 1
 
     if is_empty(mp.get_property("path")) and not is_older_than_v0_36 then
         osc_visibility = mp.get_property_native("user-data/osc/visibility")
