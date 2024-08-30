@@ -15,7 +15,7 @@ local o = {
     menu_x_padding = 5,
     menu_y_padding = 2,
 
-    use_mediainfo = false, -- use MediaInfo CLI tool for track info
+    use_mediainfo = false, -- # true requires the MediaInfo CLI app being installed
     stream_quality_options = "2160,1440,1080,720,480",
     aspect_ratios = "4:3,16:9,2.35:1,1.36,1.82,0,-1",
 }
@@ -446,6 +446,21 @@ local function select_track(property, type, error)
     })
 end
 
+function hide_osc()
+    if is_empty(mp.get_property("path")) and not is_older_than_v0_36 then
+        osc_visibility = mp.get_property_native("user-data/osc/visibility")
+
+        if osc_visibility == "auto" or osc_visibility == "always" then
+            mp.command("script-message osc-visibility never no_osd")
+        end
+    end
+
+    if uosc_available then
+        local disable_elements = "window_border, top_bar, timeline, controls, volume, idle_indicator, audio_indicator, buffering_indicator, pause_indicator"
+        mp.commandv('script-message-to', 'uosc', 'disable-elements', mp.get_script_name(), disable_elements)
+    end
+end
+
 mp.register_script_message("show-command-palette", function (name)
     menu_content.list = {}
     menu_content.current_i = 1
@@ -476,6 +491,7 @@ mp.register_script_message("show-command-palette", function (name)
             "Stream Quality",
             "Aspect Ratio",
             "Command Palette",
+            "Recent Files",
         }
 
         for _, item in ipairs(items) do
@@ -793,6 +809,9 @@ mp.register_script_message("show-command-palette", function (name)
         end
     elseif name == "Secondary Subtitle" then
         select_track("secondary-sid", "sub", "No available subtitle tracks")
+    elseif name == "Recent Files" then
+        mp.command("script-message open-recent-menu command-palette")
+        return
     elseif name == "Video Tracks" then
         if o.use_mediainfo then
             local mi = get_media_info()
@@ -905,19 +924,7 @@ mp.register_script_message("show-command-palette", function (name)
         return
     end
 
-    if is_empty(mp.get_property("path")) and not is_older_than_v0_36 then
-        osc_visibility = mp.get_property_native("user-data/osc/visibility")
-
-        if osc_visibility == "auto" or osc_visibility == "always" then
-            mp.command("script-message osc-visibility never no_osd")
-        end
-    end
-
-    if uosc_available then
-        local disable_elements = "window_border, top_bar, timeline, controls, volume, idle_indicator, audio_indicator, buffering_indicator, pause_indicator"
-        mp.commandv('script-message-to', 'uosc', 'disable-elements', mp.get_script_name(), disable_elements)
-    end
-
+    hide_osc()
     menu:init(menu_content)
 end)
 
@@ -960,5 +967,6 @@ mp.register_script_message("show-command-palette-json", function (json)
         mp.command_native(tbl.values)
     end
 
+    hide_osc()
     menu:init(menu_content)
 end)

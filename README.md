@@ -9,7 +9,7 @@ documented directly in the script via code comment at the beginning of the scrip
   playlist, chapters, profiles, all tracks, audio tracks, video tracks,
   subtitle tracks, secondary subtitle tracks, subtitle lines, commands,
   properties, options, audio devices, Blu-ray titles, stream quality,
-  aspect ratio.
+  aspect ratio, recent files.
 - [search_menu](#search_menu) - Searchable menu for bindings, commands, properties, playlist
   entries and audio/subtitle tracks.
 - [auto_mode.lua](auto_mode.lua) - Use mpv as video player, music player and image viewer.
@@ -54,6 +54,7 @@ command_palette is a searchable menu for:
 - Blu-ray titles
 - Stream quality
 - Aspect ratio
+- Recent files (depends on [recent-menu](https://github.com/natural-harmonia-gropius/recent-menu))
 
 ### Installation
 
@@ -61,6 +62,12 @@ command_palette is a searchable menu for:
 2. Create a empty text file for options at: `<mpv conf folder>/script-opts/command_palette.conf`
 3. Download [extended-menu](https://github.com/Seme4eg/mpv-scripts/blob/master/script-modules/extended-menu.lua)
    and save it at: `<mpv conf folder>/script-modules/extended-menu.lua`
+4. The Recent Files feature requires [recent-menu](https://github.com/natural-harmonia-gropius/recent-menu)
+   being installed.
+5. For better track media info like showing bitrates, the MediaInfo CLI app must be installed.  
+   Debian/Ubuntu: `sudo apt install mediainfo`  
+   Windows: https://mediaarea.net/en/MediaInfo/Download/Windows  
+   This feature must be enabled in `command_palette.conf` as `use_mediainfo=yes`
 
 ### Usage
 
@@ -85,6 +92,7 @@ Alt+l       script-message-to command_palette show-command-palette "Subtitle Lin
 Alt+t       script-message-to command_palette show-command-palette "Blu-ray Titles" # Blu-ray Titles
 Alt+q       script-message-to command_palette show-command-palette "Stream Quality" # Stream Quality
 Alt+r       script-message-to command_palette show-command-palette "Aspect Ratio" # Aspect Ratio
+Alt+e       script-message-to command_palette show-command-palette "Recent Files" # Recent Files
 ```
 
 Available options and their defaults:
@@ -101,7 +109,7 @@ line_bottom_margin=1
 menu_x_padding=5
 menu_y_padding=2
 
-use_mediainfo=no  # use MediaInfo CLI tool for track info
+use_mediainfo=no  # yes requires the MediaInfo CLI app being installed
 stream_quality_options=2160,1440,1080,720,480
 aspect_ratios=4:3,16:9,2.35:1,1.36,1.82,0,-1
 ```
