@@ -19,7 +19,9 @@
 
     exclude=list of folders to be excluded, separated via semicolon
     storage_path=~~/history.log
-    minimal_play_time=60 # log only files that were played for longer than 60 seconds
+    minimal_play_time=60
+
+    minimal_play_time=60 means it logs only files that were played for longer than 60 seconds
 
     Similar or related scripts:
     https://github.com/yuukidach/mpv-scripts/blob/master/history-bookmark.lua

@@ -98,20 +98,25 @@ Alt+e       script-message-to command_palette show-command-palette "Recent Files
 Available options and their defaults:
 
 ```
-font_size=16
+font_size=40
 scale_by_window=no
 lines_to_show=12
-pause_on_open=no  # might be buggy
-resume_on_exit="only-if-was-paused"
+
+# might be buggy
+#pause_on_open=no
+
+#resume_on_exit=only-if-was-paused
 
 # styles
-line_bottom_margin=1
-menu_x_padding=5
-menu_y_padding=2
+#line_bottom_margin=1
+#menu_x_padding=5
+#menu_y_padding=2
 
-use_mediainfo=no  # yes requires the MediaInfo CLI app being installed
-stream_quality_options=2160,1440,1080,720,480
-aspect_ratios=4:3,16:9,2.35:1,1.36,1.82,0,-1
+# yes requires the MediaInfo CLI app being installed
+#use_mediainfo=no
+
+#stream_quality_options=2160,1440,1080,720,480
+#aspect_ratios=4:3,16:9,2.35:1,1.36,1.82,0,-1
 ```
 
 ### Credits
