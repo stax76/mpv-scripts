@@ -5,32 +5,44 @@ https://github.com/stax76/mpv-scripts
 
 This script shows a customizable on screen menu.
 
-Some code parts are derived from:
-
-https://github.com/dyphire/mpv-scripts/blob/main/chapter-list.lua
-
-
 Usage:
 
 Download the following dependency:
 
 https://github.com/CogentRedTester/mpv-scroll-list/blob/master/scroll-list.lua
 
-Save it at: ~~/script-modules/scroll-list.lua
+Save it at: /home/username/.config/mpv/script-modules/scroll-list.lua
+On Windows the mpv config directory location is: C:\users\username\AppData\Roaming\mpv\
 
-
-Define menus using INI format at: ~~/script-opts/osm-menu.conf
+Define menus using INI format at: /home/username/.config/mpv/script-opts/osm-menu.conf
 
 osm-menu.conf example:
 
+--------------------------------------------
 [main]
-Quit = quit
-Zoom = script-message-to osm show-menu zoom
+Zoom  = script-message-to osm show-menu zoom
+Color = script-message-to osm show-menu color
+Power = script-message-to osm show-menu power-linux
+Quit  = quit
 
 [zoom]
-Zoom In  = add video-zoom  0.1 #keep-open
-Zoom Out = add video-zoom -0.1 #keep-open
+Zoom In  = add video-zoom  0.1  #keep-open
+Zoom Out = add video-zoom -0.1  #keep-open
 
+[power-linux]
+Suspend = run systemctl suspend
+Shutdown = run shutdown -h now
+
+[color]
+Contrast + = add contrast  5  #keep-open
+Contrast - = add contrast -5  #keep-open
+Brightness + = add brightness  5  #keep-open
+Brightness - = add brightness -5  #keep-open
+Gamma + = add gamma  5  #keep-open
+Gamma - = add gamma -5  #keep-open
+Saturation + = add saturation  5  #keep-open
+Saturation - = add saturation -5  #keep-open
+--------------------------------------------
 
 Add a binding to your input.conf file:
 <key> script-message-to osm show-menu main
@@ -48,11 +60,11 @@ PGUP:                Move selection page up
 PGDWN:               Move selection page down
 
 
-Configuration: ~~/script-opts/osm.conf
+Configuration: /home/username/.config/mpv/script-opts/osm.conf
 
-## https://fileformats.fandom.com/wiki/SubStation_Alpha#Style_overrides
-## https://github.com/CogentRedTester/mpv-scroll-list
+https://fileformats.fandom.com/wiki/SubStation_Alpha#Style_overrides
 
+----------------------------------
 #header_style={\q2\fs45\c&00ccff&}
 #list_style={\q2\fs45\c&Hffffff&}
 #selected_style={\c&H00ccff&}
@@ -69,10 +81,14 @@ Configuration: ~~/script-opts/osm.conf
 #key_scroll_up=UP WHEEL_UP
 #key_invoke=ENTER SPACE RIGHT MBTN_LEFT
 #key_close=ESC LEFT BS MBTN_RIGHT
-
+---------------------------------
 
 If the command contains 'keep-open' in the comment,
 the menu stays open after the command is executed.
+
+Credits:
+
+https://github.com/dyphire/mpv-scripts/blob/main/chapter-list.lua
 
 ]]--
 
@@ -208,7 +224,7 @@ function show(name)
         add_keys(list, o.key_move_pagedown, 'move_pagedown', function() list:move_pagedown() end, {})
         add_keys(list, o.key_move_begin, 'move_begin', function() list:move_begin() end, {})
         add_keys(list, o.key_move_end, 'move_end', function() list:move_end() end, {})
-        add_keys(list, o.key_invoke, 'invoke', function() list:invoke() end, {})
+        add_keys(list, o.key_invoke, 'invoke', function() list:invoke() end, {repeatable = true})
         add_keys(list, o.key_close, 'close', function() list:close() end, {})
 
         lists[name] = list
