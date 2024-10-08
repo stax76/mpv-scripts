@@ -15,8 +15,9 @@
     -------------------------
     Prints detailed media info on the screen.
     
-    Depends on the CLI tool 'mediainfo':
-    https://mediaarea.net/en/MediaInfo/Download
+    Depends on the CLI tool mediainfo:  
+    https://mediaarea.net/en/MediaInfo/Download  
+    On Ubuntu: sudo apt install mediainfo
 
     In input.conf add:
     i script-message-to misc print-media-info
@@ -375,6 +376,8 @@ Text;S: %Language/String%, %Format%, %Format_Profile%, %Title%\\n]]
         media_info_cache[path] = output
 
         return output
+    else
+        mp.osd_message("mediainfo failed to run")
     end
 end
 
