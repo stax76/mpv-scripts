@@ -61,7 +61,7 @@ command_palette is a searchable menu for:
 Run the following command line:
 
 ```
-powershell -executionpolicy bypass -nologo -noexit -command "irm https://raw.githubusercontent.com/stax76/mpv-scripts/refs/heads/main/powershell/command_palette_installer.ps1 | iex"
+powershell -executionpolicy bypass -nologo -noexit -noprofile -command "irm https://raw.githubusercontent.com/stax76/mpv-scripts/refs/heads/main/powershell/command_palette_installer.ps1 | iex"
 ```
 
 Or follow these steps:

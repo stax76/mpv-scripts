@@ -109,3 +109,5 @@ if (Test-Path $InputConfPath) {
 } else {
     $Bindings | Out-File $InputConfPath | Out-Null
 }
+
+pause
