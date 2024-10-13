@@ -50,7 +50,7 @@ mkdir ($ConfigDir + '/script-modules/')
 
 # Download script
 try {
-    Invoke-WebRequest -OutFile $ScriptFile -Uri $ScriptFileURL
+    Invoke-WebRequest -OutFile $ScriptFile -Uri $ScriptFileURL | Out-Null
 }
 catch {
     "Couldn't download: $ScriptFileURL"
@@ -58,7 +58,7 @@ catch {
 
 # Download menu library
 try {
-    Invoke-WebRequest -OutFile $ExtendedScriptFile -Uri $ExtendedMenuScriptURL
+    Invoke-WebRequest -OutFile $ExtendedScriptFile -Uri $ExtendedMenuScriptURL | Out-Null
 }
 catch {
     "Couldn't download: $ExtendedMenuScriptURL"
