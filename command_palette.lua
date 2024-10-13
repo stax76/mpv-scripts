@@ -944,6 +944,12 @@ mp.register_script_message('uosc-version', function(version)
 end)
 
 mp.register_script_message("show-command-palette-json", function (json)
+    if dpiScale == 0 then
+        dpiScale = mp.get_property_native("display-hidpi-scale", 1)
+    end
+
+    o.font_size = originalFontSize * dpiScale
+
     local menu_data = utils.parse_json(json)
     menu_content.list = {}
     menu_content.current_i = 1

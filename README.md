@@ -100,7 +100,7 @@ Alt+l       script-message-to command_palette show-command-palette "Subtitle Lin
 Alt+t       script-message-to command_palette show-command-palette "Blu-ray Titles" # Blu-ray Titles
 Alt+q       script-message-to command_palette show-command-palette "Stream Quality" # Stream Quality
 Alt+r       script-message-to command_palette show-command-palette "Aspect Ratio" # Aspect Ratio
-Alt+e       script-message-to command_palette show-command-palette "Recent Files" # Recent Files
+Alt+f       script-message-to command_palette show-command-palette "Recent Files" # Recent Files
 ```
 
 Available options and their defaults:
