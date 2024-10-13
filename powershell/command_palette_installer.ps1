@@ -119,5 +119,3 @@ if (Test-Path $InputConfPath) {
 }
 
 Write-Host "command_palette.lua was installed. Restart mpv/mpv.net." -ForegroundColor Green
-
-pause
