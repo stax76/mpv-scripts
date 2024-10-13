@@ -3,39 +3,39 @@
 
 # Determine install directory
 if (Test-Path env:MPVNET_HOME) {
-	Write-Output "Installing into (MPVNET_HOME):"
-	$ConfigDir = "$env:MPVNET_HOME"
+    Write-Output "Installing into (MPVNET_HOME):"
+    $ConfigDir = "$env:MPVNET_HOME"
 }
 elseif (Test-Path "$PWD/portable_config") {
-	Write-Output "Installing into (portable config):"
-	$ConfigDir = "$PWD/portable_config"
+    Write-Output "Installing into (portable config):"
+    $ConfigDir = "$PWD/portable_config"
 }
 elseif ((Get-Item -Path $PWD).BaseName -eq "portable_config") {
-	Write-Output "Installing into (portable config):"
-	$ConfigDir = "$PWD"
+    Write-Output "Installing into (portable config):"
+    $ConfigDir = "$PWD"
 }
 else {
-	Write-Output "Installing into (current user config):"
-	$ConfigDir = "$env:APPDATA/mpv"
-	if (-not (Test-Path $ConfigDir)) {
-		Write-Output "Creating folder: $ConfigDir"
-		New-Item -ItemType Directory -Force -Path $ConfigDir | Out-Null
-	}
+    Write-Output "Installing into (current user config):"
+    $ConfigDir = "$env:APPDATA/mpv"
+    if (-not (Test-Path $ConfigDir)) {
+        Write-Output "Creating folder: $ConfigDir"
+        New-Item -ItemType Directory -Force -Path $ConfigDir | Out-Null
+    }
 }
 
 Write-Output "-> $ConfigDir"
 
 # Ensure install directory exists
 if (-not (Test-Path -Path $ConfigDir -PathType Container)) {
-	if (Test-Path -Path $ConfigDir -PathType Leaf) {
-		"Config directory is a file."
-	}
-	try {
-		New-Item -ItemType Directory -Force -Path $ConfigDir | Out-Null
-	}
-	catch {
-		"Couldn't create config directory."
-	}
+    if (Test-Path -Path $ConfigDir -PathType Leaf) {
+        "Config directory is a file."
+    }
+    try {
+        New-Item -ItemType Directory -Force -Path $ConfigDir | Out-Null
+    }
+    catch {
+        "Couldn't create config directory."
+    }
 }
 
 $ScriptFile = $ConfigDir + '/scripts/command_palette.lua'
@@ -46,18 +46,18 @@ $ExtendedMenuScriptURL = 'https://raw.githubusercontent.com/Seme4eg/mpv-scripts/
 
 # Download script
 try {
-	Invoke-WebRequest -OutFile $ScriptFile -Uri $ScriptFileURL | Out-Null
+    Invoke-WebRequest -OutFile $ScriptFile -Uri $ScriptFileURL | Out-Null
 }
 catch {
-	"Couldn't download: $ScriptFileURL"
+    "Couldn't download: $ScriptFileURL"
 }
 
 # Download menu library
 try {
-	Invoke-WebRequest -OutFile $ExtendedScriptFile -Uri $ExtendedMenuScriptURL | Out-Null
+    Invoke-WebRequest -OutFile $ExtendedScriptFile -Uri $ExtendedMenuScriptURL | Out-Null
 }
 catch {
-	"Couldn't download: $ExtendedMenuScriptURL"
+    "Couldn't download: $ExtendedMenuScriptURL"
 }
 
 $Bindings = @'
