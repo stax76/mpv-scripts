@@ -84,12 +84,18 @@ Alt+e       script-message-to command_palette show-command-palette "Recent Files
 
 # Edit input.conf
 $InputConfPath = $ConfigDir + "/input.conf"
-$InputConfContent = Get-Content $InputConfPath
 
 if (Test-Path $InputConfPath) {
-    if (-not $InputConfContent.Contains('show-command-palette')) {
-        $NewContent = $InputConfContent + "`r`n" + $Bindings
-        $NewContent | Out-File $InputConfPath | Out-Null
+    $InputConfContent = Get-Content $InputConfPath
+
+    if (Test-Path $InputConfPath) {
+        if (-not $InputConfContent.Contains('show-command-palette')) {
+            $NewContent = $InputConfContent + "`r`n" + $Bindings
+            $NewContent | Out-File $InputConfPath | Out-Null
+        }
     }
+} else {
+    $Bindings | Out-File $InputConfPath | Out-Null
 }
+
 
