@@ -118,4 +118,4 @@ if (Test-Path $InputConfPath) {
     $Bindings | Out-File $InputConfPath | Out-Null
 }
 
-Write-Host "command_palette.lua was installed. Restart mpv/mpv.net." -ForegroundColor Green
+Write-Host "command_palette.lua was installed. Restart mpv/mpv.net. Show the command palette with Ctrl+P." -ForegroundColor Green
