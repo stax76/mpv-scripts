@@ -45,6 +45,9 @@ $ScriptFileURL = 'https://raw.githubusercontent.com/stax76/mpv-scripts/refs/head
 $ExtendedScriptFile = ($ConfigDir + '/script-modules/extended-menu.lua') -replace '/','\'
 $ExtendedMenuScriptURL = 'https://raw.githubusercontent.com/Seme4eg/mpv-scripts/refs/heads/master/script-modules/extended-menu.lua'
 
+mkdir ($ConfigDir + '/scripts/')
+mkdir ($ConfigDir + '/script-modules/')
+
 # Download script
 try {
     Invoke-WebRequest -OutFile $ScriptFile -Uri $ScriptFileURL
