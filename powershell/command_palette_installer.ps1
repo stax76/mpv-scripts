@@ -23,6 +23,7 @@ else {
     }
 }
 
+$ConfigDir = $ConfigDir -replace '/','\'
 Write-Output "-> $ConfigDir"
 
 # Ensure install directory exists
