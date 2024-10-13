@@ -84,8 +84,8 @@ Add bindings to input.conf:
 ```
 Ctrl+p      script-message-to command_palette show-command-palette "Command Palette" # Command Palette
 F1          script-message-to command_palette show-command-palette "Bindings" # Bindings
-F2          script-message-to command_palette show-command-palette "Commands" # Commands
-F3          script-message-to command_palette show-command-palette "Properties" # Properties
+F2          script-message-to command_palette show-command-palette "Properties" # Properties
+F3          script-message-to command_palette show-command-palette "Commands" # Commands
 F4          script-message-to command_palette show-command-palette "Options" # Options
 F8          script-message-to command_palette show-command-palette "Playlist" # Playlist
 F9          script-message-to command_palette show-command-palette "Tracks" # Tracks
