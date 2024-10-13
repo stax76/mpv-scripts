@@ -58,10 +58,10 @@ command_palette is a searchable menu for:
 
 ### Installation
 
-Run the following command line:
+Ensure the mpv.net startup folder is accessable in the
+Path environment variable, then run the following command line:
 
 ```
-
 powershell -executionpolicy bypass -nologo -noexit -command "irm https://raw.githubusercontent.com/stax76/mpv-scripts/refs/heads/main/powershell/command_palette_installer.ps1 | iex"
 ```
 
