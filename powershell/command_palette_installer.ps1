@@ -1,5 +1,5 @@
 
-Credits: https://github.com/tomasklaen/uosc/blob/main/installers/windows.ps1
+# Credits: https://github.com/tomasklaen/uosc/blob/main/installers/windows.ps1
 
 # Determine install directory
 if (Test-Path env:MPVNET_HOME) {
