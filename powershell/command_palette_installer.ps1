@@ -13,8 +13,7 @@ elseif (Test-Path "$PWD/portable_config") {
 elseif ((Get-Item -Path $PWD).BaseName -eq "portable_config") {
     Write-Output "Installing into (portable config):"
     $ConfigDir = "$PWD"
-}
-else {
+} else {
     Write-Output "Installing into (current user config):"
     $ConfigDir = "$env:APPDATA/mpv"
     if (-not (Test-Path $ConfigDir)) {
@@ -45,8 +44,17 @@ $ScriptFileURL = 'https://raw.githubusercontent.com/stax76/mpv-scripts/refs/head
 $ExtendedScriptFile = ($ConfigDir + '/script-modules/extended-menu.lua') -replace '/','\'
 $ExtendedMenuScriptURL = 'https://raw.githubusercontent.com/Seme4eg/mpv-scripts/refs/heads/master/script-modules/extended-menu.lua'
 
-mkdir ($ConfigDir + '/scripts/')
-mkdir ($ConfigDir + '/script-modules/')
+$ScriptsFolder = $ConfigDir + '/scripts/'
+
+if (-not (Test-Path $ScriptsFolder)) {
+    mkdir $ScriptsFolder
+}
+
+$ScriptModulesFolder = $ConfigDir + '/script-modules/'
+
+if (-not (Test-Path $ScriptModulesFolder)) {
+    mkdir $ScriptModulesFolder
+}
 
 # Download script
 try {
@@ -93,7 +101,7 @@ if (Test-Path $InputConfPath) {
     $InputConfContent = Get-Content $InputConfPath
 
     if (Test-Path $InputConfPath) {
-        if (-not $InputConfContent.Contains('show-command-palette')) {
+        if (-not $InputConfContent -match 'show-command-palette') {
             $NewContent = $InputConfContent + "`r`n" + $Bindings
             $NewContent | Out-File $InputConfPath | Out-Null
         }
@@ -101,5 +109,3 @@ if (Test-Path $InputConfPath) {
 } else {
     $Bindings | Out-File $InputConfPath | Out-Null
 }
-
-

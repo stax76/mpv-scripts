@@ -58,6 +58,15 @@ command_palette is a searchable menu for:
 
 ### Installation
 
+Run the following command line:
+
+```
+
+powershell -executionpolicy bypass -nologo -noexit -command "irm https://raw.githubusercontent.com/stax76/mpv-scripts/refs/heads/main/powershell/command_palette_installer.ps1 | iex"
+```
+
+Or follow these steps:
+
 1. Save the script at: `<mpv conf folder>/scripts/command_palette.lua`
 2. Create a empty text file for options at: `<mpv conf folder>/script-opts/command_palette.conf`
 3. Download [extended-menu](https://github.com/Seme4eg/mpv-scripts/blob/master/script-modules/extended-menu.lua)
