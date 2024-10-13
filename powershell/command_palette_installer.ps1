@@ -39,15 +39,15 @@ if (-not (Test-Path -Path $ConfigDir -PathType Container)) {
     }
 }
 
-$ScriptFile = $ConfigDir + '/scripts/command_palette.lua'
+$ScriptFile = ($ConfigDir + '/scripts/command_palette.lua') -replace '/','\'
 $ScriptFileURL = 'https://raw.githubusercontent.com/stax76/mpv-scripts/refs/heads/main/command_palette.lua'
 
-$ExtendedScriptFile = $ConfigDir + '/script-modules/extended-menu.lua'
+$ExtendedScriptFile = ($ConfigDir + '/script-modules/extended-menu.lua') -replace '/','\'
 $ExtendedMenuScriptURL = 'https://raw.githubusercontent.com/Seme4eg/mpv-scripts/refs/heads/master/script-modules/extended-menu.lua'
 
 # Download script
 try {
-    Invoke-WebRequest -OutFile $ScriptFile -Uri $ScriptFileURL | Out-Null
+    Invoke-WebRequest -OutFile $ScriptFile -Uri $ScriptFileURL
 }
 catch {
     "Couldn't download: $ScriptFileURL"
@@ -55,7 +55,7 @@ catch {
 
 # Download menu library
 try {
-    Invoke-WebRequest -OutFile $ExtendedScriptFile -Uri $ExtendedMenuScriptURL | Out-Null
+    Invoke-WebRequest -OutFile $ExtendedScriptFile -Uri $ExtendedMenuScriptURL
 }
 catch {
     "Couldn't download: $ExtendedMenuScriptURL"
