@@ -452,7 +452,7 @@ function loadfiles(mode)
             if ($containsFiles) {
                 [Windows.Forms.Clipboard]::GetFileDropList() -join [Environment]::NewLine
             } else {
-                Get-Clipboard
+                (Get-Clipboard).Replace('"', "")
             }
         ]]
 

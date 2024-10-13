@@ -120,6 +120,10 @@ end
 ----- main
 
 local command_palette_version = 1
+local BluRayTitles = {}
+local dpiScale = 0
+local originalFontSize = o.font_size
+
 mp.commandv('script-message', 'command-palette-version', command_palette_version)
 
 local is_older_than_v0_36 = string.find(mp.get_property("mpv-version"), 'mpv v0%.[1-3][0-5]%.') == 1
@@ -127,8 +131,6 @@ local is_older_than_v0_36 = string.find(mp.get_property("mpv-version"), 'mpv v0%
 if not is_older_than_v0_36 then
     mp.set_property_native("user-data/command-palette/version", command_palette_version)
 end
-
-local BluRayTitles = {}
 
 mp.enable_messages("info")
 
@@ -462,6 +464,12 @@ function hide_osc()
 end
 
 mp.register_script_message("show-command-palette", function (name)
+    if dpiScale == 0 then
+        dpiScale = mp.get_property_native("display-hidpi-scale", 1)
+    end
+
+    o.font_size = originalFontSize * dpiScale
+
     menu_content.list = {}
     menu_content.current_i = 1
     menu.search_heading = name
