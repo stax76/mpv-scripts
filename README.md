@@ -71,7 +71,7 @@ Or follow these steps:
 3. Download [extended-menu](https://github.com/Seme4eg/mpv-scripts/blob/master/script-modules/extended-menu.lua)
    and save it at: `<mpv conf folder>/script-modules/extended-menu.lua`
 4. The Recent Files feature requires [recent-menu](https://github.com/natural-harmonia-gropius/recent-menu)
-   being installed.
+   being installed or mpv.net being used.
 5. For better track media info like showing bitrates, the MediaInfo CLI app must be installed.  
    Debian/Ubuntu: `sudo apt install mediainfo`  
    Windows: https://mediaarea.net/en/MediaInfo/Download/Windows  
