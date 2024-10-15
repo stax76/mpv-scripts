@@ -119,7 +119,7 @@ end
 
 ----- main
 
-local command_palette_version = 1
+local command_palette_version = 2
 local BluRayTitles = {}
 local dpiScale = 0
 local originalFontSize = o.font_size
@@ -818,7 +818,14 @@ mp.register_script_message("show-command-palette", function (name)
     elseif name == "Secondary Subtitle" then
         select_track("secondary-sid", "sub", "No available subtitle tracks")
     elseif name == "Recent Files" then
-        mp.command("script-message open-recent-menu command-palette")
+        local frontend = mp.get_property_native("user-data/frontend/name")
+
+        if frontend == "mpv.net" then
+            mp.command("script-message show-recent-in-command-palette")
+        else
+            mp.command("script-message open-recent-menu command-palette")
+        end
+
         return
     elseif name == "Video Tracks" then
         if o.use_mediainfo then
