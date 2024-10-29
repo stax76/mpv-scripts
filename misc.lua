@@ -308,6 +308,10 @@ function show_pos()
     local position = mp.get_property_number("time-pos")
     local duration = mp.get_property_number("duration")
 
+    if position == nil or duration == nil then
+        return
+    end
+
     if position > duration then
         position = duration
     end
@@ -317,8 +321,35 @@ function show_pos()
     end
 end
 
+local timer_obj = nil
+local periodic_time = 0.05  -- 50 ms
+local elapsed_time = 0
+
+function periodic_function()
+    if elapsed_time > 2 then
+        if timer_obj ~= nil then
+             timer_obj:kill()
+        end
+
+        elapsed_time = 0
+        mp.osd_message("")
+    else
+        show_pos()
+    end
+
+    elapsed_time = elapsed_time + periodic_time
+end
+
 mp.register_script_message("show-position", function (mode)
-    mp.add_timeout(0.05, show_pos)
+    show_pos()
+
+    if timer_obj == nil then
+        timer_obj = mp.add_periodic_timer(periodic_time, periodic_function)
+    else
+        elapsed_time = 0
+        timer_obj:kill()
+        timer_obj:resume()
+    end
 end)
 
 ----- Print media info on screen
