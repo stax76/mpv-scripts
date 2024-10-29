@@ -1,22 +1,22 @@
 
 --[[
 
-    https://github.com/stax76/mpv-scripts
+https://github.com/stax76/mpv-scripts
 
-    This script changes options depending on what type of
-    file is played. It uses the file extension to detect
-    if the current file is a video, audio or image file.
+This script changes options depending on what type of
+file is played. It uses the file extension to detect
+if the current file is a video, audio or image file.
 
-    The changes happen not on every file load, but only
-    when a mode change is detected.
+The changes happen not on every file load, but only
+when a mode change is detected.
 
-    On mode change 3 things can be done:
+On mode change 3 things can be done:
 
-    1. Change options
-    2. Change key bindings
-    3. Send messages
+1. Change options
+2. Change key bindings
+3. Send messages
 
-    The configuration is done in code.
+The configuration is done in code.
 
 ]]--
 
@@ -26,6 +26,7 @@
 -- video mode
 
 function on_video_mode_activate()
+    msg.info("Video mode is activated")
     mp.set_property("osd-playing-msg", "${media-title}")       -- in video mode use media-title
     mp.command("script-message osc-visibility auto no_osd")    -- set osc visibility to auto
 end
@@ -36,6 +37,7 @@ end
 -- audio mode
 
 function on_audio_mode_activate()
+    msg.info("Audio mode is activated")
     mp.set_property("osd-playing-msg", "${media-title}")       -- in audio mode use media-title
     mp.command("script-message osc-visibility never no_osd")   -- in audio mode disable the osc
 end
@@ -46,23 +48,24 @@ end
 -- image mode
 
 function on_image_mode_activate()
+    msg.info("Image mode is activated")
     mp.set_property("osd-playing-msg", "")                     -- disable osd-playing-msg for images
-    mp.set_property("background", "#1A2226")                   -- use dark grey background for images
+    mp.set_property("background-color", "#1A2226")                   -- use dark grey background for images
     mp.command("script-message osc-visibility never no_osd")   -- disable osc for images
 end
 
 function on_image_mode_deactivate()
-    mp.set_property("background", "#000000")                   -- use black background for audio and video
+    mp.set_property("background-color", "#000000")             -- use black background for audio and video
 end
 
 -- called whenever the file extension changes
 
 function on_type_change(old_ext, new_ext)
-    if new_ext == ".gif" then
+    if new_ext == "gif" then
         mp.set_property("loop-file", "inf")                    -- loop GIF files
     end
 
-    if old_ext == ".gif" then
+    if old_ext == "gif" then
         mp.set_property("loop-file", "no")                     -- use loop-file=no for anything except GIF
     end
 end
@@ -85,13 +88,7 @@ image_mode_bindings = {
     { "BS",         function () mp.command("no-osd set video-pan-y 0; no-osd set video-zoom 0") end }, -- reset image options
 }
 
--- extension configuration
-
-image_file_extensions = { ".jpg", ".png", ".bmp", ".gif", ".webp" }
-audio_file_extensions = { ".mp3", ".ogg", ".opus", ".flac", ".m4a", ".mka", ".ac3", ".dts", ".dtshd", ".dtshr", ".dtsma", ".eac3", ".mp2", ".mpa", ".thd", ".w64", ".wav", ".aac" }
-
 ----- end config
-
 
 ----- string
 
@@ -99,11 +96,24 @@ function ends_with(value, ending)
     return ending == "" or value:sub(-#ending) == ending
 end
 
+function split(input, sep)
+    assert(#sep == 1) -- supports only single character separator
+    local tbl = {}
+
+    if input ~= nil then
+        for str in string.gmatch(input, "([^" .. sep .. "]+)") do
+            table.insert(tbl, str)
+        end
+    end
+
+    return tbl
+end
+
 ----- path
 
-function get_file_ext(path)
+function get_file_ext_short(path)
     if path == nil then return nil end
-    local val = path:match("^.+(%.[^%./\\]+)$")
+    local val = path:match("^.+%.([^%./\\]+)$")
     if val == nil then return nil end
     return val:lower()
 end
@@ -146,6 +156,7 @@ end
 
 ----- main
 
+local msg = require "mp.msg"
 active_mode = "video"
 last_type = nil
 
@@ -194,13 +205,13 @@ function disable_audio_mode()
 end
 
 function on_start_file(event)
-    local ext = get_file_ext(mp.get_property("path"))
+    local short_ext = get_file_ext_short(mp.get_property("path"))
 
-    if list_contains(image_file_extensions, ext) then
+    if list_contains(split(mp.get_property("image-exts"), ","), short_ext) then
         disable_video_mode()
         disable_audio_mode()
         enable_image_mode()
-    elseif list_contains(audio_file_extensions, ext) then
+    elseif list_contains(split(mp.get_property("audio-exts"), ","), short_ext) then
         disable_image_mode()
         disable_video_mode()
         enable_audio_mode()
@@ -210,9 +221,9 @@ function on_start_file(event)
         enable_video_mode()
     end
 
-    if last_type ~= ext then
-        on_type_change(last_type, ext)
-        last_type = ext
+    if last_type ~= short_ext then
+        on_type_change(last_type, short_ext)
+        last_type = short_ext
     end
 end
 
