@@ -352,6 +352,12 @@ mp.register_script_message("show-position", function (mode)
     end
 end)
 
+mp.register_event("end-file", function ()
+    if timer_obj == nil then return end
+    elapsed_time = 3
+    mp.osd_message("")
+end)
+
 ----- Print media info on screen
 
 local media_info_cache = {}
