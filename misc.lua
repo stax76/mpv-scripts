@@ -322,7 +322,7 @@ function show_pos()
 end
 
 local timer_obj = nil
-local periodic_time = 0.05  -- 50 ms
+local periodic_time = 0.1
 local elapsed_time = 0
 
 function periodic_function()
