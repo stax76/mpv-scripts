@@ -324,6 +324,7 @@ end
 local timer_obj = nil
 local periodic_time = 0.1
 local elapsed_time = 0
+local seek_path = ""
 
 function periodic_function()
     if elapsed_time > 2 then
@@ -332,7 +333,12 @@ function periodic_function()
         end
 
         elapsed_time = 0
-        mp.osd_message("")
+
+        local test_path = mp.get_property("path")
+
+        if seek_path == test_path then
+            mp.osd_message("")
+        end
     else
         show_pos()
     end
@@ -341,6 +347,7 @@ function periodic_function()
 end
 
 mp.register_script_message("show-position", function (mode)
+    seek_path = mp.get_property("path")
     show_pos()
 
     if timer_obj == nil then
@@ -355,7 +362,12 @@ end)
 mp.register_event("end-file", function ()
     if timer_obj == nil then return end
     elapsed_time = 3
-    mp.osd_message("")
+
+    local test_path = mp.get_property("path")
+
+    if seek_path == test_path then
+        mp.osd_message("")
+    end
 end)
 
 ----- Print media info on screen
