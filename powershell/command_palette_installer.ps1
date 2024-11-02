@@ -5,9 +5,6 @@
 if (Test-Path env:MPVNET_HOME) {
     Write-Output "Installing into (MPVNET_HOME):"
     $ConfigDir = "$env:MPVNET_HOME"
-} elseif (Test-Path env:MPV_CONFIG_DIR) {
-    Write-Output "Installing into (MPV_CONFIG_DIR):"
-    $ConfigDir = "$env:MPV_CONFIG_DIR"
 } elseif (Test-Path "$PWD/portable_config") {
     Write-Output "Installing into (portable config):"
     $ConfigDir = "$PWD/portable_config"
@@ -17,17 +14,18 @@ if (Test-Path env:MPVNET_HOME) {
 } elseif (Test-Path "$env:APPDATA/mpv.net") {
     Write-Output "Installing into (current mpv.net user config):"
     $ConfigDir = "$env:APPDATA/mpv.net"
-    if (-not (Test-Path $ConfigDir)) {
-        Write-Output "Creating folder: $ConfigDir"
-        New-Item -ItemType Directory -Force -Path $ConfigDir | Out-Null
-    }
+} elseif (Test-Path env:MPV_CONFIG_DIR) {
+    Write-Output "Installing into (MPV_CONFIG_DIR):"
+    $ConfigDir = "$env:MPV_CONFIG_DIR"
+} elseif (Test-Path env:MPV_HOME) {
+    Write-Output "Installing into (MPV_HOME):"
+    $ConfigDir = "$env:MPV_HOME"
 } elseif (Test-Path "$env:APPDATA/mpv") {
-    Write-Output "Installing into (current user config):"
+    Write-Output "Installing into (current mpv user config):"
     $ConfigDir = "$env:APPDATA/mpv"
-    if (-not (Test-Path $ConfigDir)) {
-        Write-Output "Creating folder: $ConfigDir"
-        New-Item -ItemType Directory -Force -Path $ConfigDir | Out-Null
-    }
+} else {
+    Write-Output "Installing into current directory:"
+    $ConfigDir = "$PWD"
 }
 
 $ConfigDir = $ConfigDir -replace '/','\'
