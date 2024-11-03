@@ -2,21 +2,22 @@
 # Credits: https://github.com/tomasklaen/uosc/blob/main/installers/windows.ps1
 
 # Determine install directory
-if (Test-Path env:MPVNET_HOME) {
-    Write-Output "Installing into (MPVNET_HOME):"
-    $ConfigDir = "$env:MPVNET_HOME"
+
+if (Test-Path env:MPV_CONFIG_DIR) {
+    Write-Output "Installing into (MPV_CONFIG_DIR):"
+    $ConfigDir = "$env:MPV_CONFIG_DIR"
 } elseif (Test-Path "$PWD/portable_config") {
     Write-Output "Installing into (portable config):"
     $ConfigDir = "$PWD/portable_config"
 } elseif ((Get-Item -Path $PWD).BaseName -eq "portable_config") {
     Write-Output "Installing into (portable config):"
     $ConfigDir = "$PWD"
+} elseif (Test-Path env:MPVNET_HOME) {
+    Write-Output "Installing into (MPVNET_HOME):"
+    $ConfigDir = "$env:MPVNET_HOME"
 } elseif (Test-Path "$env:APPDATA/mpv.net") {
     Write-Output "Installing into (current mpv.net user config):"
     $ConfigDir = "$env:APPDATA/mpv.net"
-} elseif (Test-Path env:MPV_CONFIG_DIR) {
-    Write-Output "Installing into (MPV_CONFIG_DIR):"
-    $ConfigDir = "$env:MPV_CONFIG_DIR"
 } elseif (Test-Path env:MPV_HOME) {
     Write-Output "Installing into (MPV_HOME):"
     $ConfigDir = "$env:MPV_HOME"
