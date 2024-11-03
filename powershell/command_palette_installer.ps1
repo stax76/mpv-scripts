@@ -2,7 +2,6 @@
 # Credits: https://github.com/tomasklaen/uosc/blob/main/installers/windows.ps1
 
 # Determine install directory
-
 if (Test-Path env:MPV_CONFIG_DIR) {
     Write-Output "Installing into (MPV_CONFIG_DIR):"
     $ConfigDir = "$env:MPV_CONFIG_DIR"
