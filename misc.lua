@@ -325,9 +325,10 @@ local timer_obj = nil
 local periodic_time = 0.1
 local elapsed_time = 0
 local seek_path = ""
+local osd_duration = mp.get_property_number("osd-duration") / 1000
 
 function periodic_function()
-    if elapsed_time > 2 then
+    if elapsed_time > osd_duration then
         if timer_obj ~= nil then
              timer_obj:kill()
         end
@@ -361,7 +362,7 @@ end)
 
 mp.register_event("end-file", function ()
     if timer_obj == nil then return end
-    elapsed_time = 3
+    elapsed_time = osd_duration + 1
 
     local test_path = mp.get_property("path")
 
