@@ -281,6 +281,11 @@ end)
 
 ----- Alternative seek OSD message
 
+local timer_obj = nil
+local periodic_time = 0.1
+local elapsed_time = 0
+local osd_duration = mp.get_property_number("osd-duration")
+
 function pad_zero(value)
     local value = round(value)
 
@@ -304,7 +309,7 @@ function format_pos(value)
     return pad_zero(pos_min_floor) .. ":" .. pad_zero(sec_rest)
 end
 
-function show_pos()
+function update_msg()
     local position = mp.get_property_number("time-pos")
     local duration = mp.get_property_number("duration")
 
@@ -317,39 +322,28 @@ function show_pos()
     end
 
     if position ~= 0 then
-        mp.osd_message(format_pos(position) .. " / " .. format_pos(duration))
+        local txt = format_pos(position) .. " / " .. format_pos(duration)
+        mp.set_property("osd-msg3", txt)
     end
 end
 
-local timer_obj = nil
-local periodic_time = 0.1
-local elapsed_time = 0
-local seek_path = ""
-local osd_duration = mp.get_property_number("osd-duration") / 1000
-
 function periodic_function()
-    if elapsed_time > osd_duration then
+    if elapsed_time > (osd_duration / 1000) + 1 then
         if timer_obj ~= nil then
              timer_obj:kill()
         end
 
         elapsed_time = 0
-
-        local test_path = mp.get_property("path")
-
-        if seek_path == test_path then
-            mp.osd_message("")
-        end
+        mp.set_property("osd-msg3", "")
     else
-        show_pos()
+        update_msg()
     end
 
     elapsed_time = elapsed_time + periodic_time
 end
 
 mp.register_script_message("show-position", function (mode)
-    seek_path = mp.get_property("path")
-    show_pos()
+    update_msg()
 
     if timer_obj == nil then
         timer_obj = mp.add_periodic_timer(periodic_time, periodic_function)
@@ -358,17 +352,8 @@ mp.register_script_message("show-position", function (mode)
         timer_obj:kill()
         timer_obj:resume()
     end
-end)
 
-mp.register_event("end-file", function ()
-    if timer_obj == nil then return end
-    elapsed_time = osd_duration + 1
-
-    local test_path = mp.get_property("path")
-
-    if seek_path == test_path then
-        mp.osd_message("")
-    end
+    mp.command("osd-msg show-progress")
 end)
 
 ----- Print media info on screen
