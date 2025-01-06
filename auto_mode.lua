@@ -23,6 +23,8 @@ The configuration is done in code.
 
 ----- start config
 
+local msg = require "mp.msg"
+
 -- video mode
 
 function on_video_mode_activate()
