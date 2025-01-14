@@ -23,6 +23,9 @@ if (Test-Path env:MPV_CONFIG_DIR) {
 } elseif (Test-Path "$env:APPDATA/mpv") {
     Write-Output "Installing into (current mpv user config):"
     $ConfigDir = "$env:APPDATA/mpv"
+} elseif ((Get-Command scoop -ea SilentlyContinue) -and (Test-Path (scoop which mpv))) {
+    Write-Output "Installing into scoop installation location"
+    $ConfigDir = Resolve-Path (Join-Path (Split-Path (scoop which mpv)) "portable_config")
 } else {
     Write-Output "Installing into current directory:"
     $ConfigDir = "$PWD"
