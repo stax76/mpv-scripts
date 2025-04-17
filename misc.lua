@@ -1,156 +1,165 @@
 
 --[[
 
-    https://github.com/stax76/mpv-scripts
+https://github.com/stax76/mpv-scripts
 
-    This script consist of various small unrelated features.
+This script consist of various small unrelated features.
 
-    Not used code sections can be removed.
+Not used code sections can be removed.
 
-    Bindings must be added manually to input.conf.
-
-
-
-    Show media info on screen
-    -------------------------
-    Prints detailed media info on the screen.
-    
-    Depends on the CLI tool mediainfo:  
-    https://mediaarea.net/en/MediaInfo/Download  
-    On Ubuntu: sudo apt install mediainfo
-
-    In input.conf add:
-    i script-message-to misc print-media-info
+Bindings must be added manually to input.conf.
 
 
 
-    Load files/URLs from clipboard
-    ------------------------------
-    Loads one or multiple files/URLs from the clipboard.
-    The clipboard format can be of type string or file object.
-    Allows appending to the playlist.
-    On Linux requires xclip being installed.
+Show media info on screen
+-------------------------
+Prints detailed media info on the screen.
 
-    In input.conf add:
-    ctrl+v script-message-to misc load-from-clipboard
-    ctrl+V script-message-to misc append-from-clipboard
+Depends on the CLI tool mediainfo:  
+https://mediaarea.net/en/MediaInfo/Download  
+On Ubuntu: sudo apt install mediainfo
 
-
-
-    Cycle audio and subtitle tracks
-    -------------------------------
-    If there are 20+ subtitle tracks, it's annoying cycling through all
-    of them. This feature allows you to cycle only through languages
-    you actually know.
-
-    In mpv.conf define your known languages:
-    alang = de,deu,ger,en,eng #German/English
-    slang = en,eng,de,deu,ger #English/German
-
-    If you don't know the language IDs, use the terminal,
-    mpv prints the language IDs there whenever a video file is loaded.
-
-    In input.conf add:
-    SHARP script-message-to misc cycle-known-tracks audio
-    j     script-message-to misc cycle-known-tracks sub up
-    J     script-message-to misc cycle-known-tracks sub down
-
-    ~~/script-opts/misc.conf:
-    #include_no_audio=no
-    #include_no_sub=yes
-
-    ## If more than 5 tracks exist, only known are cycled,
-    ## define 0 to always cycle only known tracks.
-    #max_audio_track_count=5
-    #max_sub_track_count=5
-
-    If you prefer a menu:
-    https://github.com/stax76/mpv-scripts?tab=readme-ov-file#command_palette
-    https://github.com/stax76/mpv-scripts#search-menu
-    https://github.com/dyphire/mpv-scripts/blob/main/track-list.lua
-    https://codeberg.org/NRK/mpv-toolbox/src/branch/master/mdmenu
-    https://github.com/tomasklaen/uosc
-
-    The code was originally written by stax76, it was later
-    greatly improved by kaoneko making it much shorter.
-
-
-    Jump to a random position in the playlist
-    -----------------------------------------
-    In input.conf add:
-    ctrl+r script-message-to misc playlist-random
-
-    If pos=last it jumps to first instead of random.
+In input.conf add:
+i script-message-to misc print-media-info
 
 
 
-    Quick Bookmark
-    --------------
-    Creates or restores a bookmark. Supports one bookmark per video.
+Load files/URLs from clipboard
+------------------------------
+Loads one or multiple files/URLs from the clipboard,
+requires Windows or Linux X11, on Linux X11 requires
+xclip being installed.
 
-    Usage:
-    Create a folder in the following location:
-    ~~/script-settings/quick-bookmark/
-    Or create it somewhere else, config at:
-    ~~/script-opts/misc.conf:
-    quick_bookmark_folder=<folder path>
+The clipboard format can be of type string or
+file object as copied by a file manager.
 
-    In input.conf add:
-    ctrl+q script-message-to misc quick-bookmark
+In input.conf add:
+ctrl+v script-message-to misc load-from-clipboard replace
+ctrl+V script-message-to misc load-from-clipboard append
 
- 
+With mpv v0.40 or newer, mpv has limited built-in support
+for loading a file/URL from the clipboard:
 
-    Playlist Next/Prev
-    ------------------
-    Like the regular playlist-next/playlist-prev, but does not restart playback
-    of the first or last file, in case the first or last track already plays,
-    instead shows a OSD message.
+loadfile ${clipboard/text} replace
 
-    F11 script-message-to misc playlist-prev # Go to previous file in playlist
-    F12 script-message-to misc playlist-next # Go to next file in playlist
+It does not support file objects and multiple files.
 
 
 
-    Playlist First/Last
-    -------------------
-    Navigates to the first or last track in the playlist,
-    in case the first or last track already plays, it does not
-    restart playback, instead shows a OSD message.
+Cycle audio and subtitle tracks
+-------------------------------
+If there are 20+ subtitle tracks, it's annoying cycling through all
+of them. This feature allows you to cycle only through languages
+you actually know.
 
-    Home script-message-to misc playlist-first # Go to first file in playlist
-    End  script-message-to misc playlist-last  # Go to last file in playlist
+In mpv.conf define your known languages:
+alang = de,deu,ger,en,eng #German/English
+slang = en,eng,de,deu,ger #English/German
+
+If you don't know the language IDs, use the terminal,
+mpv prints the language IDs there whenever a video file is loaded.
+
+In input.conf add:
+SHARP script-message-to misc cycle-known-tracks audio
+j     script-message-to misc cycle-known-tracks sub up
+J     script-message-to misc cycle-known-tracks sub down
+
+~~/script-opts/misc.conf:
+#include_no_audio=no
+#include_no_sub=yes
+
+## If more than 5 tracks exist, only known are cycled,
+## define 0 to always cycle only known tracks.
+#max_audio_track_count=5
+#max_sub_track_count=5
+
+If you prefer a menu:
+https://github.com/stax76/mpv-scripts?tab=readme-ov-file#command_palette
+https://github.com/stax76/mpv-scripts#search-menu
+https://github.com/dyphire/mpv-scripts/blob/main/track-list.lua
+https://codeberg.org/NRK/mpv-toolbox/src/branch/master/mdmenu
+https://github.com/tomasklaen/uosc
+
+The code was originally written by stax76, it was later
+greatly improved by kaoneko making it much shorter.
+
+
+Jump to a random position in the playlist
+-----------------------------------------
+In input.conf add:
+ctrl+r script-message-to misc playlist-random
+
+If pos=last it jumps to first instead of random.
 
 
 
-    Restart mpv
-    -----------
-    Restarts mpv restoring the properties path, time-pos,
-    pause and volume, the playlist is not restored.
+Quick Bookmark
+--------------
+Creates or restores a bookmark. Supports one bookmark per video.
 
-    r script-message-to misc restart-mpv
+Usage:
+Create a folder in the following location:
+~~/script-settings/quick-bookmark/
+Or create it somewhere else, config at:
+~~/script-opts/misc.conf:
+quick_bookmark_folder=<folder path>
 
-
-
-    Execute Lua code
-    ----------------
-    Allows to execute Lua Code directly from input.conf.
-
-    It's necessary to add a binding to input.conf:
-    #Navigates to the last file in the playlist
-    END script-message-to misc execute-lua-code "mp.set_property_number('playlist-pos', mp.get_property_number('playlist-count') - 1)"
+In input.conf add:
+ctrl+q script-message-to misc quick-bookmark
 
 
 
-    When seeking displays position and duration like so:
-    ----------------------------------------------------
-    70:00 / 80:00
+Playlist Next/Prev
+------------------
+Like the regular playlist-next/playlist-prev, but does not restart playback
+of the first or last file, in case the first or last track already plays,
+instead shows a OSD message.
 
-    Which is different from most players which use:
+F11 script-message-to misc playlist-prev # Go to previous file in playlist
+F12 script-message-to misc playlist-next # Go to next file in playlist
 
-    01:10:00 / 01:20:00
 
-    input.conf:
-    Right no-osd seek 5; script-message-to misc show-position
+
+Playlist First/Last
+-------------------
+Navigates to the first or last track in the playlist,
+in case the first or last track already plays, it does not
+restart playback, instead shows a OSD message.
+
+Home script-message-to misc playlist-first # Go to first file in playlist
+End  script-message-to misc playlist-last  # Go to last file in playlist
+
+
+
+Restart mpv
+-----------
+Restarts mpv restoring the properties path, time-pos,
+pause and volume, the playlist is not restored.
+
+r script-message-to misc restart-mpv
+
+
+
+Execute Lua code
+----------------
+Allows to execute Lua Code directly from input.conf.
+
+It's necessary to add a binding to input.conf:
+#Navigates to the last file in the playlist
+END script-message-to misc execute-lua-code "mp.set_property_number('playlist-pos', mp.get_property_number('playlist-count') - 1)"
+
+
+
+When seeking displays position and duration like so:
+----------------------------------------------------
+70:00 / 80:00
+
+Which is different from most players which use:
+
+01:10:00 / 01:20:00
+
+input.conf:
+Right no-osd seek 5; script-message-to misc show-position
 
 ]]--
 
@@ -478,57 +487,59 @@ end)
 
 ----- Load files from clipboard
 
-function loadfiles(mode)
-    if is_windows then
-        local ps_code = [[
-            Add-Type -AssemblyName System.Windows.Forms
-            $containsFiles = [Windows.Forms.Clipboard]::ContainsFileDropList()
-            
-            if ($containsFiles) {
-                [Windows.Forms.Clipboard]::GetFileDropList() -join [Environment]::NewLine
-            } else {
-                (Get-Clipboard).Replace('"', "")
-            }
-        ]]
-
-        proc_args = { "powershell", "-command", ps_code }
-    else
-        proc_args = { "xclip", "-o", "-selection", "clipboard" }
-    end
-
-    subprocess = {
+function get_proc_output(args)
+    local subprocess = {
         name = "subprocess",
-        args = proc_args,
+        args = args,
         playback_only = false,
         capture_stdout = true,
         capture_stderr = true
     }
 
-    proc_result = mp.command_native(subprocess)
+    local result = mp.command_native(subprocess)
 
-    if proc_result.status < 0 then
-        msg.error("Error string: " .. proc_result.error_string)
-        msg.error("Error stderr: " .. proc_result.stderr)
+    if result.status < 0 then
+        msg.error("Error reading output from a process:")
+        msg.error("Error string: " .. result.error_string)
+        msg.error("Error stderr: " .. result.stderr)
+        msg.error("Arguments:\n" .. table.concat(args, '\n'))
         return
     end
 
-    proc_output = trim(proc_result.stdout)
-
-    if is_empty(proc_output) then return end
-
-    if contains(proc_output, "\n") then
-        mp.commandv("loadlist", "memory://" .. proc_output, mode)
-    else
-        mp.commandv("loadfile", proc_output, mode)
-    end
+    return trim(result.stdout)
 end
 
-mp.register_script_message("load-from-clipboard", function ()
-    loadfiles("replace")
-end)
+function get_clipboard_from_powershell()
+    local code = [[
+        Add-Type -AssemblyName System.Windows.Forms
+        $containsFiles = [Windows.Forms.Clipboard]::ContainsFileDropList()
+        
+        if ($containsFiles) {
+            [Windows.Forms.Clipboard]::GetFileDropList() -join [Environment]::NewLine
+        } else {
+            (Get-Clipboard).Replace('"', "")
+        }
+    ]]
 
-mp.register_script_message("append-from-clipboard", function ()
-    loadfiles("append")
+    return get_proc_output({ "powershell", "-command", code })
+end
+
+mp.register_script_message("load-from-clipboard", function (mode)
+    local content = nil
+
+    if is_windows then
+        content = get_clipboard_from_powershell()
+    else
+        content = get_proc_output({ "xclip", "-o", "-selection", "clipboard" })
+    end
+
+    if is_empty(content) then return end
+
+    if contains(content, "\n") then
+        mp.commandv("loadlist", "memory://" .. content, mode)
+    else
+        mp.commandv("loadfile", content, mode)
+    end
 end)
 
 ----- Restart mpv

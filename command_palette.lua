@@ -126,9 +126,22 @@ local originalFontSize = o.font_size
 
 mp.commandv('script-message', 'command-palette-version', command_palette_version)
 
-local is_older_than_v0_36 = string.find(mp.get_property("mpv-version"), 'mpv v0%.[1-3][0-5]%.') == 1
+function get_mpv_version()
+    local version = mp.get_property("mpv-version")
+    local major, minor = version:match("^mpv v(%d+)%.(%d+)%.")
 
-if not is_older_than_v0_36 then
+    if major and minor then
+        return tonumber(major), tonumber(minor)
+    end
+end
+
+local major, minor = get_mpv_version()
+
+if major == nil or minor == nil then
+    msg.error("Failed getting mpv version.")
+end
+
+if major == nil or minor == nil or (major > 0 or (major == 0 and minor > 35)) then
     mp.set_property_native("user-data/command-palette/version", command_palette_version)
 end
 
