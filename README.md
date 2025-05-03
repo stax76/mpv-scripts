@@ -56,6 +56,10 @@ command_palette is a searchable menu for:
 - Aspect ratio
 - Recent files (depends on [recent-menu](https://github.com/natural-harmonia-gropius/recent-menu))
 
+### Note
+
+mpv v0.40 has a built-in script named [select.lua](https://mpv.io/manual/master/#select) that is similar to command_palette.lua.
+
 ### Installation
 
 Run the following command line:
@@ -142,7 +146,9 @@ https://github.com/stax76/awesome-mpv?tab=readme-ov-file#menu
 
 ### About
 
-search_menu is very similar to command_palette, it's based on the external tools [Rofi](https://github.com/davatorium/rofi) (Linux) or terminal based on [fzf](https://github.com/junegunn/fzf) (cross-platform).
+search_menu is discontinued as command_palette.lua and select.lua are recommended instead.
+
+search_menu based on the external tools [Rofi](https://github.com/davatorium/rofi) (Linux) or terminal based on [fzf](https://github.com/junegunn/fzf) (cross-platform).
 
 It provides a searchable menu for bindings, commands, properties, playlist entries and audio/subtitle tracks.
 
