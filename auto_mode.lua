@@ -26,7 +26,7 @@ The configuration is done in code.
 -- video mode
 
 function on_video_mode_activate()
-    msg.info("Video mode is activated")
+    mp.msg.info("Video mode is activated")
     mp.set_property("osd-playing-msg", "${media-title}")       -- in video mode use media-title
     mp.command("script-message osc-visibility auto no_osd")    -- set osc visibility to auto
 end
@@ -37,7 +37,7 @@ end
 -- audio mode
 
 function on_audio_mode_activate()
-    msg.info("Audio mode is activated")
+    mp.msg.info("Audio mode is activated")
     mp.set_property("osd-playing-msg", "${media-title}")       -- in audio mode use media-title
     mp.command("script-message osc-visibility never no_osd")   -- in audio mode disable the osc
 end
@@ -48,9 +48,9 @@ end
 -- image mode
 
 function on_image_mode_activate()
-    msg.info("Image mode is activated")
+    mp.msg.info("Image mode is activated")
     mp.set_property("osd-playing-msg", "")                     -- disable osd-playing-msg for images
-    mp.set_property("background-color", "#1A2226")                   -- use dark grey background for images
+    mp.set_property("background-color", "#1A2226")             -- use dark grey background for images
     mp.command("script-message osc-visibility never no_osd")   -- disable osc for images
 end
 
@@ -73,8 +73,8 @@ end
 -- binding configuration
 
 audio_mode_bindings = {
-    { "Left",   function () mp.command("no-osd seek -10") end,        "repeatable" }, -- make audio mode seek length longer than video mode seek length
-    { "Right",  function () mp.command("no-osd seek  10") end,        "repeatable" }, -- make audio mode seek length longer than video mode seek length
+    { "Left",   function () mp.command("no-osd seek -10") end, "repeatable" }, -- make audio mode seek length longer than video mode seek length
+    { "Right",  function () mp.command("no-osd seek  10") end, "repeatable" }, -- make audio mode seek length longer than video mode seek length
 }
 
 image_mode_bindings = {
@@ -156,9 +156,8 @@ end
 
 ----- main
 
-local msg = require "mp.msg"
-active_mode = "video"
-last_type = nil
+local active_mode = "video"
+local last_type = nil
 
 function enable_video_mode()
     if active_mode == "video" then return end
