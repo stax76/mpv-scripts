@@ -368,26 +368,26 @@ local function get_language(lng)
         return lng
     end
 
-    if lng == "ara" then lng = "Arabic" end
-    if lng == "ben" then lng = "Bangla" end
-    if lng == "bng" then lng = "Bangla" end
-    if lng == "chi" then lng = "Chinese" end
-    if lng == "zho" then lng = "Chinese" end
-    if lng == "eng" then lng = "English" end
-    if lng == "fre" then lng = "French" end
-    if lng == "fra" then lng = "French" end
-    if lng == "ger" then lng = "German" end
-    if lng == "deu" then lng = "German" end
-    if lng == "hin" then lng = "Hindi" end
-    if lng == "ita" then lng = "Italian" end
-    if lng == "jpn" then lng = "Japanese" end
-    if lng == "kor" then lng = "Korean" end
-    if lng == "msa" then lng = "Malay" end
-    if lng == "por" then lng = "Portuguese" end
-    if lng == "pan" then lng = "Punjabi" end
-    if lng == "rus" then lng = "Russian" end
-    if lng == "spa" then lng = "Spanish" end
-    if lng == "und" then lng = "Undetermined" end
+    if lng == "ara" then return "Arabic" end
+    if lng == "ben" then return "Bangla" end
+    if lng == "bng" then return "Bangla" end
+    if lng == "chi" then return "Chinese" end
+    if lng == "zho" then return "Chinese" end
+    if lng == "eng" then return "English" end
+    if lng == "fre" then return "French" end
+    if lng == "fra" then return "French" end
+    if lng == "ger" then return "German" end
+    if lng == "deu" then return "German" end
+    if lng == "hin" then return "Hindi" end
+    if lng == "ita" then return "Italian" end
+    if lng == "jpn" then return "Japanese" end
+    if lng == "kor" then return "Korean" end
+    if lng == "msa" then return "Malay" end
+    if lng == "por" then return "Portuguese" end
+    if lng == "pan" then return "Punjabi" end
+    if lng == "rus" then return "Russian" end
+    if lng == "spa" then return "Spanish" end
+    if lng == "und" then return "Undetermined" end
 
     return lng
 end
