@@ -5,12 +5,18 @@ command_palette and search_menu are documented here, all other scripts are
 documented directly in the script via code comment at the beginning of the script.
 
 - [powershell-completion](powershell/mpv-powershell-completion.ps1) - Command line completion for mpv and mpv.net.
-- [command_palette](#command_palette) - Searchable menu for bindings,
-  playlist, chapters, profiles, all tracks, audio tracks, video tracks,
-  subtitle tracks, secondary subtitle tracks, subtitle lines, commands,
+- [command_palette](#command_palette) - Note that this script is now obsolete
+  because mpv supports all this now directly using the built-in script select.lua.
+  
+  Searchable menu for bindings, playlist, chapters, profiles, all tracks, audio tracks,
+  video tracks, subtitle tracks, secondary subtitle tracks, subtitle lines, commands,
   properties, options, audio devices, Blu-ray titles, stream quality,
-  aspect ratio, recent files.
-- [search_menu](#search_menu) - Searchable menu for bindings, commands, properties, playlist
+  aspect ratio, recent files. Note that this script is now obsolete
+  because mpv supports all this now using the built-in script select.lua.
+- [search_menu](#search_menu) - Note that this script is now obsolete
+  because mpv supports all this now directly using the built-in script select.lua.
+  
+  Searchable menu for bindings, commands, properties, playlist
   entries and audio/subtitle tracks.
 - [auto_mode.lua](auto_mode.lua) - Use mpv as video player, music player and image viewer.
 - [delete_current_file.lua](delete_current_file.lua) - Moves the currently playing file instantly to the recycle bin.
@@ -29,6 +35,9 @@ documented directly in the script via code comment at the beginning of the scrip
 - [average_volume.lua](average_volume.lua) - Records and restores the relative volume for music.
 
 # command_palette
+
+Note that this script is now obsolete because mpv supports
+all this now directly using the built-in script select.lua.
 
 ![command_palette_main](screenshots/command_palette_main.webp)
 
@@ -144,9 +153,10 @@ https://github.com/stax76/awesome-mpv?tab=readme-ov-file#menu
 
 # search_menu
 
-### About
+Note that this script is now obsolete because mpv supports
+all this now directly using the built-in script select.lua.
 
-search_menu is discontinued as command_palette.lua and select.lua are recommended instead.
+### About
 
 search_menu based on the external tools [Rofi](https://github.com/davatorium/rofi) (Linux) or terminal based on [fzf](https://github.com/junegunn/fzf) (cross-platform).
 
@@ -222,3 +232,11 @@ enter key to confirm, escape key to close.
 misc.lua has various features, among them is printing media info on the screen.
 
 ![media-info](screenshots/media-info.jpg)
+
+
+Other projects from me
+----------------------
+
+A list of my other projects can be found here:
+
+https://stax76.github.io/software-list
