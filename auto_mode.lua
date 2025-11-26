@@ -39,7 +39,6 @@ end
 function on_audio_mode_activate()
     mp.msg.info("Audio mode is activated")
     mp.set_property("osd-playing-msg", "${media-title}")       -- in audio mode use media-title
-    mp.command("script-message osc-visibility never no_osd")   -- in audio mode disable the osc
 end
 
 function on_audio_mode_deactivate()
@@ -50,12 +49,10 @@ end
 function on_image_mode_activate()
     mp.msg.info("Image mode is activated")
     mp.set_property("osd-playing-msg", "")                     -- disable osd-playing-msg for images
-    mp.set_property("background-color", "#1A2226")             -- use dark grey background for images
     mp.command("script-message osc-visibility never no_osd")   -- disable osc for images
 end
 
 function on_image_mode_deactivate()
-    mp.set_property("background-color", "#000000")             -- use black background for audio and video
 end
 
 -- called whenever the file extension changes
@@ -78,14 +75,18 @@ audio_mode_bindings = {
 }
 
 image_mode_bindings = {
-    { "UP",         function () mp.command("no-osd add video-pan-y -0.02") end,  "repeatable" }, -- move image up
-    { "DOWN",       function () mp.command("no-osd add video-pan-y  0.02") end,  "repeatable" }, -- move image down
-    { "LEFT",       function () mp.command("playlist-prev") end,                 "repeatable" }, -- show previous image
-    { "RIGHT",      function () mp.command("playlist-next") end,                 "repeatable" }, -- show next image
-    { "SPACE",      function () mp.command("playlist-next") end,                 "repeatable" }, -- show next image
-    { "WHEEL_UP",   function () mp.command("add video-zoom  0.1") end,           "repeatable" }, -- increase image size
-    { "WHEEL_DOWN", function () mp.command("add video-zoom -0.1") end,           "repeatable" }, -- decrease image size
-    { "BS",         function () mp.command("no-osd set video-pan-y 0; no-osd set video-zoom 0") end }, -- reset image options
+    { "UP",          function () mp.command("no-osd add video-pan-y -0.02") end,  "repeatable" }, -- move image up
+    { "DOWN",        function () mp.command("no-osd add video-pan-y  0.02") end,  "repeatable" }, -- move image down
+    { "LEFT",        function () mp.command("playlist-prev") end,                 "repeatable" }, -- show previous image
+    { "RIGHT",       function () mp.command("playlist-next") end,                 "repeatable" }, -- show next image
+    { "SPACE",       function () mp.command("playlist-next") end,                 "repeatable" }, -- show next image
+    { "WHEEL_UP",    function () mp.command("add video-zoom  0.1") end,           "repeatable" }, -- increase image size
+    { "WHEEL_DOWN",  function () mp.command("add video-zoom -0.1") end,           "repeatable" }, -- decrease image size
+    { "+",           function () mp.command("add video-zoom  0.1") end,           "repeatable" }, -- increase image size
+    { "-",           function () mp.command("add video-zoom -0.1") end,           "repeatable" }, -- decrease image size
+    { "KP_Add",      function () mp.command("add video-zoom  0.1") end,           "repeatable" }, -- increase image size
+    { "KP_Subtract", function () mp.command("add video-zoom -0.1") end,           "repeatable" }, -- decrease image size
+    { "BS",          function () mp.command("no-osd set video-pan-y 0; no-osd set video-zoom 0") end }, -- reset image options
 }
 
 ----- end config
