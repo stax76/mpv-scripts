@@ -131,12 +131,12 @@ End  script-message-to misc playlist-last  # Go to last file in playlist
 
 
 
-Restart mpv
------------
-Restarts mpv restoring the properties path, time-pos,
+Restart mpv or mpv frontend
+---------------------------
+Restarts mpv or mpv frontend restoring the properties path, time-pos,
 pause and volume, the playlist is not restored.
 
-r script-message-to misc restart-mpv
+r script-message-to misc restart mpv
 
 
 
@@ -542,11 +542,11 @@ mp.register_script_message("load-from-clipboard", function (mode)
     end
 end)
 
------ Restart mpv
+----- Restart mpv or mpv frontend
 
-mp.register_script_message("restart-mpv", function ()
+mp.register_script_message("restart", function (exe_name)
     local restart_args = {
-        "mpv",
+        exe_name,
         "--pause=" .. mp.get_property("pause"),
         "--volume=" .. mp.get_property("volume"),
     }
